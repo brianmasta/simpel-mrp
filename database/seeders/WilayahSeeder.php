@@ -6,15 +6,11 @@ use App\Models\Wilayah\Kabupaten;
 use App\Models\Wilayah\Kecamatan;
 use App\Models\Wilayah\Kelurahan;
 use App\Models\Wilayah\Provinsi;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 
 class WilayahSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $baseUrl = 'https://ibnux.github.io/data-indonesia';
