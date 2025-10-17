@@ -21,6 +21,9 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
+
 
 Route::get('/login', Login::class)->name('login')->middleware('guest');;
 
@@ -108,6 +111,20 @@ Route::get('/reset-password/{token}', ResetPassword::class)
 Route::post('/reset-password', [ResetPassword::class, 'reset'])
     ->middleware('guest')
     ->name('password.update');
+
+Route::get('/view-private/{folder}/{filename}', function ($folder, $filename) {
+    $path = storage_path("app/private/public/surat_oap/{$folder}/{$filename}");
+
+    if (!file_exists($path)) {
+        abort(404, 'File tidak ditemukan.');
+    }
+
+    $mime = mime_content_type($path);
+    return response()->file($path, [
+        'Content-Type' => $mime,
+        'Cache-Control' => 'no-cache, must-revalidate',
+    ]);
+})->middleware(['auth', 'role:admin,petugas'])->name('view.private');
 
 
 

@@ -24,7 +24,11 @@ class DataSuratOap extends Component
     public $search = '';
     public $filterStatus = '';
 
+    public $hapusId;
+    public $hapusNama;
+    public $detailSurat;
     public $previewPdfData = null; // simpan PDF base64
+    public $selectedData;
 
     public function render()
     {
@@ -51,6 +55,41 @@ class DataSuratOap extends Component
             'pengajuan' => $pengajuan
         ]);
 
+    }
+
+    public function lihatData($id)
+    {
+        $this->selectedData = PengajuanSurat::with(['profil.kabupaten'])->find($id);
+        // dd($this->selectedData);
+        $this->dispatch('show-lihat-data');
+    }
+
+    public function konfirmasiHapus($id)
+    {
+        $item = PengajuanSurat::with('profil')->find($id);
+        $this->hapusId = $id;
+        $this->hapusNama = $item?->profil?->nama_lengkap ?? 'Pengguna';
+        $this->dispatch('show-hapus-modal'); // kirim event ke JS
+    }
+
+    public function hapusData()
+    {
+        $item = PengajuanSurat::find($this->hapusId);
+
+        if (!$item) {
+            session()->flash('error', 'Data tidak ditemukan.');
+            return;
+        }
+
+        if ($item->file_surat && Storage::exists($item->file_surat)) {
+            Storage::delete($item->file_surat);
+        }
+
+        $item->delete();
+        $this->hapusId = null;
+        $this->hapusNama = null;
+
+        session()->flash('success', 'Data berhasil dihapus.');
     }
 
     public function setStatus($id, $status)
