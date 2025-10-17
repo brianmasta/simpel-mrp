@@ -15,7 +15,6 @@ class PengajuanMarga extends Component
     public $wilayah_adat;
     public $suku;
     public $marga;
-    public $asal_daerah;
     public $alasan;
     public $berkas;
 
@@ -35,7 +34,6 @@ class PengajuanMarga extends Component
             'wilayah_adat' => 'required|string|max:255',
             'suku' => 'required|string|max:255',
             'marga' => 'required|string|max:255',
-            'asal_daerah' => 'nullable|string|max:255',
             'alasan' => 'nullable|string',
             'berkas' => 'nullable|file|max:2048|mimes:pdf,jpg,png',
         ]);
@@ -48,7 +46,6 @@ class PengajuanMarga extends Component
             'wilayah_adat' => $this->wilayah_adat,
             'suku' => $this->suku,
             'marga' => $this->marga,
-            'asal_daerah' => $this->asal_daerah,
             'alasan' => $this->alasan,
             'berkas' => $path,
         ]);

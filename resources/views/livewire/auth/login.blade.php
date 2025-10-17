@@ -20,22 +20,34 @@
                                 <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
                             </svg>
                         </span>
-                          <input class="form-control" type="email" id="email" wire:model="email" placeholder="Email">
-                           @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                          <input class="form-control @error('email') is-invalid @enderror" type="email" id="email" wire:model="email" placeholder="Email" required>
+                            <div class="invalid-feedback">
+                                @error('email')
+                                  {{ $message }}
+                                @else
+                                  Masukkan email yang valid.
+                                @enderror
+                            </div>
                         </div>
                         <div class="input-group mb-4"><span class="input-group-text">
                             <svg class="icon">
                                 <path d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2M2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
                             </svg></span>
-                          <input class="form-control" type="password" id="password" wire:model="password" placeholder="Password">
-                          @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                          <input class="form-control @error('password') is-invalid @enderror" type="password" id="password" wire:model="password" placeholder="Password" required minlength="6">
+                          <div class="invalid-feedback">
+                            @error('password')
+                              {{ $message }}
+                            @else
+                              Password minimal 6 karakter.
+                            @enderror
+                          </div>
                         </div>
                         <div class="row">
                           <div class="col-6">
                             <button type="submit" class="btn btn-primary px-4">Login</button>
                           </div>
                           <div class="col-6 text-end">
-    <a href="{{ route('password.request') }}" class="btn btn-link px-0">Lupa password?</a>
+                            <a href="{{ route('password.request') }}" class="btn btn-link px-0">Lupa password?</a>
                           </div>
                         </div>
                     </form>

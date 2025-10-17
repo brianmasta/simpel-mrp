@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\FormatSurat;
 use App\Models\Marga;
-use App\Models\PengajuanMarga;
 use App\Models\PengajuanSurat;
 use App\Models\Profil;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -12,32 +11,38 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\Label\Label;
-use Endroid\QrCode\RoundBlockSizeMode;
 
 class SuratOap extends Component
 {
     use WithFileUploads;
 
-    public $namaLengkap, $nik, $asalKabupaten, $namaAyah, $namaIbu;
+    public $namaLengkap, $nik, $no_kk, $asalKabupaten, $namaAyah, $namaIbu, $suku;
     public $alasan, $foto, $ktp, $kk, $akte;
+    public $marga, $cekMarga;
     public $margaValid = false;
     public $pesanVerifikasi = '';
     public $riwayat = []; // <-- Tambahkan ini
+    public $alasan_lain, $status_oaps, $wilayah_adat, $status_oap;
 
     public function mount()
     {
         $profil = Profil::where('user_id', Auth::id())->with('kabupaten')->first();
+
+        // Ambil kata terakhir sebagai marga
+        $parts = explode(' ', trim($profil?->nama_lengkap));
+        $this->marga = ucfirst(strtolower(end($parts)));
+        $cekMarga = Marga::where('marga', $this->marga)->first();
+        
+        // dd($cekMarga->suku);
+
         if ($profil) {
             $this->nik = $profil->nik;
+            $this->no_kk = $profil->no_kk;
             $this->namaLengkap = $profil->nama_lengkap;
             $this->asalKabupaten = $profil->kabupaten->nama ?? '-';
             $this->namaAyah = $profil->nama_ayah;
             $this->namaIbu = $profil->nama_ibu;
+            $this->suku = $cekMarga->suku;
         }
 
         // Ambil riwayat surat pengguna
@@ -95,11 +100,15 @@ class SuratOap extends Component
 
         $this->validate([
             'alasan' => 'required',
+            'alasan_lain' => $this->alasan === 'Lainnya' ? 'required|string|max:255' : 'nullable',
             'foto' => 'nullable|image|max:2048',
             'ktp' => 'nullable|file|max:2048',
             'kk' => 'nullable|file|max:2048',
             'akte' => 'nullable|file|max:2048',
+            
         ]);
+
+        $alasanFinal = $this->alasan === 'Lainnya' ? $this->alasan_lain : $this->alasan;
 
         // Upload file
         $fotoPath = $this->foto?->store('public/surat_oap/foto');
@@ -110,7 +119,7 @@ class SuratOap extends Component
         // Simpan pengajuan
         $pengajuan = PengajuanSurat::create([
             'user_id' => Auth::id(),
-            'alasan' => $this->alasan,
+            'alasan' => $alasanFinal,
             'foto' => $fotoPath,
             'ktp' => $ktpPath,
             'kk' => $kkPath,
@@ -167,48 +176,54 @@ class SuratOap extends Component
 
         $qr->saveToFile($qrAbsolutePath);
 
-        // Tambahkan tag <img> untuk menampilkan QR code di surat
-        $imgTag = '<div style="text-align:center; margin-top:20px;">
-                        <p><strong>QR Code Validasi Surat:</strong></p>
-                        <img src="' . public_path('storage/' . $qrRelativePath) . '" width="150">
-                        <p>Kode Autentikasi: <strong>' . $kodeAutentikasi . '</strong></p>
-                </div>';
+            // === AMBIL FOTO DARI FOLDER PRIVATE ===
+        $fotoFullPath = storage_path('app/private/' . $pengajuan->foto);
 
-        // Ambil QR code base64 agar bisa dimasukkan ke PDF
-        // $qrImageData = base64_encode(file_get_contents($qrAbsolutePath));
-        // $qrBase64 = 'data:image/png;base64,' . $qrImageData;
 
-        // 🔧 Substitusi placeholder dinamis
-        $isiSurat = str_replace(
-            [
-                '[[ nama_lengkap ]]',
-                '[[ nik ]]',
-                '[[ kabupaten ]]',
-                '[[ nama_ayah ]]',
-                '[[ nama_ibu ]]',
-                '[[ nomorSurat ]]',
-                '[[ $tanggal ]]',
-                '[[ $judul ]]',
-                '[[ qrcode ]]',
-            ],
-            [
-                $profil->nama_lengkap,
-                $profil->nik,
-                $profil->kabupaten->nama ?? '-',
-                $profil->nama_ayah,
-                $profil->nama_ibu,
-                $nomorSurat,
-                now()->translatedFormat('d F Y'),
-                $format->jenis ?? 'SURAT KETERANGAN ORANG ASLI PAPUA',
-                "<img src='" . public_path('storage/'. $qrRelativePath) . "' width='100' height='100' alt='QR Code'>"
-            ],
-            $format->isi
-        );
+        if (!file_exists($fotoFullPath)) {
+            $fotoBase64 = ''; // fallback jika tidak ada foto
+        } else {
+            $fotoData = file_get_contents($fotoFullPath);
+            $fotoBase64 = 'data:image/jpeg;base64,' . base64_encode($fotoData);
+        }
 
-        // Tambahkan QR code di bawah isi surat
-        $isiSurat .= $imgTag;
+        // === KONVERSI QR CODE JADI BASE64 UNTUK DOMPDF ===
+        $qrData = file_get_contents($qrAbsolutePath);
+        $qrBase64 = 'data:image/png;base64,' . base64_encode($qrData);
 
-        $pdf = Pdf::loadHTML($isiSurat);
+        // Ambil kata terakhir sebagai marga
+        $parts = explode(' ', trim($profil->nama_lengkap));
+        $this->marga = ucfirst(strtolower(end($parts)));
+        $cekMarga = Marga::where('marga', $this->marga)->first();
+        // dd($cekMarga->suku);
+
+        $data = [
+            'nama_lengkap' => $profil->nama_lengkap ?? 'Nama Pengguna',
+            'nik' => $profil->nik ?? '1234567890',
+            'nik_kk' => $profil->no_kk ?? '1234567890',
+            'nomor_surat' => $nomorSurat,
+            'kabupaten' => $profil->kabupaten->nama ?? '',
+            'nama_ayah' => $profil->nama_ayah ?? '',
+            'nama_ibu' => $profil->nama_ibu ?? '',
+            'alasan' => $pengajuan->alasan,
+            'suku' => $cekMarga->suku,
+            'foto' => $fotoBase64,
+            'qrcode' => public_path('storage/'. $qrRelativePath),
+            'tanggal' => now()->translatedFormat('d F Y'),
+        ];
+
+        // dd($data);
+
+        // Ganti placeholder dinamis di template
+        $html = $format->isi_html;
+        foreach ($data as $key => $value) {
+            $html = str_replace('[[' . $key . ']]', $value, $html);
+        }
+
+        // Buat PDF preview
+        $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+        // $this->pdfContent = base64_encode($pdf->output());
+
         $fileName = 'surat_oap_' . $profil->nik . '_' . time() . '.pdf';
         $relativePath = 'surat_oap/' . $fileName;
 

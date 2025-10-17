@@ -20,7 +20,15 @@
 
                 <div class="mb-3">
                     <label>Wilayah Adat</label>
-                    <input type="text" class="form-control" wire:model.defer="wilayah_adat">
+                    <select class="form-control" wire:model.defer="wilayah_adat">
+                        <option value="">-- Pilih Wilayah Adat --</option>
+                        <option value="Saireri">Saireri</option>
+                        <option value="Domberai">Domberai</option>
+                        <option value="Bomberai">Bomberai</option>
+                        <option value="Meepago">Meepago</option>
+                        <option value="La Pago">La Pago</option>
+                        <option value="Ha Anim">Ha Anim</option>
+                    </select>
                     @error('wilayah_adat') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
 
@@ -34,11 +42,6 @@
                     <label>Marga</label>
                     <input type="text" class="form-control" wire:model.defer="marga">
                     @error('marga') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label>Asal Daerah</label>
-                    <input type="text" class="form-control" wire:model.defer="asal_daerah">
                 </div>
 
                 <div class="mb-3">
@@ -60,6 +63,7 @@
     <div class="card mb-4">
         <div class="card-header bg-dark text-white"><strong>Riwayat Pengajuan Marga OAP</strong></div>
         <div class="card-body">
+            <div class="table-responsive">
             <table class="table table-bordered align-middle">
                 <thead class="table-light">
                     <tr>
@@ -94,6 +98,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 

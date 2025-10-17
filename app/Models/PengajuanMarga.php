@@ -15,7 +15,6 @@ class PengajuanMarga extends Model
         'wilayah_adat',
         'suku',
         'marga',
-        'asal_daerah',
         'alasan',
         'berkas',
         'status',

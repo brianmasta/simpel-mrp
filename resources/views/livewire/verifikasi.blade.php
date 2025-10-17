@@ -11,7 +11,19 @@
             @if (session()->has('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
+            <div class="mb-2">
+                <button wire:click="exportExcel" 
+                        wire:loading.attr="disabled" 
+                        wire:target="exportExcel" 
+                        class="btn btn-success btn-sm">
+                    <span wire:loading wire:target="exportExcel" class="spinner-border spinner-border-sm me-1"></span>
+                    Export Excel
+                </button>
+            </div>
+            <input wire:model.live="search" type="text" class="form-control form-control-sm" placeholder="Cari nama/NIK...">
 
+            
+            <div class="table-responsive">
             <table class="table table-striped align-middle">
                 <thead>
                     <tr>
@@ -25,7 +37,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($pengajuans as $index => $item)
+                    @foreach ($pengajuan as $index => $item)
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $item->nama_lengkap }}</td>
@@ -59,6 +71,9 @@
                     @endforeach
                 </tbody>
             </table>
+                        {{ $pengajuan->links() }}
+            </div>
+
         </div>
     </div>
 </div>

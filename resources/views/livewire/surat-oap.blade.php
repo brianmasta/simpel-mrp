@@ -1,15 +1,17 @@
 <div>
     {{-- RIWAYAT PENGAJUAN SURAT --}}
-    <div class="card mb-4">
-        <div class="card-header bg-dark text-white"><strong>Riwayat Pengajuan Surat OAP</strong></div>
-        <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white"><strong>Riwayat Pengajuan Surat OAP</strong></div>
+    <div class="card-body">
 
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        <div class="table-responsive">
             <table class="table table-bordered table-striped">
                 <thead class="table-light">
                     <tr>
@@ -34,15 +36,19 @@
                                     <span class="badge bg-warning text-dark">{{ ucfirst($item->status) }}</span>
                                 @endif
                             </td>
-                            <td>{{ $item->created_at->format('d-m-Y') }}</td>
+                            <td>{{ $item->created_at?->format('d-m-Y') ?? '-' }}</td>
                             <td>
-                                @if ($item->file_surat)
-                                    <a href="{{ Storage::url($item->file_surat) }}" target="_blank" class="btn btn-sm btn-warning">
-                                        <i class="bi bi-download"></i> Unduh
-                                    </a>
-                                @else
-                                    <span class="text-muted">Belum tersedia</span>
-                                @endif
+@php
+    $filePath = $item->file_surat; // misal "surat/12345.pdf"
+@endphp
+
+@if ($filePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($filePath))
+    <a href="{{ \Illuminate\Support\Facades\Storage::url($filePath) }}" target="_blank" class="btn btn-sm btn-warning">
+        <i class="bi bi-download"></i> Unduh
+    </a>
+@else
+    <span class="text-muted">Belum tersedia</span>
+@endif
                             </td>
                         </tr>
                     @empty
@@ -53,7 +59,10 @@
                 </tbody>
             </table>
         </div>
+
     </div>
+</div>
+
 
     {{-- FORM PENGAJUAN SURAT --}}
     <div class="card mb-4">
@@ -71,8 +80,18 @@
             </div>
 
             <div class="mb-3">
+                <label class="form-label">No KK</label>
+                <input class="form-control" type="text" value="{{ $no_kk }}" disabled>
+            </div>
+
+            <div class="mb-3">
                 <label class="form-label">Nama Lengkap</label>
                 <input class="form-control" type="text" value="{{ $namaLengkap }}" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Suku</label>
+                <input class="form-control" type="text" value="{{ $suku }}" disabled>
             </div>
 
             <div class="mb-3">
@@ -90,17 +109,30 @@
                 <input class="form-control" type="text" value="{{ $namaIbu }}" disabled>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Alasan Pengajuan</label>
-                <select wire:model="alasan" class="form-select">
-                    <option value="">-- Pilih Alasan --</option>
-                    <option value="Pendaftaran CPNS">Pendaftaran CPNS</option>
-                    <option value="Pendaftaran IPDN">Pendaftaran IPDN</option>
-                    <option value="Beasiswa">Beasiswa</option>
-                    <option value="Lainnya">Lainnya</option>
-                </select>
-                @error('alasan') <small class="text-danger">{{ $message }}</small> @enderror
-            </div>
+<div class="mb-3">
+    <label class="form-label">Alasan Pengajuan</label>
+    <select wire:model.live="alasan" class="form-select">
+        <option value="">-- Pilih Alasan --</option>
+        <option value="Pendaftaran CPNS">Pendaftaran CPNS</option>
+        <option value="Pendaftaran IPDN">Pendaftaran IPDN</option>
+        <option value="Beasiswa">Beasiswa</option>
+        <option value="Lainnya">Lainnya</option>
+    </select>
+    @error('alasan') 
+        <small class="text-danger">{{ $message }}</small> 
+    @enderror
+</div>
+
+{{-- Input tambahan jika alasan = Lainnya --}}
+@if ($alasan === 'Lainnya')
+    <div class="mb-3">
+        <label class="form-label">Tuliskan Alasan Lainnya</label>
+        <input type="text" wire:model="alasan_lain" class="form-control" placeholder="Masukkan alasan lain...">
+        @error('alasan_lain') 
+            <small class="text-danger">{{ $message }}</small> 
+        @enderror
+    </div>
+@endif
 
             <hr>
             <h5 class="mb-3">Unggah Dokumen Pendukung</h5>

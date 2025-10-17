@@ -2,13 +2,33 @@
     <div class="card mb-4">
         <div class="card-header bg-dark text-white"><strong>Profil</strong></div>
         <div class="card-body">
-            
+
+            {{-- <div class="mb-3">
+                <label>KTP (Scan / Foto)</label>
+                <input type="file" wire:model="foto_ktp" accept="image/*" class="form-control">
+                <div wire:loading wire:target="foto_ktp">Membaca data dari KTP...</div>
+            </div>
+
+            <div class="mb-3">
+                <label>Kartu Keluarga (Scan / Foto)</label>
+                <input type="file" wire:model="foto_kk" accept="image/*" class="form-control">
+                <div wire:loading wire:target="foto_kk">Membaca data dari KK...</div>
+            </div> --}}
+                
             {{-- NIK --}}
             <div class="mb-3">
                 <label class="form-label">NIK</label>
                 <input class="form-control" type="number" wire:model.live="nik">
                 <div class="form-text">NIK sesuai KTP.</div>
                 @error('nik') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+
+            {{-- NIK --}}
+            <div class="mb-3">
+                <label class="form-label">No KK</label>
+                <input class="form-control" type="number" wire:model.live="no_kk">
+                <div class="form-text">No KK yang sesuai </div>
+                @error('no_kk') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
             {{-- Nama Lengkap --}}
@@ -22,15 +42,35 @@
                 @if($margaDitemukan === true)
                     <div class="alert alert-success mt-2">
                         ✅ Marga <strong>{{ $marga }}</strong> terdaftar di database MRP.
+                        <br>
+                        <small class="text-muted">Diverifikasi otomatis {{ $nama_lengkap ? 'dari Nama Lengkap' : 'dari Nama Ibu' }}</small>
                     </div>
                 @elseif($margaDitemukan === false)
                     <div class="alert alert-warning mt-2">
-                        ⚠️ Marga <strong>{{ $marga }}</strong> tidak ditemukan.
+                        ⚠️ Marga <strong>{{ $marga }}</strong> tidak ditemukan di database MRP.
+                        <br>
+                        <small class="text-muted">Diverifikasi otomatis {{ $nama_lengkap ? 'dari Nama Lengkap' : 'dari Nama Ibu' }}</small>
                         <br>
                         Silakan <a href="{{ url('/pengajuan-marga') }}" class="alert-link">ajukan penambahan marga</a> ke MRP.
                     </div>
                 @endif
-            </div>  
+            </div>
+            
+            <hr>
+
+            {{-- Nama Ayah --}}
+            <div class="mb-3">
+                <label class="form-label">Nama Ayah</label>
+                <input class="form-control" type="text" wire:model.live="nama_ayah">
+                @error('nama_ayah') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+
+            {{-- Nama Ibu --}}
+            <div class="mb-3">
+                <label class="form-label">Nama Ibu</label>
+                <input class="form-control" type="text" wire:model.live="nama_ibu">
+                @error('nama_ibu') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
 
             {{-- Catatan Marga --}}
             <div class="mb-3">
@@ -139,21 +179,7 @@
                 @error('alamat') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
-            <hr>
 
-            {{-- Nama Ayah --}}
-            <div class="mb-3">
-                <label class="form-label">Nama Ayah</label>
-                <input class="form-control" type="text" wire:model.live="nama_ayah">
-                @error('nama_ayah') <span class="text-danger">{{ $message }}</span> @enderror
-            </div>
-
-            {{-- Nama Ibu --}}
-            <div class="mb-3">
-                <label class="form-label">Nama Ibu</label>
-                <input class="form-control" type="text" wire:model.live="nama_ibu">
-                @error('nama_ibu') <span class="text-danger">{{ $message }}</span> @enderror
-            </div>
 
             <hr>
 
@@ -185,3 +211,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.addEventListener('ocr-success', event => {
+    alert(event.detail.message);
+});
+</script>

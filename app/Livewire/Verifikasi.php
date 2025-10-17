@@ -5,9 +5,19 @@ namespace App\Livewire;
 use App\Models\Marga;
 use App\Models\PengajuanMarga;
 use Livewire\Component;
+use Livewire\WithPagination;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Verifikasi extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+
+    public $search = '';
+    public $filterStatus = '';
+
     public $pengajuans;
     public $selectedId;
     public $catatan;
@@ -65,8 +75,79 @@ class Verifikasi extends Component
         $this->loadData();
     }
 
+    public function exportExcel()
+    {
+        $fileName = 'data_pengajuan_marga_oap_' . now()->format('Ymd_His') . '.xlsx';
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header kolom
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Marga');
+        $sheet->setCellValue('C1', 'Suku');
+        $sheet->setCellValue('D1', 'wilayah_adat');
+        $sheet->setCellValue('E1', 'status');
+        $sheet->setCellValue('F1', 'Tanggal Pengajuan');
+
+        // Ambil data sesuai filter/search
+        $query = PengajuanMarga::query();
+
+        if ($this->search) {
+            $query->where('nama_lengkap', 'like', "%{$this->search}%")
+                ->orWhere('nik', 'like', "%{$this->search}%")
+                ->orWhere('suku', 'like', "%{$this->search}%")
+                ->orWhere('wilayah_adat', 'like', "%{$this->search}%")
+                ->orWhere('marga', 'like', "%{$this->search}%");
+        }
+
+        if ($this->filterStatus) {
+            $query->where('status', $this->filterStatus);
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $row = 2;
+        $no = 1;
+        foreach ($data as $item) {
+            $sheet->setCellValue("A{$row}", $no++);
+            $sheet->setCellValue("B{$row}", $item->nama_lengkap ?? '-');
+            $sheet->setCellValue("C{$row}", $item->nik ?? '-');
+            $sheet->setCellValue("D{$row}", $item->marga ?? '-');
+            $sheet->setCellValue("E{$row}", $item->status ?? '-');
+            $sheet->setCellValue("F{$row}", optional($item->created_at)->format('Y-m-d H:i') ?? '-');
+            $row++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        return new StreamedResponse(function() use ($writer) {
+            $writer->save('php://output');
+        }, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="data_pengajuan_marga_oap_' . now()->format('Ymd_His') . '.xlsx"',
+            'Cache-Control' => 'max-age=0',
+        ]);
+    }
+
     public function render()
     {
-        return view('livewire.verifikasi');
+        $query = PengajuanMarga::query();
+
+        // 🔍 Pencarian berdasarkan profil
+        if ($this->search) {
+            $query->where('nama_lengkap', 'like', "%{$this->search}%")
+                ->orWhere('nik', 'like', "%{$this->search}%")
+                ->orWhere('suku', 'like', "%{$this->search}%")
+                ->orWhere('wilayah_adat', 'like', "%{$this->search}%")
+                ->orWhere('marga', 'like', "%{$this->search}%");
+            }
+
+        // 🔽 Urutan data terbaru dulu
+        $pengajuan = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        return view('livewire.verifikasi', [
+            'pengajuan' => $pengajuan,
+        ]);
     }
 }

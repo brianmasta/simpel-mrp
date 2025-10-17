@@ -1,169 +1,104 @@
 <div>
-    <div class="card mb-4">
-        <div class="card-header"><strong>Format Surat</strong></div>
-        <div class="card-body">
-            @if (session()->has('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
+    
+    <div class="container mt-4">
 
-            <div class="mb-3">
-                <label class="form-label">Jenis Surat</label>
-                <input class="form-control" type="text" wire:model.defer="jenis">
-                @error('jenis') <span class="text-danger">{{ $message }}</span> @enderror
+        {{-- Kartu Input Template Surat --}}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Manajemen Template Surat</h5>
             </div>
 
-            <div wire:ignore class="mb-3">
-                <label class="form-label">Isi Format Surat</label>
-                {{-- <div id="editor"></div> --}}
-                <div id="summernote">Hello Summernote</div>
-                @error('isi') <span class="text-danger">{{ $message }}</span> @enderror
-            </div>
-
-
-
-            <div class="d-flex gap-2">
-                <button type="button" class="btn btn-primary" wire:click="simpan">
-                    {{ $formatId ? 'Perbarui Format' : 'Simpan Format' }}
-                </button>
-                @if($formatId)
-                    <button type="button" class="btn btn-secondary" wire:click="resetForm" wire:click="$dispatch('reset-editor')">
-                        Batal Edit
-                    </button>
+            <div class="card-body">
+                {{-- Notifikasi --}}
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
                 @endif
+
+                {{-- Jenis Surat --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Jenis Surat</label>
+                    <input type="text" class="form-control" wire:model.defer="jenis" placeholder="Contoh: Surat Keterangan OAP">
+                    @error('jenis') <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
+
+                {{-- Isi Surat HTML --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Isi Surat (HTML)</label>
+                    <textarea wire:model.defer="isi_html" class="form-control" rows="12" placeholder="Tulis format HTML surat di sini..."></textarea>
+                    <small class="text-muted d-block mt-1">
+                        Gunakan tag HTML dan placeholder seperti 
+                        <code>[[nama_lengkap]]</code>, <code>[[nik]]</code>, <code>[[kabupaten]]</code>, <code>[[tanggal]]</code>.
+                    </small>
+                    @error('isi_html') <small class="text-danger d-block">{{ $message }}</small> @enderror
+                </div>
+
+                {{-- Tombol --}}
+                <div class="d-flex gap-2">
+                    <button class="btn btn-success" wire:click="simpan">Simpan</button>
+
+                    @if($formatId)
+                        <button class="btn btn-secondary" wire:click="preview({{ $formatId }})">Preview</button>
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
 
-    {{-- Daftar format --}}
-    <div class="card mb-4">
-        <div class="card-header"><strong>Daftar Format Surat</strong></div>
-        <div class="card-body">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Jenis</th>
-                        <th>Tanggal</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($daftarFormat as $index => $item)
+        {{-- Daftar Template Surat --}}
+        <div class="card shadow-sm">
+            <div class="card-header bg-light fw-semibold">
+                Daftar Template Surat
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-striped mb-0 align-middle">
+                    <thead class="table-secondary">
                         <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $item->jenis }}</td>
-                            <td>{{ $item->created_at->format('d-m-Y') }}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" wire:click="preview({{ $item->id }})">Preview</button>
-                                <button class="btn btn-sm btn-warning" wire:click="edit({{ $item->id }})">Edit</button>
-                                <button class="btn btn-sm btn-danger" wire:click="hapus({{ $item->id }})"
-                                    onclick="return confirm('Yakin ingin menghapus format surat ini?')">
-                                    Hapus
-                                </button>
-                            </td>
+                            <th>Jenis Surat</th>
+                            <th class="text-center" width="200">Aksi</th>
                         </tr>
-                    @empty
-                        <tr><td colspan="4" class="text-center">Belum ada format surat.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    {{-- Modal Preview --}}
-@if($showPdfModal)
-    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5);">
-        <div class="modal-dialog modal-xl" style="max-width: 90%;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Preview PDF</h5>
-                    <button type="button" class="btn-close" wire:click="closePdfModal"></button>
-                </div>
-                <div class="modal-body">
-                    <iframe 
-                        src="data:application/pdf;base64,{{ $pdfContent }}" 
-                        type="application/pdf" 
-                        width="100%" 
-                        height="600px">
-                    </iframe>
-                </div>
+                    </thead>
+                    <tbody>
+                        @forelse($daftarFormat as $f)
+                            <tr>
+                                <td>{{ $f->jenis }}</td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-primary" wire:click="edit({{ $f->id }})">Edit</button>
+                                        <button class="btn btn-sm btn-danger" wire:click="hapus({{ $f->id }})">Hapus</button>
+                                        <button class="btn btn-sm btn-secondary" wire:click="preview({{ $f->id }})">Preview</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="2" class="text-center text-muted py-3">Belum ada template surat</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
+
+        {{-- Modal Preview PDF --}}
+        @if ($showPdfModal && $pdfContent)
+            <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-xl modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-header bg-dark text-white">
+                            <h5 class="modal-title">Preview Surat (PDF)</h5>
+                            <button type="button" class="btn-close btn-close-white" wire:click="$set('showPdfModal', false)"></button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <iframe src="data:application/pdf;base64,{{ $pdfContent }}" width="100%" height="650px" style="border:none;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Klik area gelap untuk menutup modal --}}
+            <div class="modal-backdrop fade show" wire:click="$set('showPdfModal', false)"></div>
+        @endif
     </div>
-@endif
 </div>
-
-@script
-<script>
-const toolbarOptions = [
-    ['bold', 'italic', 'underline', 'strike','code'],
-    ['table'], // Tambahkan 'table' di sini
-    ['blockquote', 'code-block'],
-    ['link', 'image'],
-    [{ 'header': 1 }, { 'header': 2 }],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    [{ 'indent': '-1'}, { 'indent': '+1' }],
-    [{ 'color': [] }, { 'background': [] }],
-    [{ 'align': [] }],
-    [{ 'size': ['small', false, 'large', 'huge'] }],
-    ['clean'],
-    [{ 'script': 'sub'}, { 'script': 'super' }],     // superscript/subscript
-];
-
-
-const quill = new Quill('#editor', {
-    modules: { toolbar: toolbarOptions,clipboard: {
-            matchVisual: false, // memastikan HTML asli tetap utuh
-        } },
-    theme: 'snow',
-    placeholder: 'Tulis isi format surat...'
-});
-
-quill.on('text-change', function() {
-    @this.set('isi', quill.root.innerHTML);
-});
-
-Livewire.on('reset-editor', () => {
-    quill.root.innerHTML = '';
-});
-
-Livewire.on('set-editor', (isi) => {
-    quill.root.innerHTML = isi || '';
-});
-</script>
-@endscript
-
-
-@script
-<script>
-    // Inisialisasi Summernote
-    $('#summernote').summernote({
-          toolbar: [
-    // [groupName, [list of button]]
-    ['style', ['bold', 'italic', 'underline', 'clear']],
-    ['font', ['strikethrough', 'superscript', 'subscript']],
-    ['fontsize', ['fontsize']],
-    ['color', ['color']],
-    ['para', ['ul', 'ol', 'paragraph']],
-    ['height', ['height']],
-    ['table', ['table']],
-  ],
-        height: 200,
-        callbacks: {
-            onChange: function(contents, $editable) {
-                @this.set('isi', contents); // update properti Livewire
-            }
-        }
-    });
-
-    // Event reset editor
-    Livewire.on('reset-editor', () => {
-        $('#summernote').summernote('reset');
-    });
-
-    // Event set isi editor (misal saat edit)
-    Livewire.on('set-editor', isi => {
-        $('#summernote').summernote('code', isi);
-    });
-</script>
-@endscript

@@ -11,6 +11,7 @@ class Profil extends Model
 
     protected $fillable = [
         'nik',
+        'no_kk',
         'nama_lengkap',
         'tempat_lahir',
         'tanggal_lahir',

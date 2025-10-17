@@ -94,7 +94,7 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted flex-md-shrink-0" href="/login">Login / Daftar</a>
+      <a class="btn-getstarted flex-md-shrink-0" href="/login">Login</a>
 
     </div>
   </header>
@@ -108,9 +108,9 @@
         <div class="row gy-4">
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
             <h1 data-aos="fade-up">SIMPEL-MRP </h1>
-            <p data-aos="fade-up" data-aos-delay="100"><strong>(Sistem Informasi Pelayanan Majelis Rakyat Papua Provinsi Papua Tengah)</strong> Berkomitmen memberikan layanan digital yang cepat, transparan, dan akuntabel untuk mendukung pelestarian adat, budaya, serta perlindungan hak-hak masyarakat adat Papua dalam kerangka Otonomi Khusus.</p>
+            <p data-aos="fade-up" data-aos-delay="100"><strong>Sistem Informasi Pelayanan Majelis Rakyat Papua Provinsi Papua Tengah</strong> Berkomitmen memberikan layanan digital yang cepat, transparan, dan akuntabel untuk mendukung pelestarian adat, budaya, serta perlindungan hak-hak masyarakat adat Papua dalam kerangka Otonomi Khusus.</p>
             <div class="d-flex flex-column flex-md-row" data-aos="fade-up" data-aos-delay="200">
-              <a href="/login" class="btn-get-started">Get Started <i class="bi bi-arrow-right"></i></a>
+              <a href="/register" class="btn-get-started">Buat Akun <i class="bi bi-arrow-right"></i></a>
               <a href="#" class="glightbox btn-watch-video d-flex align-items-center justify-content-center ms-0 ms-md-4 mt-4 mt-md-0"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
             </div>
           </div>

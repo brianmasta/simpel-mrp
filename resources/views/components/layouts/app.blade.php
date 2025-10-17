@@ -37,12 +37,26 @@
 
 
     <!-- Include stylesheet -->
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    {{-- <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" /> --}}
 <!-- include libraries(jQuery, bootstrap) -->
 {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"> --}}
+    <script src="{{ asset('assets/js/config.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/color-modes.js') }}"></script> --}}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> --}}
 
-<!-- include summernote css/js -->
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+    {{-- <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script> --}}
+
+
+    <!-- Bootstrap 5 CSS -->
+    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
+
+    <!-- Bootstrap 5 JS Bundle (include Popper) -->
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> --}}
+
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+
 
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     @livewireStyles
@@ -66,7 +80,7 @@
         <button class="btn-close d-lg-none" type="button" data-coreui-theme="dark" aria-label="Close" onclick="coreui.Sidebar.getInstance(document.querySelector(&quot;#sidebar&quot;)).toggle()"></button>
       </div>
       <ul class="sidebar-nav" data-coreui="navigation" data-simplebar>
-        <li class="nav-item"><a class="nav-link" href="/dashboard">
+        <li class="nav-item"><a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="/dashboard">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-house-door-fill" viewBox="0 0 16 16">
             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
           </svg>
@@ -77,28 +91,28 @@
         
         {{-- Admin bisa lihat semua --}}
         @if(auth()->check() && auth()->user()->role === 'admin')
-        <li class="nav-item"><a class="nav-link" wire:navigate href="/profil">
+        <li class="nav-item"><a class="nav-link {{ request()->is('profil') ? 'active' : '' }}" wire:navigate href="/profil">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
              Profil</a></li>
-        <li class="nav-item"><a class="nav-link" wire:navigate href="/surat-oap">
+        <li class="nav-item"><a class="nav-link {{ request()->is('surat-oap') ? 'active' : '' }}" wire:navigate href="/surat-oap">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-clock-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
             Surat OAP</a></li>
-        <li class="nav-item"><a class="nav-link" wire:navigate href="/verifikasi">
+        <li class="nav-item"><a class="nav-link {{ request()->is('verifikasi') ? 'active' : '' }}" wire:navigate href="/verifikasi">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
              Verifikasi</a></li>
-        <li class="nav-item"><a class="nav-link" wire:navigate href="/pengajuan-marga">
+        <li class="nav-item"><a class="nav-link {{ request()->is('pengajuan-marga') ? 'active' : '' }}" wire:navigate href="/pengajuan-marga">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
              Pengajuan Marga</a></li>
         <li class="nav-title">Master Data</li>
-      <li class="nav-item"><a class="nav-link" wire:navigate href="/format-surat">
+      <li class="nav-item"><a class="nav-link {{ request()->is('format-surat') ? 'active' : '' }}" wire:navigate href="/format-surat">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-envelope-fill" viewBox="0 0 16 16">
             <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
           </svg>
@@ -113,17 +127,17 @@
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
              Tanda Tangan Digital</a></li> --}}
-            <li class="nav-item"><a class="nav-link" wire:navigate href="/data-marga">
+            <li class="nav-item"><a class="nav-link {{ request()->is('data-marga') ? 'active' : '' }}" wire:navigate href="/data-marga">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
              Data Marga</a></li>
-          <li class="nav-item"><a class="nav-link" wire:navigate href="/data-surat-oap">
+          <li class="nav-item"><a class="nav-link {{ request()->is('data-surat-oap') ? 'active' : '' }}" wire:navigate href="/data-surat-oap">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
              Data Surat OAP</a></li>
-          <li class="nav-item"><a class="nav-link" wire:navigate href="/admin/manage-users">
+          <li class="nav-item"><a class="nav-link {{ request()->is('admin/manage-users') ? 'active' : '' }}" wire:navigate href="/admin/manage-users">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
@@ -136,12 +150,12 @@
         {{-- Petugas --}}
        @if(auth()->check() && auth()->user()->role === 'petugas')
 
-        <li class="nav-item"><a class="nav-link" wire:navigate href="/profil">
+        <li class="nav-item"><a class="nav-link {{ request()->is('profil') ? 'active' : '' }}" wire:navigate href="/profil">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
              Profil</a></li>
-                     <li class="nav-item"><a class="nav-link" wire:navigate href="/verifikasi">
+                     <li class="nav-item"><a class="nav-link {{ request()->is('verifikasi') ? 'active' : '' }}" wire:navigate href="/verifikasi">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
@@ -150,17 +164,17 @@
 
       {{-- pengguna --}}
        @if(auth()->check() && auth()->user()->role === 'pengguna')
-        <li class="nav-item"><a class="nav-link" wire:navigate href="/profil">
+        <li class="nav-item"><a class="nav-link {{ request()->is('profil') ? 'active' : '' }}" wire:navigate href="/profil">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
              Profil</a></li>
-        <li class="nav-item"><a class="nav-link" wire:navigate href="/surat-oap">
+        <li class="nav-item"><a class="nav-link {{ request()->is('surat-oap') ? 'active' : '' }}" wire:navigate href="/surat-oap">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-clock-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
             Surat OAP</a></li>
-        <li class="nav-item"><a class="nav-link" wire:navigate href="/pengajuan-marga">
+        <li class="nav-item"><a class="nav-link {{ request()->is('pengajuan-marga') ? 'active' : '' }}" wire:navigate href="/pengajuan-marga">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
@@ -188,41 +202,40 @@
             <li class="nav-item py-1">
               <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
             </li>
-            <li class="nav-item dropdown"><a class="nav-link py-0 pe-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                <div class="avatar avatar-md"><img class="avatar-img" src="{{ asset('assets/img/profil.jpg') }}" alt="{{ Auth::user()->email }}"></div></a>
-                {{-- <div class="avatar avatar-md"><img class="avatar-img" src="{{ asset('assets/img/profil.jpg') }}" alt=""></div></a> --}}
-              <div class="dropdown-menu dropdown-menu-end pt-0">
-                <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">Akun</div><a class="dropdown-item" href="/profil" wire:navigate>
-                  <svg class="icon me-2">
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-                  </svg> Profile
-                  {{-- <span class="badge badge-sm bg-info ms-2">1</span> --}}
-                  </a><a class="dropdown-item" href="/profil" >
-                  </a>
-                  {{-- <a class="dropdown-item" href="/logout" wire:click="logout">
-                  <svg class="icon me-2">
-                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
-                  </svg> Logout</a> --}}
-<form action="{{ route('logout') }}" method="POST">
-    @csrf
-    <button type="submit" class="dropdown-item">
+<li class="nav-item dropdown">
+  <a class="nav-link py-0 pe-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+    <div class="avatar avatar-md">
+      <img class="avatar-img" src="{{ asset('assets/img/profil.jpg') }}" alt="{{ Auth::user()->email }}">
+    </div>
+  </a>
+
+  <div class="dropdown-menu dropdown-menu-end pt-0">
+    <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">
+      Akun
+    </div>
+
+    <!-- Profil -->
+    <a class="dropdown-item" href="/profil">
+      <svg class="icon me-2">
+        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+      </svg>
+      Profile
+    </a>
+
+    <!-- Logout -->
+    <form action="{{ route('logout') }}" method="POST" class="m-0 p-0">
+      @csrf
+      <button type="submit" class="dropdown-item d-flex align-items-center">
         <svg class="icon me-2">
-            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
         </svg>
         Logout
-    </button>
-</form>
-              
-                  
-    {{-- <a class="dropdown-item" href="/logout" wire:click.prevent="$dispatch('logout')">
-        <svg class="icon me-2">
-            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
-        </svg> 
-        Logout
-    </a> --}}
-              </div>
-            </li>
+      </button>
+    </form>
+  </div>
+</li>
+
           </ul>
         </div>
         <div class="container-fluid px-4">
@@ -259,30 +272,51 @@
       </div> 
             @livewireScripts
       <footer class="footer px-4">
-        <div><a href="https://mrp.papuatengahprov.go.id/">MRP Provinsi Papua Tengah </a> &copy; 2025 By Pranata Komputer.</div>
-        <div class="ms-auto">Powered by&nbsp;<a href="#">Prakom</a></div>
+        <div><a href="https://mrp.papuatengahprov.go.id/">SIMPEL MRP </a> &copy; 2025 By MRP Provinsi Papua Tengah.</div>
+        <div class="ms-auto">Powered by&nbsp;<a href="#">Sub Bag. Umum & Humas</a></div>
       </footer>
     </div>
 
-    <!-- Include the Quill library -->
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <!-- CoreUI and necessary plugins-->
     <script src="{{ asset('assets/js/coreui.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/simplebar.min.js') }}"></script>
 
-    <script src="{{ asset('assets/js/config.js') }}"></script>
-    {{-- <script src="{{ asset('assets/js/color-modes.js') }}"></script> --}}
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> --}}
+        <!-- Sidebar toggle script -->
+    <script>
+        function initSidebar() {
+            const sidebarEl = document.getElementById('sidebar');
+            if (!sidebarEl) return;
 
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
+            const sidebar = new coreui.Sidebar(sidebarEl, { unfoldable: false });
+
+            const headerToggler = document.querySelector('.header-toggler');
+            if (headerToggler) {
+                headerToggler.onclick = () => sidebar.toggle();
+            }
+
+            const footerToggler = document.querySelector('.sidebar-toggler');
+            if (footerToggler) {
+                footerToggler.onclick = () => sidebar.toggle();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initSidebar);
+        document.addEventListener('livewire:load', initSidebar);
+        document.addEventListener('livewire:navigated', initSidebar);
+    </script>
+
+<script>
+document.addEventListener('livewire:load', function () {
+    // Saat Livewire selesai update DOM
+    Livewire.hook('message.processed', (message, component) => {
+        document.querySelectorAll('[data-coreui-toggle="dropdown"]').forEach(dropdownToggle => {
+            new coreui.Dropdown(dropdownToggle);
+        });
+    });
+});
+</script>
 
 
-    <!-- Bootstrap 5 CSS -->
-    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
-
-    <!-- Bootstrap 5 JS Bundle (include Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
   </body>

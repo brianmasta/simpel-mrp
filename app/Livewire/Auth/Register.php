@@ -9,24 +9,47 @@ use Livewire\Component;
 
 class Register extends Component
 {
-    public $name, $email, $password, $password_confirmation;
+    public $name;
+    public $email;
+    public $password;
+    public $password_confirmation;
+
+    protected $rules = [
+        'name' => 'required|string|min:3',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|min:6|confirmed',
+    ];
+
+    protected $messages = [
+        'name.required' => 'Nama lengkap wajib diisi.',
+        'name.min' => 'Nama minimal 3 karakter.',
+        'email.required' => 'Email wajib diisi.',
+        'email.email' => 'Format email tidak valid.',
+        'email.unique' => 'Email sudah terdaftar.',
+        'password.required' => 'Password wajib diisi.',
+        'password.min' => 'Password minimal 6 karakter.',
+        'password.confirmed' => 'Konfirmasi password tidak sesuai.',
+    ];
+
+    public function updated($field)
+    {
+        $this->validateOnly($field);
+    }
 
     public function register()
     {
-        $this->validate([
-            'name' => 'required|string|min:3',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
-        ]);
+        $validated = $this->validate();
 
         $user = User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => Hash::make($this->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
             'role' => 'pengguna',
         ]);
 
         Auth::login($user);
+
+        session()->flash('success', 'Registrasi berhasil! Anda telah login.');
 
         return redirect()->route('dashboard');
     }

@@ -4,6 +4,7 @@
         <strong>
             {{ $selectedId ? 'Edit Marga OAP' : 'Tambah Marga OAP' }}
         </strong>
+
     </div>
         <div class="card-body">
             @if(session()->has('message'))
@@ -63,6 +64,16 @@
         <div class="card-body">
             <div class="mb-3">
             <input type="text" class="form-control mb-3" placeholder="Cari marga, suku, atau wilayah adat..." wire:model.live="search">
+            </div>
+            {{-- Form Import Excel --}}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form wire:submit.prevent="import" class="d-flex align-items-center gap-2">
+                        <input type="file" wire:model="file" class="form-control w-auto">
+                        <button class="btn btn-success" type="submit">📥 Import Excel</button>
+                        @error('file') <span class="text-danger small">{{ $message }}</span> @enderror
+                    </form>
+                </div>
             </div>
 
             <table class="table">

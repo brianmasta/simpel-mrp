@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Imports\MargaImport;
 use App\Models\Marga;
 use App\Models\MargaHistory;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,7 @@ use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DataMarga extends Component
 {
@@ -18,6 +20,9 @@ class DataMarga extends Component
     public $selectedId = null;
     public $deleteId = null;
 
+    // Tambahan properti untuk import Excel
+    public $file;
+
     public $existingBerkas;
 
     // Jika mau pakai bootstrap untuk pagination:
@@ -25,6 +30,19 @@ class DataMarga extends Component
 
     public $search = '';
 
+
+
+    // Import Excel
+    public function import()
+    {
+        $this->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:5120',
+        ]);
+
+        Excel::import(new MargaImport, $this->file->getRealPath());
+        $this->reset('file');
+        session()->flash('message', 'Data marga berhasil diimpor dari Excel!');
+    }
 
     public function resetForm()
     {
@@ -151,4 +169,5 @@ class DataMarga extends Component
 
         return view('livewire.data-marga', compact('margas'));
         }
+
 }

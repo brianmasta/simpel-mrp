@@ -17,36 +17,83 @@ class WilayahSeeder extends Seeder
      */
     public function run(): void
     {
-        $provinsis = Http::get('https://ibnux.github.io/data-indonesia/provinsi.json')->json();
-        foreach ($provinsis as $prov) {
-            $p = Provinsi::create(['id' => $prov['id'], 'nama' => $prov['nama']]);
+        $baseUrl = 'https://ibnux.github.io/data-indonesia';
 
-            $kabs = Http::get("https://ibnux.github.io/data-indonesia/kabupaten/{$prov['id']}.json")->json();
+        // Daftar ID provinsi untuk Pulau Papua
+        $papuaProvinceIds = [
+            '94', // Papua
+            '92', // Papua Barat
+            '95', // Papua Tengah
+            '96', // Papua Pegunungan
+            '97', // Papua Selatan
+            '98', // Papua Barat Daya
+        ];
+
+        // Ambil semua provinsi
+        $allProv = Http::get("{$baseUrl}/provinsi.json")->json();
+
+        foreach ($allProv as $prov) {
+            if (!in_array($prov['id'], $papuaProvinceIds)) continue;
+
+            $p = Provinsi::updateOrCreate(
+                ['id' => $prov['id']],
+                ['nama' => $prov['nama']]
+            );
+
+            $this->command->info("Memproses Provinsi: {$prov['nama']}");
+
+            // Ambil kabupaten
+            $kabs = $this->fetchJson("{$baseUrl}/kabupaten/{$prov['id']}.json");
             foreach ($kabs as $kab) {
-                $k = Kabupaten::create([
-                    'id' => $kab['id'],
-                    'provinsi_id' => $p->id,
-                    'nama' => $kab['nama']
-                ]);
+                $k = Kabupaten::updateOrCreate(
+                    ['id' => $kab['id']],
+                    [
+                        'provinsi_id' => $p->id,
+                        'nama' => $kab['nama']
+                    ]
+                );
 
-                $kecs = Http::get("https://ibnux.github.io/data-indonesia/kecamatan/{$kab['id']}.json")->json();
+                $this->command->info("  ↳ Kabupaten: {$kab['nama']}");
+
+                // Ambil kecamatan
+                $kecs = $this->fetchJson("{$baseUrl}/kecamatan/{$kab['id']}.json");
                 foreach ($kecs as $kec) {
-                    $kc = Kecamatan::create([
-                        'id' => $kec['id'],
-                        'kabupaten_id' => $k->id,
-                        'nama' => $kec['nama']
-                    ]);
+                    $kc = Kecamatan::updateOrCreate(
+                        ['id' => $kec['id']],
+                        [
+                            'kabupaten_id' => $k->id,
+                            'nama' => $kec['nama']
+                        ]
+                    );
 
-                    $desas = Http::get("https://ibnux.github.io/data-indonesia/kelurahan/{$kec['id']}.json")->json();
+                    // Ambil kelurahan
+                    $desas = $this->fetchJson("{$baseUrl}/kelurahan/{$kec['id']}.json");
                     foreach ($desas as $desa) {
-                        Kelurahan::create([
-                            'id' => $desa['id'],
-                            'kecamatan_id' => $kc->id,
-                            'nama' => $desa['nama']
-                        ]);
+                        Kelurahan::updateOrCreate(
+                            ['id' => $desa['id']],
+                            [
+                                'kecamatan_id' => $kc->id,
+                                'nama' => $desa['nama']
+                            ]
+                        );
                     }
                 }
             }
         }
+
+        $this->command->info('Wilayah Pulau Papua berhasil di-seed.');
+    }
+
+    private function fetchJson(string $url)
+    {
+        try {
+            $response = Http::timeout(10)->get($url);
+            if ($response->successful()) {
+                return $response->json();
+            }
+        } catch (\Exception $e) {
+            $this->command->warn("Gagal mengambil data dari: $url");
+        }
+        return [];
     }
 }

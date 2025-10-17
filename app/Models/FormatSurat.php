@@ -11,6 +11,7 @@ class FormatSurat extends Model
 
     protected $fillable = [
         'jenis',
-        'isi',
+        'isi_html',
+        'file_path',
     ];
 }
