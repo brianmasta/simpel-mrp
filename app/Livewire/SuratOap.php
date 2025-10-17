@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\File;
 
 class SuratOap extends Component
 {
@@ -58,14 +59,14 @@ class SuratOap extends Component
     {
         $surat = PengajuanSurat::findOrFail($id);
 
-        if (!$surat->file_surat || !Storage::exists('public/' . $surat->file_surat)) {
+        if (!$surat->file_surat || !Storage::exists('html_public/' . $surat->file_surat)) {
             session()->flash('error', 'File surat tidak ditemukan.');
             return;
         }
 
         // Kirim response langsung sebagai download (stream)
         return response()->streamDownload(function () use ($surat) {
-            echo Storage::get('public/' . $surat->file_surat);
+            echo Storage::get('html_public/' . $surat->file_surat);
         }, basename($surat->file_surat));
     }
 
@@ -161,8 +162,14 @@ class SuratOap extends Component
 
         // Generate QR Code (versi kompatibel QR-Code v5)
         $qrFileName = "qrcode_{$kodeAutentikasi}.png";
-        $qrRelativePath = "qrcodes/{$qrFileName}";
-        $qrAbsolutePath = storage_path("app/public/{$qrRelativePath}");
+        
+        $qrDirectory = public_path('qrcodes');
+        
+        if (!File::exists($qrDirectory)) {
+            File::makeDirectory($qrDirectory, 0755, true);
+        }
+        
+        $qrAbsolutePath = $qrDirectory . '/' . $qrFileName;
 
         $qr = \Endroid\QrCode\Builder\Builder::create()
             ->writer(new \Endroid\QrCode\Writer\PngWriter())
@@ -208,7 +215,7 @@ class SuratOap extends Component
             'alasan' => $pengajuan->alasan,
             'suku' => $cekMarga->suku,
             'foto' => $fotoBase64,
-            'qrcode' => public_path('storage/'. $qrRelativePath),
+            'qrcode' => $qrBase64,
             'tanggal' => now()->translatedFormat('d F Y'),
         ];
 
