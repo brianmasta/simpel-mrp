@@ -33,6 +33,17 @@ class SuratOap extends Component
         $parts = explode(' ', trim($profil?->nama_lengkap));
         $this->marga = ucfirst(strtolower(end($parts)));
         $cekMarga = Marga::where('marga', $this->marga)->first();
+
+        // Cek apakah marga & suku valid
+        if ($cekMarga && $cekMarga->suku) {
+            $this->suku = $cekMarga->suku;
+            $this->margaValid = true;
+            $this->pesanVerifikasi = "✅ Marga '{$this->marga}' dengan suku '{$this->suku}' terverifikasi.";
+        } else {
+            $this->suku = null;
+            $this->margaValid = false;
+            $this->pesanVerifikasi = "⚠️ Marga '{$this->marga}' tidak ditemukan atau belum memiliki suku. Pengajuan tidak dapat dilakukan.";
+        }
         
         // dd($cekMarga->suku);
 
@@ -43,7 +54,7 @@ class SuratOap extends Component
             $this->asalKabupaten = $profil->kabupaten->nama ?? '-';
             $this->namaAyah = $profil->nama_ayah;
             $this->namaIbu = $profil->nama_ibu;
-            $this->suku = $cekMarga->suku;
+            $this->suku = $cekMarga?->suku;
         }
 
         // Ambil riwayat surat pengguna

@@ -14,7 +14,7 @@
 
                 <div class="mb-3">
                     <label>NIK</label>
-                    <input type="text" class="form-control" wire:model.defer="nik">
+                    <input type="number" class="form-control" wire:model.defer="nik">
                     @error('nik') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
 
@@ -55,6 +55,10 @@
                     <div wire:loading wire:target="berkas" class="text-info">Mengunggah...</div>
                     @error('berkas') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
+
+                @if ($pesanDuplikat)
+                    <div class="text-danger mb-2">{{ $pesanDuplikat }}</div>
+                @endif
 
                 <button class="btn btn-primary" wire:click="save">Kirim Pengajuan</button>
         </div>

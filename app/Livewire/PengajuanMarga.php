@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\PengajuanMarga as ModelsPengajuanMarga;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -18,12 +19,15 @@ class PengajuanMarga extends Component
     public $alasan;
     public $berkas;
 
+    public $pesanDuplikat;
+
     public $riwayat_pengajuan = [];
 
     public function mount()
     {
-        // Menampilkan semua pengajuan milik user (bisa difilter berdasarkan NIK nanti)
-        $this->riwayat_pengajuan = ModelsPengajuanMarga::latest()->get();
+        $this->riwayat_pengajuan = ModelsPengajuanMarga::where('user_id', Auth::id())
+            ->latest()
+            ->get();
     }
 
     public function save()
@@ -38,9 +42,25 @@ class PengajuanMarga extends Component
             'berkas' => 'nullable|file|max:2048|mimes:pdf,jpg,png',
         ]);
 
+        // Cek duplikat
+        $duplikat = ModelsPengajuanMarga::where('user_id', Auth::id())
+            ->where('wilayah_adat', $this->wilayah_adat)
+            ->where('suku', $this->suku)
+            ->where('marga', $this->marga)
+            ->first();
+
+        if ($duplikat) {
+            // Set property pesan untuk ditampilkan di view
+            $this->pesanDuplikat = "⚠️ Marga '{$this->marga}' dengan suku '{$this->suku}' dan wilayah adat '{$this->wilayah_adat}' sudah diajukan sebelumnya.";
+            return;
+        } else {
+            $this->pesanDuplikat = null; // hapus pesan jika tidak ada duplikat
+        }
+
         $path = $this->berkas ? $this->berkas->store('berkas-pengajuan-marga', 'public') : null;
 
         ModelsPengajuanMarga::create([
+            'user_id' => Auth::id(),
             'nama_lengkap' => $this->nama_lengkap,
             'nik' => $this->nik,
             'wilayah_adat' => $this->wilayah_adat,
@@ -54,8 +74,10 @@ class PengajuanMarga extends Component
 
         $this->resetExcept('riwayat_pengajuan');
 
-        // Refresh data riwayat
-        $this->riwayat_pengajuan = ModelsPengajuanMarga::latest()->get();
+        // Refresh riwayat pengajuan milik user
+        $this->riwayat_pengajuan = ModelsPengajuanMarga::where('user_id', Auth::id())
+            ->latest()
+            ->get();
     }
 
     public function render()

@@ -42,16 +42,29 @@ class Verifikasi extends Component
         }
 
         // Cegah duplikasi jika marga sudah ada di tabel margas
-        $margaSudahAda = Marga::where('marga', $pengajuan->marga)->exists();
+        $margaSudahAda = Marga::where('marga', $pengajuan->marga)
+            ->where('suku', $pengajuan->suku)
+            ->where('wilayah_adat', $pengajuan->wilayah_adat)
+            ->exists();
 
         if (!$margaSudahAda) {
-            // Tambahkan ke tabel margas
-            Marga::create([
-                'marga' => $pengajuan->marga,
-                'suku' => $pengajuan->suku,
-                'wilayah_adat' => $pengajuan->wilayah_adat,
+            // Jika sudah ada, langsung ditolak
+            $pengajuan->update([
+                'status' => 'ditolak',
+                'catatan_verifikasi' => '⚠️ Pengajuan marga sudah ada di database utama.',
             ]);
+
+            session()->flash('error', "Pengajuan marga '{$pengajuan->marga}' sudah ada, sehingga otomatis ditolak.");
+            $this->loadData();
+            return;
         }
+
+        // Jika belum ada, tambah ke tabel Marga
+        Marga::create([
+            'marga' => $pengajuan->marga,
+            'suku' => $pengajuan->suku,
+            'wilayah_adat' => $pengajuan->wilayah_adat,
+        ]);
 
         // Update status pengajuan
         $pengajuan->update([

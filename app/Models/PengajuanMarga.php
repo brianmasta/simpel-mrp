@@ -18,5 +18,6 @@ class PengajuanMarga extends Model
         'alasan',
         'berkas',
         'status',
+        'user_id',
     ];
 }
