@@ -5,7 +5,7 @@
 </head>
 <body>
     <div class="content">
-        {!! $format->isi !!}
+        {{ $format->isi }}
     </div>
 </body>
 </html>

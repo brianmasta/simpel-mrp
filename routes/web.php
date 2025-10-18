@@ -36,7 +36,9 @@ Route::post('/logout', function () {
 
 Route::get('/register', Register::class)->name('register')->middleware('guest');;
 
-Route::get('/verifikasi-surat/{kode}', VerifikasiSurat::class)->name('verifikasi.surat');
+Route::get('/verifikasi-surat/{kode}', VerifikasiSurat::class)
+    ->middleware(['throttle:20,1']) // 20x per menit
+    ->name('verifikasi.surat');
 
 
 // Halaman utama (home)
@@ -86,11 +88,11 @@ Route::middleware(['auth', 'verified', 'role:pengguna,admin'])->group(function (
 
 });
 
-Route::middleware(['auth', 'verified', 'role:petugas,admin'])->group(function () {
+// Route::middleware(['auth', 'verified', 'role:petugas,admin'])->group(function () {
 
-    Route::get('/verifikasi', Verifikasi::class)->name('verifikasi');
+//     Route::get('/verifikasi', Verifikasi::class)->name('verifikasi');
 
-});
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/verify-email', VerifyEmail::class)->name('verification.notice');
@@ -125,9 +127,3 @@ Route::get('/view-private/{folder}/{filename}', function ($folder, $filename) {
         'Cache-Control' => 'no-cache, must-revalidate',
     ]);
 })->middleware(['auth', 'role:admin,petugas'])->name('view.private');
-
-
-
-
-
-

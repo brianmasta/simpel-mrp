@@ -70,7 +70,7 @@
         <div class="card-body">
             @if ($pesanVerifikasi)
                 <div class="alert {{ $margaValid ? 'alert-success' : 'alert-warning' }}">
-                    {!! $pesanVerifikasi !!}
+                    {{ $pesanVerifikasi }}
                 </div>
             @endif
 

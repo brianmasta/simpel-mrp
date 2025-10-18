@@ -3,7 +3,9 @@
 namespace App\Livewire\Admin;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -15,6 +17,7 @@ class ManageUsers extends Component
     public $search = '';
     public $userId;
     public $isEditing = false;
+    public $user;
 
     protected $rules = [
         'name' => 'required|string|min:3',
@@ -22,7 +25,15 @@ class ManageUsers extends Component
         'role' => 'required|in:admin,petugas,pengguna',
         'password' => 'required|min:6',
     ];
-    
+
+    // Rate-limit untuk reset password
+    protected $resetAttempts = 5;
+
+    public function mount()
+    {
+        $this->user = auth()->user();
+    }
+
     public function render()
     {
         $users = User::where('name', 'like', "%{$this->search}%")
@@ -30,7 +41,10 @@ class ManageUsers extends Component
             ->orderBy('role')
             ->paginate(10);
 
-        return view('livewire.admin.manage-users', ['users' => $users]);
+        return view('livewire.admin.manage-users', [
+            'users' => $users,
+            'searchSafe' => e($this->search), // XSS safe
+        ]);
     }
 
     public function resetForm()
@@ -43,12 +57,14 @@ class ManageUsers extends Component
     {
         $this->validate();
 
-        User::create([
+        $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
             'role' => $this->role,
             'password' => Hash::make($this->password),
         ]);
+
+        Log::info("Admin {$this->user->id} created user {$user->id}");
 
         session()->flash('success', 'Akun berhasil ditambahkan.');
         $this->resetForm();
@@ -56,6 +72,8 @@ class ManageUsers extends Component
 
     public function edit($id)
     {
+        Gate::authorize('admin');
+
         $user = User::findOrFail($id);
         $this->userId = $id;
         $this->name = $user->name;
@@ -66,6 +84,8 @@ class ManageUsers extends Component
 
     public function update()
     {
+        Gate::authorize('admin');
+
         $user = User::findOrFail($this->userId);
         $this->validate([
             'name' => 'required|string|min:3',
@@ -79,21 +99,37 @@ class ManageUsers extends Component
             'role' => $this->role,
         ]);
 
+        Log::info("Admin {$this->user->id} updated user {$user->id}");
+
         session()->flash('success', 'Akun berhasil diperbarui.');
         $this->resetForm();
     }
 
     public function resetPassword($id)
     {
+        Gate::authorize('admin');
+
+        $attempts = session()->get('reset_attempts', 0);
+        if ($attempts >= $this->resetAttempts) {
+            session()->flash('error', 'Batas reset password tercapai.');
+            return;
+        }
+
         $user = User::findOrFail($id);
         $user->update(['password' => Hash::make('password123')]);
+
+        session()->put('reset_attempts', $attempts + 1);
+        Log::warning("Admin {$this->user->id} reset password for user {$user->id}");
 
         session()->flash('success', 'Password berhasil direset ke: password123');
     }
 
     public function delete($id)
     {
+        Gate::authorize('admin');
+
         User::findOrFail($id)->delete();
+        Log::warning("Admin {$this->user->id} deleted user {$id}");
         session()->flash('success', 'Akun berhasil dihapus.');
     }
 }
