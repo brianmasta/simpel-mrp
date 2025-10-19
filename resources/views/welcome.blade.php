@@ -4,9 +4,25 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>SIMPEL MRP Provinsi Papua Tengah</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <title>SIMPEL-MRP - Sistem Pelayanan Surat OAP Papua Tengah</title>
+  <meta name="description" content="Platform resmi MRP Papua Tengah untuk pengajuan dan verifikasi Surat Orang Asli Papua (OAP) secara online. Cepat, sah, dan terverifikasi.">
+  <meta name="keywords" content="SIMPEL MRP, Surat OAP, Pelayanan OAP, MRP Papua Tengah, Surat Orang Asli Papua Online">
+
+  <!-- OPEN GRAPH / SHARE PREVIEW -->
+  <meta property="og:title" content="SIMPEL-MRP - Layanan Surat OAP Papua Tengah">
+  <meta property="og:description" content="Pengajuan surat OAP online secara resmi dan terverifikasi oleh MRP Papua Tengah.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://simpelmrp.com">
+  <meta property="og:site_name" content="MRP Papua Tengah">
+  <meta property="og:image" content="{{ asset('assets/img/logo.png') }}" />
+
+  <!-- TWITTER CARD -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SIMPEL-MRP - Layanan Surat OAP Papua Tengah">
+  <meta name="twitter:description" content="Pengajuan surat OAP online secara resmi dan terverifikasi oleh MRP Papua Tengah.">
+  <meta name="twitter:image" content="{{ asset('assets/img/logo.png') }}">
+
+
 
   <!-- Favicons -->
   <link href="{{ asset('assets/img/logo.png') }}" rel="icon">
