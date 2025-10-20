@@ -72,13 +72,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware('auth', 'verified','role:admin')->group(function () {
 
     Route::get('/admin/manage-users', ManageUsers::class)->name('admin.manage-users');
-    // Route::get('/surat-oap', SuratOap::class)->name('surat-oap');
-    Route::get('/verifikasi', Verifikasi::class)->name('verifikasi');
-    // Route::get('/pengajuan-marga', PengajuanMarga::class)->name('pengajuan-marga');
     Route::get('/format-surat', FormatSurat::class)->name('format-surat');
-    Route::get('/data-marga', DataMarga::class)->name('data-marga');
-    Route::get('/data-surat-oap', DataSuratOap::class)->name('data-surat-oap');
     Route::get('/data-akun', DataAkun::class)->name('data-akun');
+
 });
 
 Route::middleware(['auth', 'verified', 'role:pengguna,admin'])->group(function () {
@@ -88,11 +84,13 @@ Route::middleware(['auth', 'verified', 'role:pengguna,admin'])->group(function (
 
 });
 
-// Route::middleware(['auth', 'verified', 'role:petugas,admin'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin,petugas'])->group(function () {
 
-//     Route::get('/verifikasi', Verifikasi::class)->name('verifikasi');
-
-// });
+    Route::get('/verifikasi', Verifikasi::class)->name('verifikasi');
+    Route::get('/data-marga', DataMarga::class)->name('data-marga');
+    Route::get('/data-surat-oap', DataSuratOap::class)->name('data-surat-oap');
+    
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/verify-email', VerifyEmail::class)->name('verification.notice');
@@ -127,3 +125,4 @@ Route::get('/view-private/{folder}/{filename}', function ($folder, $filename) {
         'Cache-Control' => 'no-cache, must-revalidate',
     ]);
 })->middleware(['auth', 'role:admin,petugas'])->name('view.private');
+

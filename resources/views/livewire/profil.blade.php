@@ -19,7 +19,7 @@
             <div class="mb-3">
                 <label class="form-label">NIK</label>
                 <input class="form-control" type="number" wire:model.live="nik">
-                <div class="form-text">NIK sesuai KTP.</div>
+                <div class="form-text">NIK sesuai KTP *</div>
                 @error('nik') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
@@ -27,7 +27,7 @@
             <div class="mb-3">
                 <label class="form-label">No KK</label>
                 <input class="form-control" type="number" wire:model.live="no_kk">
-                <div class="form-text">No KK yang sesuai </div>
+                <div class="form-text">Nomor Kartu Keluarga *</div>
                 @error('no_kk') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
@@ -35,7 +35,7 @@
             <div class="mb-3">
                 <label class="form-label">Nama Lengkap</label>
                 <input class="form-control" type="text" wire:model.live="nama_lengkap">
-                <div class="form-text">Nama lengkap sesuai KTP.</div>
+                <div class="form-text">Nama lengkap sesuai KTP *</div>
                 @error('nama_lengkap') <span class="text-danger">{{ $message }}</span> @enderror
 
                     {{-- Hasil deteksi marga --}}
@@ -62,6 +62,7 @@
             <div class="mb-3">
                 <label class="form-label">Nama Ayah</label>
                 <input class="form-control" type="text" wire:model.live="nama_ayah">
+                <div class="form-text">Nama ayah kandung *</div>
                 @error('nama_ayah') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
@@ -69,23 +70,26 @@
             <div class="mb-3">
                 <label class="form-label">Nama Ibu</label>
                 <input class="form-control" type="text" wire:model.live="nama_ibu">
+                <div class="form-text">Nama ibu kandung *</div>
                 @error('nama_ibu') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
             {{-- Catatan Marga --}}
-            <div class="mb-3">
-                <div class="alert alert-danger">
-                    <strong>Catatan:</strong> Jika marga Anda belum terdaftar, silakan 
-                    <a href="/pengajuan-marga" class="alert-link">ajukan penambahan marga</a> 
-                    ke Majelis Rakyat Papua.
+            @if($margaDitemukan === false)
+                <div class="mb-3">
+                    <div class="alert alert-danger">
+                        <strong>Catatan:</strong> Jika marga Anda belum terdaftar, silakan 
+                        <a href="/pengajuan-marga" class="alert-link">ajukan penambahan marga</a> 
+                        ke Majelis Rakyat Papua.
+                    </div>
                 </div>
-            </div>
+            @endif
 
             {{-- Tempat Lahir --}}
             <div class="mb-3">
                 <label class="form-label">Tempat Lahir</label>
                 <input class="form-control" type="text" wire:model.live="tempat_lahir">
-                <div class="form-text">Sesuai KTP.</div>
+                <div class="form-text">Sesuai KTP *</div>
                 @error('tempat_lahir') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
@@ -93,7 +97,7 @@
             <div class="mb-3">
                 <label class="form-label">Tanggal Lahir</label>
                 <input class="form-control" type="date" wire:model.live="tanggal_lahir">
-                <div class="form-text">Sesuai KTP.</div>
+                <div class="form-text">Sesuai KTP *</div>
                 @error('tanggal_lahir') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
@@ -105,7 +109,7 @@
                     <option value="laki-laki">Laki-Laki</option>
                     <option value="perempuan">Perempuan</option>
                 </select>
-                <div class="form-text">Sesuai KTP.</div>
+                <div class="form-text">Pilih sesuai KTP *</div>
                 @error('jenis_kelamin') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
@@ -115,6 +119,7 @@
     <div class="mb-3 position-relative">
         <label>Provinsi</label>
         <input type="text" class="form-control" placeholder="Ketik provinsi..." wire:model.live="searchProvinsi">
+        <div class="form-text">Pilih provinsi sesuai alamat KK/KTP *</div>
         @if(!empty($provinsis))
             <ul class="list-group position-absolute w-100" style="z-index: 10;">
                 @foreach($provinsis as $prov)
@@ -130,6 +135,7 @@
     <div class="mb-3 position-relative">
         <label>Kabupaten</label>
         <input type="text" class="form-control" placeholder="Ketik kabupaten..." wire:model.live="searchKabupaten">
+        <div class="form-text">Pilih kabupaten sesuai alamat KK/KTP *</div>
         @if(!empty($kabupatens))
             <ul class="list-group position-absolute w-100" style="z-index: 10;">
                 @foreach($kabupatens as $kab)
@@ -145,6 +151,7 @@
     <div class="mb-3 position-relative">
         <label>Kecamatan</label>
         <input type="text" class="form-control" placeholder="Ketik kecamatan..." wire:model.live="searchKecamatan">
+        <div class="form-text">Pilih kecamatan sesuai alamat KK/KTP *</div>
         @if(!empty($kecamatans))
             <ul class="list-group position-absolute w-100" style="z-index: 10;">
                 @foreach($kecamatans as $kec)
@@ -160,6 +167,7 @@
     <div class="mb-3 position-relative">
         <label>Kelurahan</label>
         <input type="text" class="form-control" placeholder="Ketik kelurahan..." wire:model.live="searchKelurahan">
+        <div class="form-text">Pilih kelurahan sesuai alamat KK/KTP *</div>
         @if(!empty($kelurahans))
             <ul class="list-group position-absolute w-100" style="z-index: 10;">
                 @foreach($kelurahans as $kel)
@@ -175,11 +183,9 @@
             <div class="mb-3">
                 <label class="form-label">Alamat</label>
                 <textarea class="form-control" wire:model.live="alamat"></textarea>
-                <div class="form-text">Sesuai KTP.</div>
+                <div class="form-text">Alamat lengkap sesuai KTP *</div>
                 @error('alamat') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
-
-
 
             <hr>
 
@@ -187,7 +193,7 @@
             <div class="mb-3">
                 <label class="form-label">Email</label>
                 <input class="form-control" type="email" wire:model.live="email" disabled>
-                <div class="form-text">Email yang masih aktif.</div>
+                <div class="form-text">Email terdaftar (tidak dapat diubah)</div>
                 @error('email') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
@@ -195,7 +201,7 @@
             <div class="mb-3">
                 <label class="form-label">No HP</label>
                 <input class="form-control" type="number" wire:model.live="no_hp">
-                <div class="form-text">No HP yang masih aktif.</div>
+                <div class="form-text">Nomor HP aktif (untuk verifikasi & notifikasi) *</div>
                 @error('no_hp') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
 
@@ -206,7 +212,18 @@
                 </div>
             @endif
             <div class="d-grid gap-2">
-                <button class="btn btn-primary" wire:click="save">Simpan</button>
+                <button 
+                    class="btn btn-primary" 
+                    wire:click="save"
+                    wire:loading.attr="disabled" 
+                    wire:target="save"
+                >
+                    <span wire:loading.remove wire:target="save">Simpan</span>
+                    <span wire:loading wire:target="save">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Menyimpan...
+                    </span>
+                </button>
             </div>
         </div>
     </div>
@@ -216,4 +233,5 @@
     window.addEventListener('ocr-success', event => {
     alert(event.detail.message);
 });
+
 </script>

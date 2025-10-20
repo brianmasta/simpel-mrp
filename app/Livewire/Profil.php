@@ -502,10 +502,19 @@ private function extractNamaFromKtp($text)
 
         // ✅ Pesan sukses dinamis
         if ($status_oap) {
-            session()->flash('message', 'Profil berhasil disimpan. Status OAP terverifikasi (' . $marga_terverifikasi . ').');
+            $this->dispatch('toast', [
+                'message' => 'Profil berhasil disimpan dengan status OAP. Sekarang Anda sudah bisa mengajukan surat OAP.',
+                'type' => 'success'
+            ]);
+            // session()->flash('message', 'Profil berhasil disimpan. Status OAP terverifikasi (' . $marga_terverifikasi . ').');
         } else {
-            session()->flash('message', 'Profil berhasil disimpan. Status OAP belum terverifikasi.');
+            $this->dispatch('toast', [
+                'message' => "Profil berhasil disimpan, namun status OAP belum terverifikasi. Silakan ajukan marga jika belum terdaftar.",
+                'type' => 'warning'
+            ]);
+            // session()->flash('message', 'Profil berhasil disimpan. Status OAP belum terverifikasi.');
         }
+
     }
 
 

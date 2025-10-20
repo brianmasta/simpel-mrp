@@ -110,6 +110,15 @@ class SuratOap extends Component
             return;
         }
 
+        // CEK WAJIB FILE
+        if (!$this->foto || !$this->ktp || !$this->kk || !$this->akte) {
+            $this->dispatch('toast', [
+                'type' => 'warning',
+                'message' => '⚠️ Semua berkas wajib diunggah'
+            ]);
+            return;
+        }
+
         $this->validate([
             'alasan' => 'required',
             'alasan_lain' => $this->alasan === 'Lainnya' ? 'required|string|max:255' : 'nullable',
@@ -145,7 +154,11 @@ class SuratOap extends Component
         // Refresh riwayat
         $this->riwayat = PengajuanSurat::where('user_id', Auth::id())->latest()->get();
 
-        session()->flash('success', '✅ Surat OAP berhasil diterbitkan otomatis!');
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => '✅ Surat OAP berhasil diterbitkan otomatis!'
+        ]);
+        $this->dispatch('scrollToTop'); // <-- tambah ini
         $this->reset(['alasan', 'foto', 'ktp', 'kk', 'akte']);
     }
 

@@ -20,26 +20,27 @@
                     Export Excel
                 </button>
             </div>
-            <input wire:model.live="search" type="text" class="form-control form-control-sm" placeholder="Cari nama/NIK...">
-
-            
+            <div class="mb-2">
+            <input wire:model.live="search" type="text" class="form-control form-control" placeholder="Cari nama/NIK...">
+            </div>
             <div class="table-responsive">
-            <table class="table table-striped align-middle">
-                <thead>
+            <table class="table table-hover table-striped table-bordered">
+                <thead class="table-dark">
                     <tr>
-                        <th>#</th>
+                        <th>No</th>
                         <th>Nama</th>
                         <th>Marga</th>
                         <th>Suku</th>
                         <th>Wilayah Adat</th>
                         <th>Status</th>
+                        <th>Berkas</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($pengajuan as $index => $item)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $pengajuan->firstItem() + $index }}</td>
                             <td>{{ $item->nama_lengkap }}</td>
                             <td>{{ $item->marga }}</td>
                             <td>{{ $item->suku }}</td>
@@ -52,6 +53,14 @@
                                 @else
                                     <span class="badge bg-danger">Ditolak</span>
                                 @endif
+                            </td>
+                            <td>
+                            @if($item->berkas)
+                                <a href="{{ asset('storage/' . $item->berkas) }}" target="_blank" class="btn btn-sm btn-primary mb-1">Berkas</a>
+                            @else
+                                <span class="text-muted">Tidak tersedia</span>  
+                            @endif
+
                             </td>
                             <td>
                                 @if ($item->status == 'pending')

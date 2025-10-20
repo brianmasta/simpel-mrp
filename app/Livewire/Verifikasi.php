@@ -47,7 +47,7 @@ class Verifikasi extends Component
             ->where('wilayah_adat', $pengajuan->wilayah_adat)
             ->exists();
 
-        if (!$margaSudahAda) {
+        if ($margaSudahAda) {
             // Jika sudah ada, langsung ditolak
             $pengajuan->update([
                 'status' => 'ditolak',
@@ -71,7 +71,10 @@ class Verifikasi extends Component
             'status' => 'disetujui',
             'catatan_verifikasi' => $this->catatan ?? null,
         ]);
-
+            $this->dispatch('toast', [
+                'message' => "Pengajuan marga telah disetujui dan marga berhasil dimasukkan ke database utama.",
+                'type' => 'success'
+            ]);
         session()->flash('success', 'Pengajuan marga telah disetujui dan marga berhasil dimasukkan ke database utama.');
         $this->loadData();
     }
@@ -84,6 +87,10 @@ class Verifikasi extends Component
             'catatan_verifikasi' => $this->catatan,
         ]);
 
+            $this->dispatch('toast', [
+                'message' => "Pengajuan marga telah ditolak.",
+                'type' => 'warning'
+            ]);
         session()->flash('error', 'Pengajuan marga telah ditolak.');
         $this->loadData();
     }

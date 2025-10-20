@@ -1,9 +1,11 @@
 <div>
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Data Pengajuan Surat OAP</h5>
+        <div class="card-header">
+            <strong>Data Pengajuan Surat OAP</strong>
+        </div>
 
-            <div class="d-flex gap-2">
+        <div class="card-body">
+            <div class="d-flex gap-2 mb-2">
                 <input wire:model.live="search" type="text" class="form-control form-control-sm" placeholder="Cari nama/NIK...">
                 <select wire:model="filterStatus" class="form-select form-select-sm">
                     <option value="">Semua Status</option>
@@ -13,9 +15,6 @@
                     <option value="ditolak">Ditolak</option>
                 </select>
             </div>
-        </div>
-
-        <div class="card-body">
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
@@ -28,13 +27,13 @@
                     Export Excel
                 </button>
             </div>
-
-            <table class="table table-bordered align-middle">
-                <thead class="table-light">
+            <div class="table-responsive">
+            <table class="table table-hover table-striped table-bordered">
+                <thead class="table-dark">
                     <tr>
                         <th>No</th>
                         <th>No Surat</th>
-                        <th>Nama Lengkap</th>
+                        <th>Nama </th>
                         {{-- <th>NIK</th> --}}
                         <th>Asal Daerah</th>
                         <th>Tujuan Surat</th>
@@ -54,9 +53,11 @@
                             <td>{{ $item->profil->kabupaten->nama }}</td>
                             <td>{{ $item->alasan }}</td>
                             <td>
-                                <span class="badge bg-{{ $item->status == 'disetujui' ? 'success' : ($item->status == 'diproses' ? 'warning' : ($item->status == 'ditolak' ? 'danger' : 'secondary')) }}">
-                                    {{ ucfirst($item->status) }}
-                                </span>
+                                @if ($item->status === 'terbit')
+                                    <span class="badge bg-success">Terbit</span>
+                                @else
+                                    <span class="badge bg-warning text-dark">{{ ucfirst($item->status) }}</span>
+                                @endif
                             </td>
                             <td>{{ $item->updated_at->format('d/m/Y') }}</td>
                             <td>
@@ -72,10 +73,12 @@
                                 <button wire:click="lihatData({{ $item->id }})" class="btn btn-info btn-sm">
                                     <i class="bi bi-eye"></i> Lihat
                                 </button>
+                                @if(auth()->user()->role === 'admin')
                                 <button class="btn btn-sm btn-danger ms-1"
                                         wire:click="konfirmasiHapus({{ $item->id }})">
                                     <i class="bi bi-trash"></i> Hapus
                                 </button>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -83,6 +86,8 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
+
 
             {{ $pengajuan->links() }}
         </div>

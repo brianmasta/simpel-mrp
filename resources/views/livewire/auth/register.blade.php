@@ -29,14 +29,27 @@
                             {{-- Password --}}
                             <div class="mb-3">
                                 <label class="form-label">Password</label>
-                                <input type="password" wire:model.blur="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password">
-                                @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <div class="input-group">
+                                    <input type="password" id="password" wire:model.blur="password"
+                                        class="form-control @error('password') is-invalid @enderror"
+                                        placeholder="Password">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password', this)">
+                                        <i class="cil-eye"></i>
+                                    </button>
+                                </div>
+                                @error('password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                             </div>
 
                             {{-- Konfirmasi Password --}}
                             <div class="mb-4">
                                 <label class="form-label">Konfirmasi Password</label>
-                                <input type="password" wire:model.blur="password_confirmation" class="form-control" placeholder="Ulangi Password">
+                                <div class="input-group">
+                                    <input type="password" id="password_confirmation" wire:model.blur="password_confirmation"
+                                        class="form-control" placeholder="Ulangi Password">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password_confirmation', this)">
+                                        <i class="cil-eye"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="d-grid gap-2">
@@ -53,3 +66,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword(id, el) {
+        const input = document.getElementById(id);
+        const icon = el.querySelector('i');
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('cil-eye');
+            icon.classList.add('cil-low-vision');  // icon hide
+        } else {
+            input.type = "password";
+            icon.classList.remove('cil-low-vision');
+            icon.classList.add('cil-eye');         // icon show
+        }
+    }
+</script>

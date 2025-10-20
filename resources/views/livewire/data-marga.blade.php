@@ -1,4 +1,5 @@
 <div>
+    @if(auth()->user()->role === 'admin')
     <div class="card mb-4">
     <div class="card-header">
         <strong>
@@ -14,11 +15,20 @@
                 <span class="text-danger">{{ $message }}</span>
             @enderror
             <form wire:submit.prevent="save">
-            <div class="mb-3">
-                <label class="form-label" for="">Wilayah Adat</label>
-                <input class="form-control" type="text" wire:model="wilayah_adat">
-                @error('wilayah_adat') <span class="text-danger">{{ $message }}</span> @enderror
-            </div>
+                <div class="mb-3">
+                    <label>Wilayah Adat</label>
+                    <select class="form-control" wire:model="wilayah_adat">
+                        <option value="">-- Pilih Wilayah Adat --</option>
+                        <option value="Mamta/Tabi">Mamta/Tabi</option>
+                        <option value="Saireri">Saireri</option>
+                        <option value="Domberai">Domberai</option>
+                        <option value="Bomberai">Bomberai</option>
+                        <option value="Meepago">Meepago</option>
+                        <option value="La Pago">La Pago</option>
+                        <option value="Ha Anim">Ha Anim</option>
+                    </select>
+                    @error('wilayah_adat') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
             <div class="mb-3">
                 <label class="form-label" for="">Suku</label>
                 <input class="form-control" type="text" wire:model="suku">
@@ -58,6 +68,7 @@
             </form>
         </div>
     </div>
+    @endif
 
     <div class="card mb-4">
     <div class="card-header"><strong>Data Marga OAP</strong></div>
@@ -65,6 +76,7 @@
             <div class="mb-3">
             <input type="text" class="form-control mb-3" placeholder="Cari marga, suku, atau wilayah adat..." wire:model.live="search">
             </div>
+            @if(auth()->user()->role === 'admin')
             {{-- Form Import Excel --}}
             <div class="card mb-3">
                 <div class="card-body">
@@ -75,37 +87,44 @@
                     </form>
                 </div>
             </div>
-
-            <table class="table">
-                <thead>
+            @endif
+            <div class="table-responsive">
+            <table class="table table-hover table-striped table-bordered">
+                <thead class="table-dark">
                     <tr>
-                    <th scope="col">#</th>
+                    <th scope="col">No</th>
                     <th scope="col">Marga</th>
                     <th scope="col">Suku</th>
                     <th scope="col">Wilayah Adat</th>
                     <th scope="col">Tanggal</th>
                     <th scope="col">User</th>
+                    @if(auth()->user()->role === 'admin')
                     <th scope="col">Opsi</th>
+                    @endif
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($margas as $index => $item)
                     <tr>
-                    <th scope="row">{{ $index + 1 }}</th>
+                    <th scope="row">{{ $margas->firstItem() + $index }}</th>
                     <td>{{ $item->marga }}</td>
                     <td>{{ $item->suku }}</td>
                     <td>{{ $item->wilayah_adat }}</td>
                     <td>{{ $item->created_at->format('d-m-Y') }}</td>
                     <td>{{ $item->user->name ?? '-' }}</td>
+                    @if(auth()->user()->role === 'admin')
                     <td>
                         <button wire:click="edit({{ $item->id }})" class="btn btn-primary btn-sm">Edit</button>
                         <button wire:click="confirmDelete({{ $item->id }})" class="btn btn-danger btn-sm">Hapus</button>
                     </td>
+                    @endif
                     </tr>
                     @endforeach
                 </tbody>
             </table>
-                        {{ $margas->links() }}
+            {{ $margas->links() }}
+            </div>
+
 
 
     <!-- Modal Hapus -->

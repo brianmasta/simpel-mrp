@@ -38,8 +38,7 @@ class DataSuratOap extends Component
         if ($this->search) {
             $query->whereHas('profil', function ($q) {
                 $q->where('nama_lengkap', 'like', "%{$this->search}%")
-                ->orWhere('nik', 'like', "%{$this->search}%")
-                ->orWhere('marga', 'like', "%{$this->search}%");
+                ->orWhere('nik', 'like', "%{$this->search}%");
             });
         }
 

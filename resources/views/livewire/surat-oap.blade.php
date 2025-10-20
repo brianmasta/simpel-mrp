@@ -109,37 +109,38 @@
                 <input class="form-control" type="text" value="{{ $namaIbu }}" disabled>
             </div>
 
-<div class="mb-3">
-    <label class="form-label">Alasan Pengajuan</label>
-    <select wire:model.live="alasan" class="form-select">
-        <option value="">-- Pilih Alasan --</option>
-        <option value="Pendaftaran CPNS">Pendaftaran CPNS</option>
-        <option value="Pendaftaran IPDN">Pendaftaran IPDN</option>
-        <option value="Beasiswa">Beasiswa</option>
-        <option value="Lainnya">Lainnya</option>
-    </select>
-    @error('alasan') 
-        <small class="text-danger">{{ $message }}</small> 
-    @enderror
-</div>
+            <div class="mb-3">
+                <label class="form-label">Alasan Pengajuan</label>
+                <select wire:model.live="alasan" class="form-select">
+                    <option value="">-- Pilih Alasan --</option>
+                    <option value="Pendaftaran CPNS">Pendaftaran CPNS</option>
+                    <option value="Pendaftaran IPDN">Pendaftaran IPDN</option>
+                    <option value="Beasiswa">Beasiswa</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+                @error('alasan') 
+                    <small class="text-danger">{{ $message }}</small> 
+                @enderror
+            </div>
 
-{{-- Input tambahan jika alasan = Lainnya --}}
-@if ($alasan === 'Lainnya')
-    <div class="mb-3">
-        <label class="form-label">Tuliskan Alasan Lainnya</label>
-        <input type="text" wire:model="alasan_lain" class="form-control" placeholder="Masukkan alasan lain...">
-        @error('alasan_lain') 
-            <small class="text-danger">{{ $message }}</small> 
-        @enderror
-    </div>
-@endif
+            {{-- Input tambahan jika alasan = Lainnya --}}
+            @if ($alasan === 'Lainnya')
+                <div class="mb-3">
+                    <label class="form-label">Tuliskan Alasan Lainnya</label>
+                    <input type="text" wire:model="alasan_lain" class="form-control" placeholder="Masukkan alasan lain...">
+                    @error('alasan_lain') 
+                        <small class="text-danger">{{ $message }}</small> 
+                    @enderror
+                </div>
+            @endif
 
             <hr>
             <h5 class="mb-3">Unggah Dokumen Pendukung</h5>
 
             <div class="mb-3">
-                <label class="form-label">Foto Diri</label>
+                <label class="form-label">Foto Diri <span class="text-danger">*</span></label>
                 <input type="file" wire:model="foto" class="form-control">
+                <small class="text-muted d-block mt-1">Format: JPG/PNG • Maks 2MB • Tampak jelas wajah</small>
                 @if ($foto)
                     <img src="{{ $foto->temporaryUrl() }}" alt="Foto Preview" class="img-thumbnail mt-2" width="120">
                 @endif
@@ -147,20 +148,23 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">KTP</label>
+                <label class="form-label">KTP <span class="text-danger">*</span></label>
                 <input type="file" wire:model="ktp" class="form-control">
+                <small class="text-muted d-block mt-1">Format PDF/JPG • Maks 2MB • Wajib asli (bukan fotocopy)</small>
                 @error('ktp') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Kartu Keluarga (KK)</label>
+                <label class="form-label">Kartu Keluarga (KK) <span class="text-danger">*</span></label>
                 <input type="file" wire:model="kk" class="form-control">
+                <small class="text-muted d-block mt-1">Format PDF/JPG • Maks 2MB • Seluruh anggota keluarga terlihat</small>
                 @error('kk') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Akte Kelahiran</label>
+                <label class="form-label">Akte Kelahiran <span class="text-danger">*</span></label>
                 <input type="file" wire:model="akte" class="form-control">
+                <small class="text-muted d-block mt-1">Format PDF/JPG • Maks 2MB</small>
                 @error('akte') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
@@ -186,3 +190,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('scrollToTop', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+</script>

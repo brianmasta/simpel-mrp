@@ -98,6 +98,7 @@ class FormatSurat extends Component
             'keperluan' => 'Pendaftaran CPNS',
             'suku' => 'Biak',
             'tanggal' => now()->translatedFormat('d F Y'),
+            'logo_transparan' => url('assets/img/logo.png'), // <-- logo watermark
         ];
 
         // Ganti placeholder dinamis di template

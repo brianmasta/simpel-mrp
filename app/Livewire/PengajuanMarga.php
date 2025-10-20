@@ -71,6 +71,10 @@ class PengajuanMarga extends Component
         ]);
 
         session()->flash('success', 'Pengajuan marga Anda telah dikirim dan menunggu verifikasi MRP.');
+                    $this->dispatch('toast', [
+                'message' => "Pengajuan marga Anda telah dikirim dan menunggu verifikasi MRP.",
+                'type' => 'success'
+            ]);
 
         $this->resetExcept('riwayat_pengajuan');
 

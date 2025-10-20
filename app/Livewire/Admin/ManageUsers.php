@@ -36,8 +36,10 @@ class ManageUsers extends Component
 
     public function render()
     {
-        $users = User::where('name', 'like', "%{$this->search}%")
-            ->orWhere('email', 'like', "%{$this->search}%")
+        $users = User::where(function($query) {
+                $query->where('name', 'like', "%{$this->search}%")
+                    ->orWhere('email', 'like', "%{$this->search}%");
+            })
             ->orderBy('role')
             ->paginate(10);
 
@@ -45,6 +47,11 @@ class ManageUsers extends Component
             'users' => $users,
             'searchSafe' => e($this->search), // XSS safe
         ]);
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
     }
 
     public function resetForm()
@@ -89,7 +96,7 @@ class ManageUsers extends Component
         $user = User::findOrFail($this->userId);
         $this->validate([
             'name' => 'required|string|min:3',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $this->userId,
             'role' => 'required|in:admin,petugas,pengguna',
         ]);
 

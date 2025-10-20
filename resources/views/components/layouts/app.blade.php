@@ -58,6 +58,7 @@
 <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 
 
+
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     @livewireStyles
     
@@ -160,6 +161,17 @@
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
           </svg>
              Verifikasi</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->is('data-marga') ? 'active' : '' }}" wire:navigate href="/data-marga">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
+          </svg>
+             Data Marga</a></li>
+          <li class="nav-item"><a class="nav-link {{ request()->is('data-surat-oap') ? 'active' : '' }}" wire:navigate href="/data-surat-oap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
+            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
+          </svg>
+             Data Surat OAP</a></li>
+
         @endif
 
       {{-- pengguna --}}
@@ -265,10 +277,9 @@
         </div>
       </header>
     
-      <div class="container">
-        {{-- <div class="container-lg px-4"> --}}
+        <div class="container-lg px-4">
         {{ $slot }}
-        {{-- </div> --}}
+        </div>
       </div> 
             @livewireScripts
       <footer class="footer px-4">
@@ -317,7 +328,54 @@ document.addEventListener('livewire:load', function () {
 </script>
 
 
+<script>
+document.addEventListener("livewire:init", () => {
+    Livewire.on("toast", (data) => {
+        const payload = data[0]; // Livewire v3 kirim array
 
+        const toastEl = document.getElementById("toastProfil");
+        const toastMessage = document.getElementById("toastMessage");
+        if (!toastEl || !toastMessage) return;
+
+        // Reset warna
+        toastEl.classList.remove("bg-success","bg-warning","bg-info","bg-danger");
+
+        // Tipe toast
+        switch (payload.type) {
+            case "success": toastEl.classList.add("bg-success"); break;
+            case "warning": toastEl.classList.add("bg-warning"); break;
+            case "info": toastEl.classList.add("bg-info"); break;
+            default: toastEl.classList.add("bg-danger");
+        }
+
+        // Pesan masuk
+        toastMessage.innerHTML = payload.message;
+
+        // Tampilkan toast
+        const toast = coreui.Toast.getOrCreateInstance(toastEl);
+        toast.show();
+    });
+});
+</script>
+
+
+
+<!-- ✅ CoreUI Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="toastProfil"
+        class="toast align-items-center text-white fade"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        data-coreui-autohide="true"
+        data-coreui-delay="6000">
+        <div class="d-flex">
+            <div id="toastMessage" class="toast-body"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                data-coreui-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
 
   </body>
 </html>

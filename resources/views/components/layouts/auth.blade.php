@@ -35,6 +35,7 @@
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{{ asset('assets/css/examples.css') }}" rel="stylesheet">
     <script src="{{ asset('assets/js/config.js') }}"></script>
+        <script src="{{ asset('assets/js/coreui.bundle.min.js') }}"></script>
     {{-- <script src="{{ asset('assets/js/color-modes.js') }}"></script> --}}
 
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
@@ -47,7 +48,7 @@
         @livewireScripts
         
     <!-- CoreUI and necessary plugins-->
-    <script src="{{ asset('assets/js/coreui.bundle.min.js') }}"></script>
+
     <script src="{{ asset('assets/js/simplebar.min.js') }}"></script>
     <script>
       const header = document.querySelector('header.header');

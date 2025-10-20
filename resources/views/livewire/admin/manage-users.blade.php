@@ -2,7 +2,7 @@
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between">
             <h5 class="mb-0">Manajemen Akun Pengguna</h5>
-            <input wire:model="search" type="text" class="form-control w-25" placeholder="Cari nama/email...">
+            <input wire:model.live="search" type="text" class="form-control w-25" placeholder="Cari nama/email...">
         </div>
 
         <div class="card-body">
