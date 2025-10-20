@@ -50,7 +50,7 @@
                             <td>{{ $item->nomor_surat }}</td>
                             <td>{{ $item->profil->nama_lengkap }}</td>
                             {{-- <td>{{ $item->profil->nik }}</td> --}}
-                            <td>{{ $item->profil->kabupaten->nama }}</td>
+                            <td>{{ $item->profil->kabupaten->nama ?? '-' }}</td>
                             <td>{{ $item->alasan }}</td>
                             <td>
                                 @if ($item->status === 'terbit')
