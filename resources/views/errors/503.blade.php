@@ -91,7 +91,7 @@
 </head>
 
 <body>
-  <div class="card">
+  <div class="card d-flex flex-column align-items-center">
     {{-- Logo MRP --}}
     <img src="{{ asset('assets/img/simpel.svg') }}" alt="Logo SIMPEL-MRP" class="logo">
 
