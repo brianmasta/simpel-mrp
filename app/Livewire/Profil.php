@@ -520,6 +520,6 @@ private function extractNamaFromKtp($text)
 
     public function render()
     {
-        return view('livewire.profil');
+        return view('livewire.profil')->layout('layouts.app');
     }
 }
