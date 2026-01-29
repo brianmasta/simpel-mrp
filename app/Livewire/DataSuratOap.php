@@ -52,7 +52,7 @@ class DataSuratOap extends Component
 
         return view('livewire.data-surat-oap', [
             'pengajuan' => $pengajuan
-        ]);
+        ])->layout('layouts.app');
 
     }
 

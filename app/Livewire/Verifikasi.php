@@ -168,6 +168,6 @@ class Verifikasi extends Component
 
         return view('livewire.verifikasi', [
             'pengajuan' => $pengajuan,
-        ]);
+        ])->layout('layouts.app');
     }
 }

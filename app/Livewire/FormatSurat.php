@@ -29,7 +29,7 @@ class FormatSurat extends Component
 
     public function render()
     {
-        return view('livewire.format-surat');
+        return view('livewire.format-surat')->layout('layouts.app');
     }
 
     public function simpan()

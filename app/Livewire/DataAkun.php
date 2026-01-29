@@ -8,6 +8,6 @@ class DataAkun extends Component
 {
     public function render()
     {
-        return view('livewire.data-akun');
+        return view('livewire.data-akun')->layout('layouts.app');
     }
 }
