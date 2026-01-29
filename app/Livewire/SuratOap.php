@@ -131,6 +131,61 @@ class SuratOap extends Component
 
         $alasanFinal = $this->alasan === 'Lainnya' ? $this->alasan_lain : $this->alasan;
 
+        // ================= BATAS PENGAJUAN OAP =================
+
+        // 1. Cek jika masih ada proses dengan alasan sama
+        $cekProses = PengajuanSurat::where('user_id', Auth::id())
+            ->where('alasan', $alasanFinal)
+            ->whereIn('status', ['diajukan', 'verifikasi', 'diproses'])
+            ->exists();
+
+        if ($cekProses) {
+            $this->dispatch('toast', [
+                'type' => 'warning',
+                'message' => '⚠️ Pengajuan dengan alasan ini masih diproses.'
+            ]);
+            return;
+        }
+
+    // ================= BATAS PENGAJUAN OAP =================
+
+    // 1. Cek jika masih ada proses dengan alasan sama
+    $cekProses = PengajuanSurat::where('user_id', Auth::id())
+        ->where('alasan', $alasanFinal)
+        ->whereIn('status', ['diajukan', 'verifikasi', 'diproses'])
+        ->exists();
+
+    if ($cekProses) {
+        $this->dispatch('toast', [
+            'type' => 'warning',
+            'message' => '⚠️ Pengajuan dengan alasan ini masih diproses.'
+        ]);
+        return;
+    }
+
+    // 2. Ambil surat terakhir yang sudah terbit
+    $last = PengajuanSurat::where('user_id', Auth::id())
+        ->where('alasan', $alasanFinal)
+        ->where('status', 'terbit')
+        ->latest()
+        ->first();
+
+    if ($last) {
+        $expired = $last->created_at->copy()->addYear();
+
+        if (now()->lt($expired)) {
+            $sisa = now()->diffInDays($expired);
+
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => "❌ Surat dengan alasan ini masih berlaku. Sisa {$sisa} hari."
+            ]);
+            return;
+        }
+    }
+
+    // ======================================================
+
         // Upload file
         $fotoPath = $this->foto?->store('public/surat_oap/foto');
         $ktpPath = $this->ktp?->store('public/surat_oap/ktp');
