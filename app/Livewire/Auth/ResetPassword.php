@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\HasApiTokens;
 
 class ResetPassword extends Component
 {
@@ -41,8 +42,12 @@ class ResetPassword extends Component
                     'remember_token' => Str::random(60),
                 ])->save();
 
-                // Hapus semua token (API logout all device)
-                $user->tokens()->delete();
+                // Logout semua session browser
+                Auth::logoutOtherDevices($this->password);
+
+                // Regenerasi session
+                request()->session()->invalidate();
+                request()->session()->regenerateToken();
 
                 // Logout semua session browser
                 Auth::logoutOtherDevices($this->password);

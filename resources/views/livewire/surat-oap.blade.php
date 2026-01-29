@@ -1,7 +1,7 @@
 <div>
     {{-- RIWAYAT PENGAJUAN SURAT --}}
 <div class="card mb-4">
-    <div class="card-header bg-dark text-white"><strong>Riwayat Pengajuan Surat OAP</strong></div>
+    <div class="card-header bg-primary text-white"><strong>Riwayat Pengajuan Surat OAP</strong></div>
     <div class="card-body">
 
         @if (session('success'))

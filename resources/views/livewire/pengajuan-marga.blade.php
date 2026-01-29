@@ -1,6 +1,6 @@
 <div>
     <div class="card mb-4">
-        <div class="card-header bg-dark text-white"><strong>Riwayat Pengajuan Marga OAP</strong></div>
+        <div class="card-header bg-primary text-white"><strong>Riwayat Pengajuan Marga OAP</strong></div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered align-middle">

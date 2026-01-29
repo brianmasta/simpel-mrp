@@ -35,11 +35,11 @@
 
           
 <div class="card border-0 shadow-sm mb-4">
-  <div class="card-header bg-dark text-white">
+  <div class="card-header bg-primary text-white">
     <h5 class="mb-0 fw-bold">🧾 Tahapan Pengajuan Surat Keterangan Orang Asli Papua</h5>
   </div>
 
-  <div class="card-body bg-light">
+  <div class="card-body">
     <div class="row gy-4 text-center">
 
       <!-- Tahap 1 -->

@@ -18,6 +18,7 @@ class VerifyEmailId extends VerifyEmail
             ->line('Terima kasih telah mendaftar di SIMPEL-MRP.')
             ->line('Untuk mengaktifkan akun Anda, silakan klik tombol di bawah ini untuk memverifikasi alamat email Anda.')
             ->action('Verifikasi Email', $url)
-            ->line('Jika Anda tidak melakukan pendaftaran, abaikan email ini.');
+            ->line('Jika Anda tidak melakukan pendaftaran, abaikan email ini.')
+            ->salutation('Salam, Tim SIMPEL-MRP Papua Tengah');
     }
 }
