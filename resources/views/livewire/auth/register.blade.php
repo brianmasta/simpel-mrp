@@ -5,7 +5,7 @@
                 <div class="card mb-4 mx-4 shadow-sm">
                     <div class="card-body p-4">
                         <h1 class="mb-3">Register Akun</h1>
-                        <p class="text-body-secondary mb-4">Buat akun Anda untuk mengakses sistem</p>
+                        <p class="text-body-secondary mb-4">Buat akun Anda untuk mengakses SIMPEL-MRP</p>
 
                         @if (session()->has('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
