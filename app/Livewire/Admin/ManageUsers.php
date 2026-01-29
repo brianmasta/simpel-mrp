@@ -46,7 +46,7 @@ class ManageUsers extends Component
         return view('livewire.admin.manage-users', [
             'users' => $users,
             'searchSafe' => e($this->search), // XSS safe
-        ])->layout('layouts.app');
+        ])->layout('components.layouts.app');
     }
 
     public function updatingSearch()
