@@ -151,12 +151,12 @@
               <p>
                 Melalui SIMPEL-MRP, MRP berkomitmen menjaga serta melestarikan nilai-nilai adat, budaya, dan hak-hak masyarakat adat Papua dalam bingkai Otonomi Khusus.
               </p>
-              <div class="text-center text-lg-start">
+              {{-- <div class="text-center text-lg-start">
                 <a href="#" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
                   <span>Read More</span>
                   <i class="bi bi-arrow-right"></i>
                 </a>
-              </div>
+              </div> --}}
             </div>
           </div>
 
@@ -223,7 +223,7 @@
             <div class="stats-item d-flex align-items-center w-100 h-100">
               <i class="bi bi-emoji-smile color-blue flex-shrink-0"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="232" data-purecounter-duration="1" class="purecounter"></span>
+                <span data-purecounter-start="0" data-purecounter-end="130" data-purecounter-duration="1" class="purecounter"></span>
                 <p>Total Pengajuan</p>
               </div>
             </div>
@@ -233,7 +233,7 @@
             <div class="stats-item d-flex align-items-center w-100 h-100">
               <i class="bi bi-journal-richtext color-orange flex-shrink-0" style="color: #ee6c20;"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1" class="purecounter"></span>
+                <span data-purecounter-start="0" data-purecounter-end="100" data-purecounter-duration="1" class="purecounter"></span>
                 <p>Disetujui</p>
               </div>
             </div>
@@ -243,7 +243,7 @@
             <div class="stats-item d-flex align-items-center w-100 h-100">
               <i class="bi bi-headset color-green flex-shrink-0" style="color: #15be56;"></i>
               <div>
-                <span data-purecounter-start="0" data-purecounter-end="1463" data-purecounter-duration="1" class="purecounter"></span>
+                <span data-purecounter-start="0" data-purecounter-end="15" data-purecounter-duration="1" class="purecounter"></span>
                 <p>Ditolak</p>
               </div>
             </div>
@@ -1259,7 +1259,7 @@
                 <div class="info-item" data-aos="fade" data-aos-delay="200">
                   <i class="bi bi-geo-alt"></i>
                   <h3>Alamat Kantor</h3>
-                  <p>Jl. Raya Nabire – Dogiyai, Kelurahan Karadiri</p>
+                  <p>Jl. Mandala Atas, Bumi Wonorejo, Distrik Nabire</p>
                   <p>Kabupaten Nabire, Provinsi Papua Tengah – Indonesia</p>
                 </div>
               </div><!-- End Info Item -->
@@ -1268,64 +1268,53 @@
                 <div class="info-item" data-aos="fade" data-aos-delay="300">
                   <i class="bi bi-telephone"></i>
                   <h3>Kontak Resmi</h3>
-                  <p>Telepon: (0984) 123-456</p>
-                  <p>Website: https://simpel.mrp-papuatengah.go.id</p>
+                  <p>Telepon: (0984) XXX-XXX</p>
+                  <p>Website: www.simpel.mrp-papuatengah.go.id</p>
                 </div>
               </div><!-- End Info Item -->
 
-              <div class="col-md-6">
-                <div class="info-item" data-aos="fade" data-aos-delay="400">
-                  <i class="bi bi-envelope"></i>
-                  <h3>Email Resmi</h3>
-                  <p>Email: sekretariat@mrp-papuatengah.go.id</p>
-                  {{-- <p>contact@example.com</p> --}}
-                </div>
-              </div><!-- End Info Item -->
 
-              <div class="col-md-6">
+
+              {{-- <div class="col-md-6">
                 <div class="info-item" data-aos="fade" data-aos-delay="500">
                   <i class="bi bi-clock"></i>
                   <h3>Jam Pelayanan</h3>
                   <p>Senin – Jumat: 08.00 – 16.00 WIT</p>
                   <p>Sabtu & Minggu: Tutup (Pelayanan Online Tetap Aktif)</p>
                 </div>
-              </div><!-- End Info Item -->
+              </div> --}}
+              <!-- End Info Item -->
 
             </div>
 
           </div>
 
           <div class="col-lg-6">
-            <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+            {{-- <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200"> --}}
               <div class="row gy-4">
 
                 <div class="col-md-6">
-                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                  <div class="info-item" data-aos="fade" data-aos-delay="400">
+                    <i class="bi bi-envelope"></i>
+                    <h3>Email Resmi</h3>
+                    <p>Email: mrp.provinsipapuatengah@gmail.com</p>
+                    {{-- <p>contact@example.com</p> --}}
+                  </div>
                 </div>
 
                 <div class="col-md-6 ">
-                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-                </div>
-
-                <div class="col-12">
-                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-                </div>
-
-                <div class="col-12">
-                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-                </div>
-
-                <div class="col-12 text-center">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your message has been sent. Thank you!</div>
-
-                  {{-- <button type="submit">Send Message</button> --}}
+                  <div class="info-item" data-aos="fade" data-aos-delay="500">
+                    <i class="bi bi-clock"></i>
+                    <h3>Jam Pelayanan</h3>
+                    <p>Senin – Jumat: 08.00 – 16.00 WIT</p>
+                    <p>Sabtu & Minggu: Tutup (Pelayanan Online Tetap Aktif)</p>
+                  </div>
                 </div>
 
               </div>
-            </form>
-          </div><!-- End Contact Form -->
+            {{-- </form> --}}
+          </div>
+          <!-- End Contact Form -->
 
         </div>
 
@@ -1361,10 +1350,10 @@
             <span class="sitename">SIMPEL - MRP</span>
           </a>
           <div class="footer-contact pt-3">
-            <p>Jl. Raya Nabire </p>
-            <p>Dogiyai, Kelurahan Karadiri</p>
-            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-            <p><strong>Email:</strong> <span>sekretariat@mrp-papuatengah.go.id</span></p>
+            <p>Jl. Mandala Atas, Bumi Wonorejo, Distrik Nabire </p>
+            <p>Kabupaten Nabire, Provinsi Papua Tengah – Indonesia</p>
+            {{-- <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p> --}}
+            <p><strong>Email:</strong> <span>simpelmrp@gmail.com</span></p>
           </div>
         </div>
 
@@ -1392,10 +1381,10 @@
           <h4>Follow Kami:</h4>
           <p>Media sosial SIMPEL - MRP:</p>
           <div class="social-links d-flex">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
+            <a href="https://www.youtube.com/@SimpelMRPProvinsiPapuaTengah"><i class="bi bi-youtube"></i></a>
+            {{-- <a href=""><i class="bi bi-facebook"></i></a> --}}
+            {{-- <a href=""><i class="bi bi-instagram"></i></a> --}}
+            {{-- <a href=""><i class="bi bi-linkedin"></i></a> --}}
           </div>
         </div>
 
@@ -1403,13 +1392,13 @@
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright - 2025</span> <strong class="px-1 sitename">Simpel - MRP</strong> <span>All Rights Reserved</span></p>
+      <p>© <span>Copyright - 2026</span> <strong class="px-1 sitename">Simpel - MRP</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
         <!-- All the links in the footer should remain intact. -->
         <!-- You can delete the links only if you've purchased the pro version. -->
         <!-- Licensing information: https://bootstrapmade.com/license/ -->
         <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="#">Simpel-MRP</a> Develop by <a href="#">Brian M
+        Designed by <a href="#">Sub Bag - Umum & Humas</a> Develop by <a href="https://web.facebook.com/brian.marandof">Brian M (Prakom)
       </div>
     </div>
 
