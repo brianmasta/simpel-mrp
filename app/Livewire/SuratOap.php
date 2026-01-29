@@ -280,6 +280,6 @@ class SuratOap extends Component
 
     public function render()
     {
-        return view('livewire.surat-oap')->layout('layouts.app');
+        return view('livewire.surat-oap')->layout('components.layouts.app');
     }
 }

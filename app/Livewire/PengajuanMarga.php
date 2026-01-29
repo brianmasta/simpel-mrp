@@ -86,6 +86,6 @@ class PengajuanMarga extends Component
 
     public function render()
     {
-        return view('livewire.pengajuan-marga')->layout('layouts.app');
+        return view('livewire.pengajuan-marga')->layout('components.layouts.app');
     }
 }

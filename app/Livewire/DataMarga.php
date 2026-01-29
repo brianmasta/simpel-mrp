@@ -167,7 +167,7 @@ class DataMarga extends Component
 
         $margas = $query->paginate(10); // 10 data per halaman
 
-        return view('livewire.data-marga', compact('margas'))->layout('layouts.app');
+        return view('livewire.data-marga', compact('margas'))->layout('components.layouts.app');
         }
 
 }
