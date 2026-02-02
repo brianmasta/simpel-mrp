@@ -313,14 +313,40 @@ class SuratOap extends Component
         $fileName = 'surat_oap_' . $profil->nik . '_' . time() . '.pdf';
         $relativePath = 'surat_oap/' . $fileName;
 
-        // Simpan ke storage/app/public/surat_oap/
-        Storage::disk('public')->put($relativePath, $pdf->output());
+        // PRIVATE
+        $privateDir = storage_path('app/private/public/surat_oap');
+
+        // PUBLIC (mirror)
+        $publicDir  = public_path('storage/surat_oap');
+
+        // Pastikan folder ada
+        if (!File::exists($privateDir)) {
+            File::makeDirectory($privateDir, 0755, true);
+        }
+
+        if (!File::exists($publicDir)) {
+            File::makeDirectory($publicDir, 0755, true);
+        }
+
+        $privateFullPath = $privateDir . '/' . $fileName;
+        $publicFullPath  = $publicDir  . '/' . $fileName;
+
+        // Simpan ke private
+        file_put_contents($privateFullPath, $pdf->output());
+
+        // Copy ke public
+        File::copy($privateFullPath, $publicFullPath);
+
+        // Simpan relative path private
+        $relativePath = 'private/public/surat_oap/' . $fileName;
+        // lama -Simpan ke storage/app/public/surat_oap/
+        // Storage::disk('public')->put($relativePath, $pdf->output());
 
 
         // Update pengajuan yang sudah dibuat (tidak create baru)
         $pengajuan->update([
             'nomor_surat' => $nomorSurat,
-            'file_surat' => 'surat_oap/' . $fileName,
+            'file_surat' => $relativePath,
             'status' => 'terbit',
             'kode_autentikasi' => $kodeAutentikasi,
             'qr_code_path' => $relativePath,
