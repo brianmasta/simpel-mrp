@@ -34,7 +34,7 @@
             {{-- Nama Lengkap --}}
             <div class="mb-3">
                 <label class="form-label">Nama Lengkap</label>
-                <input class="form-control" type="text" wire:model.live="nama_lengkap" placeholder="Nomor Kartu Keluarga">
+                <input class="form-control" type="text" wire:model.live="nama_lengkap" placeholder="Nama lengkap sesuai KTP">
                 <div class="form-text">Nama lengkap sesuai KTP *</div>
                 @error('nama_lengkap') <span class="text-danger">{{ $message }}</span> @enderror
 
