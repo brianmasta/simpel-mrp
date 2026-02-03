@@ -18,7 +18,7 @@
             {{-- NIK --}}
             <div class="mb-3">
                 <label class="form-label">NIK</label>
-                <input class="form-control" type="number" wire:model.live="nik">
+                <input class="form-control" type="number" wire:model.live="nik" placeholder="nik sesuai KTP">
                 <div class="form-text">NIK sesuai KTP *</div>
                 @error('nik') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
