@@ -18,7 +18,7 @@
             {{-- NIK --}}
             <div class="mb-3">
                 <label class="form-label">NIK</label>
-                <input class="form-control" type="number" wire:model.live="nik" placeholder="nik sesuai KTP">
+                <input class="form-control" type="number" wire:model.live="nik" placeholder="NIK Sesuai KTP">
                 <div class="form-text">NIK sesuai KTP *</div>
                 @error('nik') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
@@ -26,7 +26,7 @@
             {{-- NIK --}}
             <div class="mb-3">
                 <label class="form-label">No KK</label>
-                <input class="form-control" type="number" wire:model.live="no_kk">
+                <input class="form-control" type="number" wire:model.live="no_kk" placeholder="Nomor Kartu Keluarga">
                 <div class="form-text">Nomor Kartu Keluarga *</div>
                 @error('no_kk') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
@@ -34,7 +34,7 @@
             {{-- Nama Lengkap --}}
             <div class="mb-3">
                 <label class="form-label">Nama Lengkap</label>
-                <input class="form-control" type="text" wire:model.live="nama_lengkap">
+                <input class="form-control" type="text" wire:model.live="nama_lengkap" placeholder="Nomor Kartu Keluarga">
                 <div class="form-text">Nama lengkap sesuai KTP *</div>
                 @error('nama_lengkap') <span class="text-danger">{{ $message }}</span> @enderror
 
@@ -61,7 +61,7 @@
             {{-- Nama Ayah --}}
             <div class="mb-3">
                 <label class="form-label">Nama Ayah</label>
-                <input class="form-control" type="text" wire:model.live="nama_ayah">
+                <input class="form-control" type="text" wire:model.live="nama_ayah" placeholder="Nama ayah kandung">
                 <div class="form-text">Nama ayah kandung *</div>
                 @error('nama_ayah') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
@@ -69,7 +69,7 @@
             {{-- Nama Ibu --}}
             <div class="mb-3">
                 <label class="form-label">Nama Ibu</label>
-                <input class="form-control" type="text" wire:model.live="nama_ibu">
+                <input class="form-control" type="text" wire:model.live="nama_ibu" placeholder="Nama ibu kandung">
                 <div class="form-text">Nama ibu kandung *</div>
                 @error('nama_ibu') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
@@ -96,7 +96,7 @@
             {{-- Tanggal Lahir --}}
             <div class="mb-3">
                 <label class="form-label">Tanggal Lahir</label>
-                <input class="form-control" type="date" wire:model.live="tanggal_lahir">
+                <input class="form-control" type="date" wire:model.live="tanggal_lahir" placeholder="Tanggal Lahir">
                 <div class="form-text">Sesuai KTP *</div>
                 @error('tanggal_lahir') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
