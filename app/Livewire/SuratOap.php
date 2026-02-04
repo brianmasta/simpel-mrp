@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class SuratOap extends Component
 {
@@ -228,10 +229,26 @@ class SuratOap extends Component
         }
 
         $tahun = now()->year;
-        $jumlahSuratTahunIni = PengajuanSurat::whereYear('created_at', $tahun)->count() + 1;
-        $nomorUrut = str_pad($jumlahSuratTahunIni, 3, '0', STR_PAD_LEFT);
-        $bulanRomawi = $this->bulanRomawi(now()->month);
-        $nomorSurat = "{$nomorUrut}/MRP-PPT/{$bulanRomawi}/{$tahun}";
+
+        // $jumlahSuratTahunIni = PengajuanSurat::whereYear('created_at', $tahun)->count() + 1;
+        // $nomorUrut = str_pad($jumlahSuratTahunIni, 3, '0', STR_PAD_LEFT);
+        // $bulanRomawi = $this->bulanRomawi(now()->month);
+        // $nomorSurat = "{$nomorUrut}/MRP-PPT/{$bulanRomawi}/{$tahun}";
+
+        DB::transaction(function () use (&$nomorSurat, $tahun) {
+
+            $last = PengajuanSurat::lockForUpdate()
+                ->whereYear('created_at', $tahun)
+                ->selectRaw("MAX(CAST(SUBSTRING_INDEX(nomor_surat,'/',1) AS UNSIGNED)) as max_no")
+                ->first();
+
+            $next = ($last->max_no ?? 0) + 1;
+
+            // 5 digit
+            $nomorUrut = str_pad($next, 5, '0', STR_PAD_LEFT);
+
+            $nomorSurat = "{$nomorUrut}/OAP/MRP-PPT";
+        });
 
         // Buat kode autentikasi unik
         $kodeAutentikasi = strtoupper(substr(md5($profil->nik . now()), 0, 10));
