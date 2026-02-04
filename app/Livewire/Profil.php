@@ -341,6 +341,13 @@ private function extractNamaFromKtp($text)
 
     public function updatedSearchProvinsi($value)
     {
+        $this->provinsi_id = null;
+
+            if (strlen($value) < 2) {
+                $this->provinsis = [];
+                return;
+            }
+
         $this->provinsis = Provinsi::where('nama', 'like', "%{$value}%")->get();
     }
 
@@ -427,10 +434,25 @@ private function extractNamaFromKtp($text)
             'nik' => 'required|digits:16',
             'no_kk' => 'required|digits:16',
             'nama_lengkap' => 'required|string|max:255',
+            'nama_ayah' => 'required|string|max:255',
+            'nama_ibu' => 'required|string|max:255',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
-            'jenis_kelamin' => 'required|string',
+            'jenis_kelamin' => 'required|in:laki-laki,perempuan',
+            'no_hp' => 'required|regex:/^08[0-9]{8,13}$/',
             'email' => ['required','email', Rule::unique('users','email')->ignore($this->user->id)],
+            'provinsi_id' => 'required|exists:provinsis,id',
+            'kabupaten_id' => 'required|exists:kabupatens,id',
+            'kecamatan_id' => 'required|exists:kecamatans,id',
+            'kelurahan_id' => 'required|exists:kelurahans,id',
+            'alamat' => 'required|string|min:1|max:500',
+        ], [
+            'provinsi_id.required' => 'Provinsi wajib dipilih.',
+            'kabupaten_id.required' => 'Kabupaten wajib dipilih.',
+            'kecamatan_id.required' => 'Kecamatan wajib dipilih.',
+            'kelurahan_id.required' => 'Kelurahan wajib dipilih.',
+            'alamat' => 'Alamat wajib dipilih',
+            'no_hp' => 'No hp wajib dipilih',
         ]);
 
         // ✅ Validasi wilayah NIK & KK Papua Tengah

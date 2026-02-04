@@ -2,41 +2,35 @@
     <div class="card mb-4">
         <div class="card-header bg-primary text-white"><strong>Data Profil</strong></div>
         <div class="card-body">
-
-            {{-- <div class="mb-3">
-                <label>KTP (Scan / Foto)</label>
-                <input type="file" wire:model="foto_ktp" accept="image/*" class="form-control">
-                <div wire:loading wire:target="foto_ktp">Membaca data dari KTP...</div>
-            </div>
-
-            <div class="mb-3">
-                <label>Kartu Keluarga (Scan / Foto)</label>
-                <input type="file" wire:model="foto_kk" accept="image/*" class="form-control">
-                <div wire:loading wire:target="foto_kk">Membaca data dari KK...</div>
-            </div> --}}
                 
             {{-- NIK --}}
             <div class="mb-3">
                 <label class="form-label">NIK</label>
-                <input class="form-control" type="number" wire:model.live="nik" placeholder="NIK Sesuai KTP">
+                <input class="form-control @error('nik') is-invalid @enderror" type="number" wire:model.live="nik" placeholder="NIK Sesuai KTP" inputmode="numeric" pattern="[0-9]*" maxlength="16" required>
                 <div class="form-text">NIK sesuai KTP *</div>
-                @error('nik') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('nik')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             {{-- NIK --}}
             <div class="mb-3">
                 <label class="form-label">No KK</label>
-                <input class="form-control" type="number" wire:model.live="no_kk" placeholder="Nomor Kartu Keluarga">
+                <input class="form-control @error('no_kk') is-invalid @enderror" type="number" wire:model.live="no_kk" placeholder="Nomor Kartu Keluarga" inputmode="numeric" pattern="[0-9]*" maxlength="16" required>
                 <div class="form-text">Nomor Kartu Keluarga *</div>
-                @error('no_kk') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('no_kk')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             {{-- Nama Lengkap --}}
             <div class="mb-3">
                 <label class="form-label">Nama Lengkap</label>
-                <input class="form-control" type="text" wire:model.live="nama_lengkap" placeholder="Nama lengkap sesuai KTP">
+                <input class="form-control @error('nama_lengkap') is-invalid @enderror" type="text" wire:model.live="nama_lengkap" placeholder="Nama lengkap sesuai KTP" required>
                 <div class="form-text">Nama lengkap sesuai KTP *</div>
-                @error('nama_lengkap') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('nama_lengkap')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
 
                     {{-- Hasil deteksi marga --}}
                 @if($margaDitemukan === true)
@@ -61,17 +55,21 @@
             {{-- Nama Ayah --}}
             <div class="mb-3">
                 <label class="form-label">Nama Ayah</label>
-                <input class="form-control" type="text" wire:model.live="nama_ayah" placeholder="Nama ayah kandung">
+                <input class="form-control @error('nama_ayah') is-invalid @enderror" type="text" wire:model.live="nama_ayah" placeholder="Nama ayah kandung" required>
                 <div class="form-text">Nama ayah kandung *</div>
-                @error('nama_ayah') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('nama_ayah')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             {{-- Nama Ibu --}}
             <div class="mb-3">
                 <label class="form-label">Nama Ibu</label>
-                <input class="form-control" type="text" wire:model.live="nama_ibu" placeholder="Nama ibu kandung">
+                <input class="form-control @error('nama_ibu') is-invalid @enderror" type="text" wire:model.live="nama_ibu" placeholder="Nama ibu kandung" required>
                 <div class="form-text">Nama ibu kandung *</div>
-                @error('nama_ibu') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('nama_ibu')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             {{-- Catatan Marga --}}
@@ -88,38 +86,49 @@
             {{-- Tempat Lahir --}}
             <div class="mb-3">
                 <label class="form-label">Tempat Lahir</label>
-                <input class="form-control" type="text" wire:model.live="tempat_lahir">
+                <input class="form-control @error('tempat_lahir') is-invalid @enderror" type="text" wire:model.live="tempat_lahir">
                 <div class="form-text">Sesuai KTP *</div>
-                @error('tempat_lahir') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('tempat_lahir')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             {{-- Tanggal Lahir --}}
             <div class="mb-3">
                 <label class="form-label">Tanggal Lahir</label>
-                <input class="form-control" type="date" wire:model.live="tanggal_lahir" placeholder="Tanggal Lahir">
+                <input class="form-control @error('tanggal_lahir') is-invalid @enderror" type="date" wire:model.live="tanggal_lahir" placeholder="Tanggal Lahir" required>
                 <div class="form-text">Sesuai KTP *</div>
-                @error('tanggal_lahir') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('tanggal_lahir')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             {{-- Jenis Kelamin --}}
             <div class="mb-3">
                 <label class="form-label">Jenis Kelamin</label>
-                <select class="form-control" wire:model.live="jenis_kelamin">
+                <select class="form-control @error('jenis_kelamin') is-invalid @enderror" wire:model.live="jenis_kelamin" required>
                     <option value="">--Pilih--</option>
                     <option value="laki-laki">Laki-Laki</option>
                     <option value="perempuan">Perempuan</option>
                 </select>
                 <div class="form-text">Pilih sesuai KTP *</div>
-                @error('jenis_kelamin') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('jenis_kelamin')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
 
 
     {{-- Provinsi --}}
-    <div class="mb-3 position-relative">
+    <div class="mb-3 position-relative" wire:click.outside="$set('provinsis', [])">
         <label>Provinsi</label>
-        <input type="text" class="form-control" placeholder="Ketik provinsi..." wire:model.live="searchProvinsi">
+        <input type="text" class="form-control @error('provinsi_id') is-invalid @enderror" placeholder="Ketik provinsi..."  wire:model.live="searchProvinsi" required>
         <div class="form-text">Pilih provinsi sesuai alamat KK/KTP *</div>
+        @error('provinsi_id')
+            <div class="invalid-feedback">
+                {{ $message }}
+            </div>
+        @enderror
         @if(!empty($provinsis))
             <ul class="list-group position-absolute w-100" style="z-index: 10;">
                 @foreach($provinsis as $prov)
@@ -132,10 +141,15 @@
     </div>
 
     {{-- Kabupaten --}}
-    <div class="mb-3 position-relative">
+    <div class="mb-3 position-relative" wire:click.outside="$set('kabupatens', [])">
         <label>Kabupaten</label>
-        <input type="text" class="form-control" placeholder="Ketik kabupaten..." wire:model.live="searchKabupaten">
+        <input type="text" class="form-control @error('kabupaten_id') is-invalid @enderror" placeholder="Ketik kabupaten..." wire:model.live="searchKabupaten" required @disabled(!$provinsi_id)>
         <div class="form-text">Pilih kabupaten sesuai alamat KK/KTP *</div>
+        @error('kabupaten_id')
+            <div class="invalid-feedback">
+                {{ $message }}
+            </div>
+        @enderror
         @if(!empty($kabupatens))
             <ul class="list-group position-absolute w-100" style="z-index: 10;">
                 @foreach($kabupatens as $kab)
@@ -148,10 +162,13 @@
     </div>
 
     {{-- Kecamatan --}}
-    <div class="mb-3 position-relative">
+    <div class="mb-3 position-relative" wire:click.outside="$set('kecamatans', [])">
         <label>Kecamatan</label>
-        <input type="text" class="form-control" placeholder="Ketik kecamatan..." wire:model.live="searchKecamatan">
+        <input type="text" class="form-control @error('kecamatan_id') is-invalid @enderror" placeholder="Ketik kecamatan..." wire:model.live="searchKecamatan" required @disabled(!$kabupaten_id)>
         <div class="form-text">Pilih kecamatan sesuai alamat KK/KTP *</div>
+        @error('kecamatan_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
         @if(!empty($kecamatans))
             <ul class="list-group position-absolute w-100" style="z-index: 10;">
                 @foreach($kecamatans as $kec)
@@ -164,10 +181,13 @@
     </div>
 
     {{-- Kelurahan --}}
-    <div class="mb-3 position-relative">
+    <div class="mb-3 position-relative" wire:click.outside="$set('kelurahans', [])">
         <label>Kelurahan</label>
-        <input type="text" class="form-control" placeholder="Ketik kelurahan..." wire:model.live="searchKelurahan">
+        <input type="text" class="form-control @error('kelurahan_id') is-invalid @enderror" placeholder="Ketik kelurahan..." wire:model.live="searchKelurahan" required @disabled(!$kecamatan_id)>
         <div class="form-text">Pilih kelurahan sesuai alamat KK/KTP *</div>
+        @error('kelurahan_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
         @if(!empty($kelurahans))
             <ul class="list-group position-absolute w-100" style="z-index: 10;">
                 @foreach($kelurahans as $kel)
@@ -182,9 +202,13 @@
             {{-- Alamat --}}
             <div class="mb-3">
                 <label class="form-label">Alamat</label>
-                <textarea class="form-control" wire:model.live="alamat"></textarea>
+                <textarea class="form-control @error('alamat') is-invalid @enderror" placeholder="Contoh: Jl. Yos Sudarso No.12 RT 02 RW 01" wire:model.live="alamat" required></textarea>
                 <div class="form-text">Alamat lengkap sesuai KTP *</div>
-                @error('alamat') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('alamat')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <hr>
@@ -200,7 +224,7 @@
             {{-- No HP --}}
             <div class="mb-3">
                 <label class="form-label">No HP</label>
-                <input class="form-control" type="number" wire:model.live="no_hp">
+                <input class="form-control @error('no_hp') is-invalid @enderror" type="number" wire:model.live="no_hp" placeholder="Contoh: 081234567890" required inputmode="numeric" pattern="[0-9]*">
                 <div class="form-text">Nomor HP aktif (untuk verifikasi & notifikasi) *</div>
                 @error('no_hp') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
