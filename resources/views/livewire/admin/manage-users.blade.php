@@ -68,10 +68,31 @@
                                     {{ ucfirst($user->role) }}
                                 </span>
                             </td>
-                            <td>
-                                <button wire:click="edit({{ $user->id }})" class="btn btn-sm btn-primary">Edit</button>
-                                <button wire:click="resetPassword({{ $user->id }})" class="btn btn-sm btn-secondary">Reset</button>
-                                <button wire:click="delete({{ $user->id }})" onclick="confirm('Yakin hapus akun ini?') || event.stopImmediatePropagation()" class="btn btn-sm btn-danger">Hapus</button>
+                            <td class="text-center">
+                                <button wire:click="view({{ $user->id }})"
+                                    class="btn btn-sm btn-info"
+                                    title="Lihat Profil">
+                                    <i class="cil-user"></i>
+                                </button>
+
+                                <button wire:click="edit({{ $user->id }})"
+                                    class="btn btn-sm btn-primary"
+                                    title="Edit">
+                                    <i class="cil-pencil"></i>
+                                </button>
+
+                                <button wire:click="resetPassword({{ $user->id }})"
+                                    class="btn btn-sm btn-secondary"
+                                    title="Reset Password">
+                                    <i class="cil-reload"></i>
+                                </button>
+
+                                <button wire:click="delete({{ $user->id }})"
+                                    onclick="confirm('Yakin hapus akun ini?') || event.stopImmediatePropagation()"
+                                    class="btn btn-sm btn-danger"
+                                    title="Hapus">
+                                    <i class="cil-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     @empty
@@ -83,4 +104,43 @@
             {{ $users->links() }}
         </div>
     </div>
+    @if($showViewModal)
+<div class="modal fade show d-block" style="background:rgba(0,0,0,.5)">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="cil-user me-2"></i> Detail Akun Pengguna
+                </h5>
+                <button wire:click="$set('showViewModal', false)" class="btn-close"></button>
+            </div>
+
+            <div class="modal-body">
+                <h6 class="text-primary">Data Akun</h6>
+                <table class="table table-sm">
+                    <tr><th width="30%">Nama</th><td>{{ $viewUser->name ?? '-' }}</td></tr>
+                    <tr><th>Email</th><td>{{ $viewUser->email ?? '-' }}</td></tr>
+                    <tr><th>Role</th><td>{{ ucfirst($viewUser->role ?? '-') }}</td></tr>
+                </table>
+
+                <hr>
+
+                <h6 class="text-primary">Data Profil</h6>
+                <table class="table table-sm">
+                    <tr><th>NIK</th><td>{{ $viewUser->profil->nik ?? '-' }}</td></tr>
+                    <tr><th>Alamat</th><td>{{ $viewUser->profil->alamat ?? '-' }}</td></tr>
+                    <tr><th>No HP</th><td>{{ $viewUser->profil->no_hp ?? '-' }}</td></tr>
+                    <tr><th>Kabupaten</th><td>{{ $viewUser->profil->kabupaten->nama ?? '-' }}</td></tr>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button wire:click="$set('showViewModal', false)" class="btn btn-secondary">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 </div>

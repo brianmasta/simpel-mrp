@@ -34,6 +34,7 @@
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{{ asset('assets/css/examples.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/@coreui/icons/css/all.min.css">
 
 
     <!-- Include stylesheet -->

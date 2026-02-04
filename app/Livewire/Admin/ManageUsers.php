@@ -19,6 +19,9 @@ class ManageUsers extends Component
     public $isEditing = false;
     public $user;
 
+    public $showViewModal = false;
+    public $viewUser;
+
     protected $rules = [
         'name' => 'required|string|min:3',
         'email' => 'required|email|unique:users,email',
@@ -47,6 +50,12 @@ class ManageUsers extends Component
             'users' => $users,
             'searchSafe' => e($this->search), // XSS safe
         ])->layout('components.layouts.app');
+    }
+
+    public function view($id)
+    {
+        $this->viewUser = User::with('profil.kabupaten')->findOrFail($id);
+        $this->showViewModal = true;
     }
 
     public function updatingSearch()
