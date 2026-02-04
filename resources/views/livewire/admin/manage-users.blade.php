@@ -71,7 +71,7 @@
                             <td>
                                 <button wire:click="edit({{ $user->id }})" class="btn btn-sm btn-primary">Edit</button>
                                 <button wire:click="resetPassword({{ $user->id }})" class="btn btn-sm btn-secondary">Reset</button>
-                                <button wire:click="delete({{ $user->id }})" class="btn btn-sm btn-danger">Hapus</button>
+                                <button wire:click="delete({{ $user->id }})" onclick="confirm('Yakin hapus akun ini?') || event.stopImmediatePropagation()" class="btn btn-sm btn-danger">Hapus</button>
                             </td>
                         </tr>
                     @empty
