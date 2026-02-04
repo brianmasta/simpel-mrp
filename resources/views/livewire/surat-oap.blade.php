@@ -138,7 +138,7 @@
             <h5 class="mb-3">Unggah Dokumen Pendukung</h5>
 
             <div class="mb-3">
-                <label class="form-label">Foto Diri <span class="text-danger">*</span></label>
+                <label class="form-label">Pas Foto Ukuran 4x6 Latar Belakang Merah <span class="text-danger">*</span></label>
                 <input type="file" wire:model="foto" class="form-control">
                 <small class="text-muted d-block mt-1">Format: JPG/PNG • Maks 2MB • Tampak jelas wajah</small>
                 @if ($foto)
