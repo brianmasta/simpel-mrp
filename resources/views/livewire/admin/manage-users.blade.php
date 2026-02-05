@@ -68,6 +68,9 @@
                                     {{ ucfirst($user->role) }}
                                 </span>
                             </td>
+                            <td>
+                                {{ $user->created_at->format('d M Y H:i') }}
+                            </td>
                             <td class="text-center">
                                 <button wire:click="view({{ $user->id }})"
                                     class="btn btn-sm btn-info"
