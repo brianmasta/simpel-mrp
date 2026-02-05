@@ -54,6 +54,7 @@
                         <th>Nama</th>
                         <th>Email</th>
                         <th>Role</th>
+                        <th>Waktu</th>
                         <th width="200">Aksi</th>
                     </tr>
                 </thead>
