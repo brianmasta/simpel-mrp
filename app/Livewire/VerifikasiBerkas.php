@@ -303,6 +303,6 @@ class VerifikasiBerkas extends Component
     {
         return view('livewire.verifikasi-berkas', [
             'pengajuan' => PengajuanSurat::latest()->get()
-        ]);
+        ])->layout('components.layouts.app');
     }
 }
