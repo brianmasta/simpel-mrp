@@ -13,6 +13,8 @@ class ManageUsers extends Component
 {
     use WithPagination;
 
+    protected $paginationTheme = 'bootstrap';
+
     public $name, $email, $role, $password;
     public $search = '';
     public $userId;
