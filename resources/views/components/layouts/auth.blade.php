@@ -6,9 +6,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
-    <meta name="author" content="Łukasz Holeczek">
-    <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
+  <meta name="description" content="Platform resmi MRP Papua Tengah untuk pengajuan dan verifikasi Surat Orang Asli Papua (OAP) secara online. Cepat, sah, dan terverifikasi.">
+  <meta name="keywords" content="SIMPEL MRP, Surat OAP, Pelayanan OAP, MRP Papua Tengah, Surat Orang Asli Papua Online">
     <title>MRP - Provinsi Papua Tengah</title>
     <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('assets/img/logo.png') }}">
     <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('assets/img/logo.png') }}">
