@@ -92,6 +92,6 @@ class PerbaikanBerkasOap extends Component
 
     public function render()
     {
-        return view('livewire.perbaikan-berkas-oap');
+        return view('livewire.perbaikan-berkas-oap')->layout('components.layouts.app');
     }
 }
