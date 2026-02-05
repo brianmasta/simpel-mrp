@@ -1,5 +1,22 @@
 <div>
     {{-- RIWAYAT PENGAJUAN SURAT --}}
+
+<style>
+/* sembunyikan preview desktop di HP */
+@media (max-width: 768px) {
+    .preview-desktop {
+        display: none !important;
+    }
+}
+
+/* sembunyikan preview mobile di desktop */
+@media (min-width: 769px) {
+    .preview-mobile {
+        display: none !important;
+    }
+}
+</style>
+
 <div class="card mb-4">
     <div class="card-header bg-primary text-white"><strong>Riwayat Pengajuan Surat OAP</strong></div>
     <div class="card-body">
@@ -134,39 +151,210 @@
                 </div>
             @endif
 
-            <hr>
-            <h5 class="mb-3">Unggah Dokumen Pendukung</h5>
+<hr>
+<h5 class="mb-3">Unggah Dokumen Pendukung</h5>
 
-            <div class="mb-3">
-                <label class="form-label">Pas Foto Ukuran 4x6 Latar Belakang Merah <span class="text-danger">*</span></label>
-                <input type="file" wire:model="foto" class="form-control">
-                <small class="text-muted d-block mt-1">Format: JPG/PNG • Maks 2MB • Tampak jelas wajah</small>
-                @if ($foto)
-                    <img src="{{ $foto->temporaryUrl() }}" alt="Foto Preview" class="img-thumbnail mt-2" width="120">
-                @endif
-                @error('foto') <small class="text-danger">{{ $message }}</small> @enderror
-            </div>
+<div class="table-responsive">
+    <table class="table table-bordered align-middle responsive-card">
+        <thead class="table-light">
+            <tr>
+                <th width="40">No</th>
+                <th>Dokumen</th>
+                <th>Unggah Berkas</th>
+                <th width="140" class="d-none d-md-table-cell">Status</th>
+                <th width="120" class="d-none d-md-table-cell">Preview</th>
+            </tr>
+        </thead>
 
-            <div class="mb-3">
-                <label class="form-label">KTP <span class="text-danger">*</span></label>
-                <input type="file" wire:model="ktp" class="form-control">
-                <small class="text-muted d-block mt-1">Format PDF/JPG • Maks 2MB • Wajib asli (bukan fotocopy)</small>
-                @error('ktp') <small class="text-danger">{{ $message }}</small> @enderror
-            </div>
+        <tbody>
+            {{-- FOTO --}}
+            <tr>
+                <td>1</td>
+                <td>Pas Foto 4x6 (Latar Belakang Merah)</td>
+                <td>
+                    <input type="file" wire:model.defer="foto" class="form-control w-100" accept="image/jpeg,image/png" capture="environment">
+                    <div wire:loading wire:target="foto" class="small text-primary mt-1">
+                        Unggah...
+                    </div>
+                    <small class="text-muted">JPG / PNG • Max 2MB</small>
+                    <div class="mt-1 d-md-none">
+                        @if($foto)
+                            <span class="badge bg-success">Siap</span>
+                        @else
+                            <span class="badge bg-secondary">Belum</span>
+                        @endif
+                    </div>
+                    {{-- PREVIEW MOBILE --}}
+                    <div class="preview-mobile mt-2">
+                        @if($foto)
+                            <img src="{{ $foto->temporaryUrl() }}" class="img-thumbnail" style="max-width:120px">
+                        @endif
+                    </div>
+                    @error('foto') <small class="text-danger">{{ $message }}</small> @enderror
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @if($foto)
+                        <span class="badge bg-success">Siap</span>
+                    @else
+                        <span class="badge bg-secondary">Belum</span>
+                    @endif
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @if($foto)
+                        <img src="{{ $foto->temporaryUrl() }}" class="img-thumbnail mt-2" width="max-width:100px">
+                    @endif
+                </td>
+            </tr>
 
-            <div class="mb-3">
-                <label class="form-label">Kartu Keluarga (KK) <span class="text-danger">*</span></label>
-                <input type="file" wire:model="kk" class="form-control">
-                <small class="text-muted d-block mt-1">Format PDF/JPG • Maks 2MB • Seluruh anggota keluarga terlihat</small>
-                @error('kk') <small class="text-danger">{{ $message }}</small> @enderror
-            </div>
+            {{-- KTP --}}
+            <tr>
+                <td>2</td>
+                <td>KTP</td>
+                <td>
+                    <input type="file" wire:model.defer="ktp" class="form-control form-control w-100" accept="image/jpeg,image/png,application/pdf">
+                    <div wire:loading wire:target="ktp" class="small text-primary mt-1">
+                        Unggah...
+                    </div>
+                    <small class="text-muted">PDF / JPG • Max 2MB</small>
+                    <div class="mt-1 d-md-none">
+                        @if($ktp)
+                            <span class="badge bg-success">Siap</span>
+                        @else
+                            <span class="badge bg-secondary">Belum</span>
+                        @endif
+                    </div>
+                    {{-- PREVIEW MOBILE --}}
+                    <div class="preview-mobile mt-2">
+                        @if($ktp)
+                            @if(str_starts_with($ktp->getMimeType(), 'image'))
+                                <img src="{{ $ktp->temporaryUrl() }}" class="img-thumbnail" style="max-width:120px">
+                            @elseif($ktp->getClientOriginalExtension() === 'pdf')
+                                <span class="badge bg-danger">PDF</span>
+                            @endif
+                        @endif
+                    </div>
+                    @error('ktp') <small class="text-danger">{{ $message }}</small> @enderror
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @if($ktp)
+                        <span class="badge bg-success">Siap</span>
+                    @else
+                        <span class="badge bg-secondary">Belum</span>
+                    @endif
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @if($ktp)  
+                        @if($ktp && str_starts_with($ktp->getMimeType(), 'image'))
+                            <img src="{{ $ktp->temporaryUrl() }}" class="img-thumbnail" width="70">
+                        @else
+                            <span class="badge bg-danger">PDF</span>
+                        @endif
+                    @endif
+                </td>
+            </tr>
 
-            <div class="mb-3">
-                <label class="form-label">Akte Kelahiran <span class="text-danger">*</span></label>
-                <input type="file" wire:model="akte" class="form-control">
-                <small class="text-muted d-block mt-1">Format PDF/JPG • Maks 2MB</small>
-                @error('akte') <small class="text-danger">{{ $message }}</small> @enderror
-            </div>
+            {{-- KK --}}
+            <tr>
+                <td>3</td>
+                <td>Kartu Keluarga</td>
+                <td>
+                    <input type="file" wire:model.defer="kk" class="form-control form-control w-100" accept="image/jpeg,image/png,application/pdf">
+                    <div wire:loading wire:target="kk" class="small text-primary mt-1">
+                        Unggah...
+                    </div>
+                    <small class="text-muted">PDF / JPG • Max 2MB</small>
+                    <div class="mt-1 d-md-none">
+                        @if($kk)
+                            <span class="badge bg-success">Siap</span>
+                        @else
+                            <span class="badge bg-secondary">Belum</span>
+                        @endif
+                    </div>
+                    {{-- PREVIEW MOBILE --}}
+                    <div class="preview-mobile mt-2">
+                        @if($kk)
+                            @if(str_starts_with($kk->getMimeType(), 'image'))
+                                <img src="{{ $kk->temporaryUrl() }}" class="img-thumbnail" style="max-width:120px">
+                            @elseif($kk->getClientOriginalExtension() === 'pdf')
+                                <span class="badge bg-danger">PDF</span>
+                            @endif
+                        @endif
+                    </div>
+                    @error('kk') <small class="text-danger">{{ $message }}</small> @enderror
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @if($kk)
+                        <span class="badge bg-success">Siap</span>
+                    @else
+                        <span class="badge bg-secondary">Belum</span>
+                    @endif
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @if($kk)                   
+                        @if($kk && str_starts_with($kk->getMimeType(), 'image'))
+                            <img src="{{ $kk->temporaryUrl() }}" class="img-thumbnail" width="70">
+                        @else
+                            <span class="badge bg-danger">PDF</span>
+                        @endif
+                    @endif
+                </td>
+            </tr>
+
+            {{-- AKTE --}}
+            <tr>
+                <td>4</td>
+                <td>Akte Kelahiran</td>
+                <td>
+                    <input type="file" wire:model.defer="akte" class="form-control form-control w-100" accept="image/jpeg,image/png,application/pdf">
+                    <div wire:loading wire:target="akte" class="small text-primary mt-1">
+                        Unggah...
+                    </div>
+                    <small class="text-muted">PDF / JPG • Max 2MB</small>
+                    <div class="mt-1 d-md-none">
+                        @if($akte)
+                            <span class="badge bg-success">Siap</span>
+                        @else
+                            <span class="badge bg-secondary">Belum</span>
+                        @endif
+                    </div>
+                    {{-- PREVIEW MOBILE --}}
+                    <div class="preview-mobile mt-2">
+                        @if($akte)
+                            @if(str_starts_with($akte->getMimeType(), 'image'))
+                                <img src="{{ $akte->temporaryUrl() }}" class="img-thumbnail" style="max-width:120px">
+                            @elseif($akte->getClientOriginalExtension() === 'pdf')
+                                <span class="badge bg-danger">PDF</span>
+                            @endif
+                        @endif
+                    </div>
+                    @error('akte') <small class="text-danger">{{ $message }}</small> @enderror
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @if($akte)
+                        <span class="badge bg-success">Siap</span>
+                    @else
+                        <span class="badge bg-secondary">Belum</span>
+                    @endif
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @if($akte)
+                        @if($akte && str_starts_with($akte->getMimeType(), 'image'))
+                            <img src="{{ $akte->temporaryUrl() }}" class="img-thumbnail" width="70">
+                        @else
+                            <span class="badge bg-danger">PDF</span>
+                        @endif
+                    @endif
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<div wire:loading wire:target="foto,ktp,kk,akte" class="text-primary small">
+    Uploading...
+</div>
+
 
             <hr>
 

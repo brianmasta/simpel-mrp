@@ -350,6 +350,22 @@ class SuratOap extends Component
         return $romawi[$bulan] ?? '';
     }
 
+    public function updatedFoto()
+    {
+        if ($this->foto) {
+            $mime = $this->foto->getMimeType();
+
+            if (!str_starts_with($mime, 'image')) {
+                $this->reset('foto');
+
+                $this->dispatch('toast', [
+                    'type' => 'error',
+                    'message' => 'Pas foto harus berupa gambar (JPG / PNG), bukan PDF.'
+                ]);
+            }
+        }
+    }
+
     public function render()
     {
         return view('livewire.surat-oap')->layout('components.layouts.app');
