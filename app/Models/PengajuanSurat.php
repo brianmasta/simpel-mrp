@@ -32,4 +32,9 @@ class PengajuanSurat extends Model
     {
         return $this->belongsTo(\App\Models\Profil::class, 'user_id', 'user_id');
     }
+
+    public function verifikasi()
+    {
+        return $this->hasMany(VerifikasiPengajuan::class, 'pengajuan_id');
+    }
 }

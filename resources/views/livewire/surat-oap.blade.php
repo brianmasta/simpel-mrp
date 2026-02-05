@@ -47,25 +47,35 @@
                             <td>{{ $item->nomor_surat ?? '-' }}</td>
                             <td>{{ $item->alasan ?? '-' }}</td>
                             <td>
-                                @if ($item->status === 'terbit')
-                                    <span class="badge bg-success">Terbit</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">{{ ucfirst($item->status) }}</span>
-                                @endif
+    <span class="badge 
+        bg-{{ 
+            $item->status === 'terbit' || $item->status === 'valid' ? 'success' :
+            ($item->status === 'perlu_perbaikan' ? 'danger' :
+            ($item->status === 'verifikasi' ? 'warning' : 'secondary'))
+        }}">
+        {{ strtoupper($item->status) }}
+    </span>
                             </td>
                             <td>{{ $item->created_at?->format('d-m-Y') ?? '-' }}</td>
                             <td>
-@php
-    $filePath = $item->file_surat; // misal "surat/12345.pdf"
-@endphp
 
-@if ($filePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($filePath))
-    <a href="{{ \Illuminate\Support\Facades\Storage::url($filePath) }}" target="_blank" class="btn btn-sm btn-warning">
-        <i class="bi bi-download"></i> Unduh
-    </a>
-@else
-    <span class="text-muted">Belum tersedia</span>
-@endif
+    @if($item->status === 'perlu_perbaikan')
+        <a href="{{ route('perbaikan-berkas', $item->id) }}"
+           class="btn btn-sm btn-danger">
+            <i class="bi bi-tools me-1"></i> Perbaiki Berkas
+        </a>
+
+    @elseif($item->file_surat && \Illuminate\Support\Facades\Storage::disk('public')->exists($item->file_surat))
+        <a href="{{ \Illuminate\Support\Facades\Storage::url($item->file_surat) }}"
+           target="_blank"
+           class="btn btn-sm btn-warning">
+            <i class="bi bi-download me-1"></i> Unduh
+        </a>
+
+    @else
+        <span class="text-muted">Belum tersedia</span>
+    @endif
+
                             </td>
                         </tr>
                     @empty

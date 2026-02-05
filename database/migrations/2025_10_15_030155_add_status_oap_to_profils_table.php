@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('profils', function (Blueprint $table) {
-            $table->boolean('status_oap')->default(false);
-            $table->string('marga_terverifikasi')->nullable();
+            if (!Schema::hasColumn('profils', 'status_oap')) {
+                $table->boolean('status_oap')->default(false)->after('status');
+            }
+
+            if (!Schema::hasColumn('profils', 'marga_terverifikasi')) {
+                $table->string('marga_terverifikasi')->nullable()->after('status_oap');
+            }
         });
     }
 
@@ -23,7 +28,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('profils', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('profils', 'marga_terverifikasi')) {
+                $table->dropColumn('marga_terverifikasi');
+            }
+
+            if (Schema::hasColumn('profils', 'status_oap')) {
+                $table->dropColumn('status_oap');
+            }
         });
     }
 };

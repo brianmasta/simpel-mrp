@@ -13,9 +13,11 @@ use App\Livewire\DataMarga;
 use App\Livewire\DataSuratOap;
 use App\Livewire\FormatSurat;
 use App\Livewire\PengajuanMarga;
+use App\Livewire\PerbaikanBerkasOap;
 use App\Livewire\Profil;
 use App\Livewire\SuratOap;
 use App\Livewire\Verifikasi;
+use App\Livewire\VerifikasiBerkas;
 use App\Livewire\VerifikasiSurat;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -25,7 +27,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 
 
-Route::get('/login', Login::class)->name('login')->middleware('guest');;
+Route::get('/login', Login::class)->name('login')->middleware('guest');
 
 Route::post('/logout', function () {
     Auth::logout();
@@ -81,6 +83,7 @@ Route::middleware(['auth', 'verified', 'role:pengguna,admin'])->group(function (
 
     Route::get('/surat-oap', SuratOap::class)->name('surat-oap');
     Route::get('/pengajuan-marga', PengajuanMarga::class)->name('pengajuan-marga');
+    Route::get('/perbaikan-berkas/{id}', PerbaikanBerkasOap::class)->name('perbaikan-berkas');
 
 });
 
@@ -89,6 +92,7 @@ Route::middleware(['auth', 'verified', 'role:admin,petugas'])->group(function ()
     Route::get('/verifikasi', Verifikasi::class)->name('verifikasi');
     Route::get('/data-marga', DataMarga::class)->name('data-marga');
     Route::get('/data-surat-oap', DataSuratOap::class)->name('data-surat-oap');
+    Route::get('/verifikasi-berkas', VerifikasiBerkas::class)->name('verifikasi-berkas');
     
 });
 

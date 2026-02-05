@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'fonnte' => [
+        'endpoint' => env('FONNTE_ENDPOINT'),
+        'token' => env('FONNTE_TOKEN'),
+    ],
+
 ];
