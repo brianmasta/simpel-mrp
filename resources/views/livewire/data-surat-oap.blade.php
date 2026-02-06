@@ -69,15 +69,31 @@
                                     <span class="text-muted">Belum tersedia</span>
                                 @endif
                             </td>
-                            <td>
-                                <button wire:click="lihatData({{ $item->id }})" class="btn btn-info btn-sm">
+                            <td class="text-nowrap">
+                                <button
+                                    wire:click="lihatData({{ $item->id }})"
+                                    class="btn btn-info btn-sm">
                                     <i class="bi bi-eye"></i> Lihat
                                 </button>
-                                @if(auth()->user()->role === 'admin')
-                                <button class="btn btn-sm btn-danger ms-1"
-                                        wire:click="konfirmasiHapus({{ $item->id }})">
-                                    <i class="bi bi-trash"></i> Hapus
+
+                                <button
+                                    wire:click="kirimEmail({{ $item->id }})"
+                                    class="btn btn-primary btn-sm ms-1">
+                                    <i class="bi bi-envelope"></i> Email
                                 </button>
+
+                                <button
+                                    wire:click="kirimWhatsapp({{ $item->id }})"
+                                    class="btn btn-success btn-sm ms-1">
+                                    <i class="bi bi-whatsapp"></i> WA
+                                </button>
+
+                                @if(auth()->user()->role === 'admin')
+                                    <button
+                                        class="btn btn-sm btn-danger ms-1"
+                                        wire:click="konfirmasiHapus({{ $item->id }})">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
                                 @endif
                             </td>
                         </tr>

@@ -66,7 +66,7 @@
         </a>
 
     @elseif($item->file_surat && \Illuminate\Support\Facades\Storage::disk('public')->exists($item->file_surat))
-        <a href="{{ \Illuminate\Support\Facades\Storage::url($item->file_surat) }}"
+        <a href="{{ \Illuminate\Support\Facades\Storage::url($item->file_surat) }}?v={{ time() }}"
            target="_blank"
            class="btn btn-sm btn-warning">
             <i class="bi bi-download me-1"></i> Unduh

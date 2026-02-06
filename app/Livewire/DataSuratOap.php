@@ -7,7 +7,11 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PengajuanSuratExport;
+use App\Mail\SuratOapMail;
+use App\Services\FonnteService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -170,5 +174,92 @@ class DataSuratOap extends Component
             echo Storage::get('public/' . $surat->file_surat);
         }, basename($surat->file_surat));
     }
+
+    public function kirimEmail($id)
+    {
+        $pengajuan = PengajuanSurat::with('user')->findOrFail($id);
+
+        // ✅ email dari tabel users
+        if (
+            !$pengajuan->user ||
+            !$pengajuan->user->email
+        ) {
+            session()->flash('error', 'Email pemohon belum tersedia.');
+            return;
+        }
+
+        if (!$pengajuan->file_surat) {
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'File surat belum tersedia.'
+            ]);
+            return;
+        }
+
+        // ✅ path file sesuai Storage::url()
+        $path = storage_path(
+            'app/public/' . $pengajuan->file_surat
+        );
+
+        if (!file_exists($path)) {
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'File surat tidak ditemukan di server.'
+            ]);
+            return;
+        }
+
+        // ✅ kirim email
+        Mail::to($pengajuan->user->email)
+            ->send(new SuratOapMail($pengajuan, $path));
+
+        // ✅ notifikasi UI
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Surat berhasil dikirim ke Email.'
+        ]);
+    }
+
+    public function kirimWhatsapp($id)
+    {
+        $pengajuan = PengajuanSurat::with('user.profil')->findOrFail($id);
+
+        if (
+            !$pengajuan->user ||
+            !$pengajuan->user->profil ||
+            !$pengajuan->user->profil->no_hp
+        ) {
+            session()->flash('error', 'Nomor WhatsApp pemohon belum tersedia.');
+            return;
+        }
+
+        if (!$pengajuan->file_surat) {
+            session()->flash('error', 'File surat belum tersedia.');
+            return;
+        }
+
+        // 🔥 LINK PDF ANTI CACHE (KONSISTEN)
+        $linkSurat = Storage::url($pengajuan->file_surat) . '?v=' . time();
+
+        $pesan =
+            "📄 *SURAT OAP TELAH DITERBITKAN*\n\n" .
+            "Yth. Bapak/Ibu *{$pengajuan->user->profil->nama}*,\n\n" .
+            "Surat Keterangan Orang Asli Papua (OAP) Anda\n" .
+            "telah *DITERBITKAN* dan dapat diunduh melalui tautan berikut:\n\n" .
+            "🔗 {$linkSurat}\n\n" .
+            "Hormat kami,\n" .
+            "*SIMPEL-MRP*\n" .
+            "Majelis Rakyat Papua Tengah";
+
+        FonnteService::send(
+            $pengajuan->user->profil->no_hp,
+            $pesan
+        );
+
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Surat berhasil dikirim ke WhatsApp.'
+        ]);
+        }
     
 }
