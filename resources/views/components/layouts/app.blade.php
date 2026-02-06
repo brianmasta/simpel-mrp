@@ -68,6 +68,33 @@
 }
 </style>
 
+<style>
+.simpel-loader {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.simpel-loader.show {
+  display: flex;
+}
+
+.simpel-loader-logo {
+  width: 90px;
+  animation: simpelPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes simpelPulse {
+  0% { transform: scale(1); opacity: .85; }
+  50% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: .85; }
+}
+</style>
+
 
 
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
@@ -75,6 +102,19 @@
     
   </head>
   <body>
+<!-- SIMPEL-MRP Page Loader -->
+<div id="simpel-loader" class="simpel-loader">
+  <div class="text-center">
+    <img
+      src="{{ asset('assets/img/logo.png') }}"
+      alt="SIMPEL-MRP"
+      class="simpel-loader-logo"
+    >
+    <div class="mt-3 text-muted fw-semibold">
+      Memuat layanan SIMPEL-MRP…
+    </div>
+  </div>
+</div>
     <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
       <div class="sidebar-header border-bottom">
         <div class="sidebar-brand">
@@ -401,5 +441,36 @@ document.addEventListener("livewire:init", () => {
 </div>
 
   </body>
+<script>
+(function () {
+  // cegah register ulang saat Livewire navigate
+  if (window.__simpelLoaderInitialized) return;
+  window.__simpelLoaderInitialized = true;
+
+  window.__simpelLoaderStart = null;
+  const MIN_LOADING_TIME = 600; // ms
+
+  document.addEventListener('livewire:navigating', () => {
+    window.__simpelLoaderStart = Date.now();
+
+    setTimeout(() => {
+      document.getElementById('simpel-loader')?.classList.add('show');
+    }, 150);
+  });
+
+  document.addEventListener('livewire:navigated', () => {
+    const loader = document.getElementById('simpel-loader');
+    if (!loader || !window.__simpelLoaderStart) return;
+
+    const elapsed = Date.now() - window.__simpelLoaderStart;
+    const remaining = MIN_LOADING_TIME - elapsed;
+
+    setTimeout(() => {
+      loader.classList.remove('show');
+      window.__simpelLoaderStart = null;
+    }, remaining > 0 ? remaining : 0);
+  });
+})();
+</script>
 </html>
 
