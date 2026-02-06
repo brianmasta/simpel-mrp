@@ -239,7 +239,9 @@ class DataSuratOap extends Component
         }
 
         // 🔥 LINK PDF ANTI CACHE (KONSISTEN)
-        $linkSurat = Storage::url($pengajuan->file_surat) . '?v=' . time();
+        $linkSurat = url(
+            Storage::url($pengajuan->file_surat)
+        ) . '?v=' . time();
 
         $pesan =
             "📄 *SURAT OAP TELAH DITERBITKAN*\n\n" .
