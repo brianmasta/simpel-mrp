@@ -62,7 +62,7 @@
                             <td>{{ $item->updated_at->format('d/m/Y') }}</td>
                             <td>
                                 @if ($item->file_surat)
-                                    <a href="{{ Storage::url($item->file_surat) }}" target="_blank" class="btn btn-sm btn-warning">
+                                    <a href="{{ Storage::url($item->file_surat) }}?v={{ time() }}" target="_blank" class="btn btn-sm btn-warning">
                                         <i class="bi bi-download"></i> Unduh
                                     </a>
                                 @else
