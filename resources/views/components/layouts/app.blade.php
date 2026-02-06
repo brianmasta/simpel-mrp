@@ -306,8 +306,8 @@
       </div> 
             @livewireScripts
       <footer class="footer px-4">
-        <div><a href="https://mrp.papuatengahprov.go.id/">SIMPEL MRP </a> &copy; 2025 By MRP Provinsi Papua Tengah.</div>
-        <div class="ms-auto">Powered by&nbsp;<a href="#">Sub Bag. Umum & Humas</a></div>
+        <div><a href="https://simpelmrp.com">SIMPEL MRP </a> &copy; 2026 By MRP Provinsi Papua Tengah.</div>
+        <div class="ms-auto">Powered by&nbsp;<a href="#">Bag. Umum & Humas Sekretariat MRP-PPT</a></div>
       </footer>
     </div>
 

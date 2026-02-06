@@ -1398,7 +1398,7 @@
         <!-- You can delete the links only if you've purchased the pro version. -->
         <!-- Licensing information: https://bootstrapmade.com/license/ -->
         <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="#">Sub Bag - Umum & Humas</a> Develop by <a href="https://web.facebook.com/brian.marandof">Brian M (Prakom)
+        Designed by <a href="#">Bag. Umum & Humas Sekretariat MRP-PPT</a> Develop by <a href="https://web.facebook.com/brian.marandof">Brian M (Prakom)
       </div>
     </div>
 
