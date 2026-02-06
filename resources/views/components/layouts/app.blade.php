@@ -57,6 +57,17 @@
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 
+<style>
+  .online-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #28a745; /* hijau */
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
+}
+</style>
+
 
 
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
@@ -92,115 +103,119 @@
         
         {{-- Admin bisa lihat semua --}}
         @if(auth()->check() && auth()->user()->role === 'admin')
-        <li class="nav-item"><a class="nav-link {{ request()->is('profil') ? 'active' : '' }}" wire:navigate href="/profil">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Profil</a></li>
-        <li class="nav-item"><a class="nav-link {{ request()->is('surat-oap') ? 'active' : '' }}" wire:navigate href="/surat-oap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-clock-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-            Surat OAP</a></li>
-        <li class="nav-item"><a class="nav-link {{ request()->is('verifikasi') ? 'active' : '' }}" wire:navigate href="/verifikasi">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Verifikasi</a></li>
-                     <li class="nav-item"><a class="nav-link {{ request()->is('verifikasi-berkas') ? 'active' : '' }}" wire:navigate href="/verifikasi-berkas">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Verifikasi Berkas</a></li>
-        <li class="nav-item"><a class="nav-link {{ request()->is('pengajuan-marga') ? 'active' : '' }}" wire:navigate href="/pengajuan-marga">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Pengajuan Marga</a></li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('profil') ? 'active' : '' }}" wire:navigate href="/profil">
+            <i class="nav-icon cil-user"></i>
+            Profil
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('surat-oap') ? 'active' : '' }}" wire:navigate href="/surat-oap">
+            <i class="nav-icon cil-envelope-open"></i>
+            Surat OAP
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('verifikasi') ? 'active' : '' }}" wire:navigate href="/verifikasi">
+            <i class="nav-icon cil-task"></i>
+            Verifikasi Marga
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('verifikasi-berkas') ? 'active' : '' }}" wire:navigate href="/verifikasi-berkas">
+            <i class="nav-icon cil-clipboard"></i>
+            Verifikasi Berkas
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('pengajuan-marga') ? 'active' : '' }}" wire:navigate href="/pengajuan-marga">
+            <i class="nav-icon cil-people"></i>
+            Pengajuan Marga
+          </a>
+        </li>
         <li class="nav-title">Master Data</li>
-      <li class="nav-item"><a class="nav-link {{ request()->is('format-surat') ? 'active' : '' }}" wire:navigate href="/format-surat">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-envelope-fill" viewBox="0 0 16 16">
-            <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
-          </svg>
-             Format Surat</a>
-          <ul class="nav-group-items compact">
-            {{-- <li class="nav-item"><a class="nav-link" href="base/accordion.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Surat OAP Umum</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/breadcrumb.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Surat OAP IPDN</a></li> --}}
-        </li> 
-      </ul>
-      {{-- <li class="nav-item"><a class="nav-link" wire:navigate href="/pengajuan-permohonan">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Tanda Tangan Digital</a></li> --}}
-            <li class="nav-item"><a class="nav-link {{ request()->is('data-marga') ? 'active' : '' }}" wire:navigate href="/data-marga">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Data Marga</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->is('data-surat-oap') ? 'active' : '' }}" wire:navigate href="/data-surat-oap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Data Surat OAP</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->is('admin/manage-users') ? 'active' : '' }}" wire:navigate href="/admin/manage-users">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Akun</a></li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('format-surat') ? 'active' : '' }}" wire:navigate href="/format-surat">
+            <i class="nav-icon cil-description"></i>
+            Format Surat
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('data-marga') ? 'active' : '' }}" wire:navigate href="/data-marga">
+            <i class="nav-icon cil-sitemap"></i>
+            Data Marga
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('data-surat-oap') ? 'active' : '' }}" wire:navigate href="/data-surat-oap">
+            <i class="nav-icon cil-folder-open"></i>
+            Data Surat OAP
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('admin/manage-users') ? 'active' : '' }}" wire:navigate href="/admin/manage-users">
+            <i class="nav-icon cil-people"></i>
+            Akun
+          </a>
+        </li>
 
         @endif
-
-        
 
         {{-- Petugas --}}
        @if(auth()->check() && auth()->user()->role === 'petugas')
 
-        <li class="nav-item"><a class="nav-link {{ request()->is('profil') ? 'active' : '' }}" wire:navigate href="/profil">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Profil</a></li>
-                     <li class="nav-item"><a class="nav-link {{ request()->is('verifikasi') ? 'active' : '' }}" wire:navigate href="/verifikasi">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Verifikasi</a></li>
-                     <li class="nav-item"><a class="nav-link {{ request()->is('verifikasi-berkas') ? 'active' : '' }}" wire:navigate href="/verifikasi-berkas">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Verifikasi Berkas</a></li>
-            <li class="nav-item"><a class="nav-link {{ request()->is('data-marga') ? 'active' : '' }}" wire:navigate href="/data-marga">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Data Marga</a></li>
-          <li class="nav-item"><a class="nav-link {{ request()->is('data-surat-oap') ? 'active' : '' }}" wire:navigate href="/data-surat-oap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Data Surat OAP</a></li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('profil') ? 'active' : '' }}" wire:navigate href="/profil">
+            <i class="nav-icon cil-user"></i>
+            Profil
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('verifikasi') ? 'active' : '' }}" wire:navigate href="/verifikasi">
+            <i class="nav-icon cil-task"></i>
+            Verifikasi Marga
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('verifikasi-berkas') ? 'active' : '' }}" wire:navigate href="/verifikasi-berkas">
+            <i class="nav-icon cil-clipboard"></i>
+            Verifikasi Berkas
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('data-marga') ? 'active' : '' }}" wire:navigate href="/data-marga">
+            <i class="nav-icon cil-sitemap"></i>
+            Data Marga
+          </a>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('data-surat-oap') ? 'active' : '' }}" wire:navigate href="/data-surat-oap">
+            <i class="nav-icon cil-folder-open"></i>
+            Data Surat OAP
+          </a>
+        </li>
 
         @endif
 
       {{-- pengguna --}}
        @if(auth()->check() && auth()->user()->role === 'pengguna')
-        <li class="nav-item"><a class="nav-link {{ request()->is('profil') ? 'active' : '' }}" wire:navigate href="/profil">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Profil</a></li>
-        <li class="nav-item"><a class="nav-link {{ request()->is('surat-oap') ? 'active' : '' }}" wire:navigate href="/surat-oap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-clock-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-            Surat OAP</a></li>
-        <li class="nav-item"><a class="nav-link {{ request()->is('pengajuan-marga') ? 'active' : '' }}" wire:navigate href="/pengajuan-marga">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="nav-icon bi bi-file-earmark-text-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
-          </svg>
-             Pengajuan Marga</a></li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('profil') ? 'active' : '' }}" wire:navigate href="/profil">
+            <i class="nav-icon cil-user"></i>
+            Profil
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('surat-oap') ? 'active' : '' }}" wire:navigate href="/surat-oap">
+            <i class="nav-icon cil-envelope-open"></i>
+            Surat OAP
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('pengajuan-marga') ? 'active' : '' }}" wire:navigate href="/pengajuan-marga">
+            <i class="nav-icon cil-people"></i>
+            Pengajuan Marga
+          </a>
+        </li>
        @endif
 
       <div class="sidebar-footer border-top d-none d-md-flex">     
@@ -217,71 +232,69 @@
             </svg>
           </button>
           <ul class="header-nav">
-            <li class="nav-item">
-              {{-- <a class="nav-link">Brian Marandof</a> --}}
-              <a class="nav-link">{{ Auth::user()->name }}</a>
+            <li class="nav-item d-flex align-items-center">
+                <span class="online-dot me-2"></span>
+                <a class="nav-link p-0">{{ Auth::user()->name }}</a>
             </li>
             <li class="nav-item py-1">
               <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
             </li>
-<li class="nav-item dropdown">
-  <a class="nav-link py-0 pe-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-    <div class="avatar avatar-md">
-      <img class="avatar-img" src="{{ asset('assets/img/profil.jpg') }}" alt="{{ Auth::user()->email }}">
-    </div>
-  </a>
+            <li class="nav-item dropdown">
+              <a class="nav-link py-0 pe-0" data-coreui-toggle="dropdown" href="#" role="button"
+                aria-haspopup="true" aria-expanded="false">
+                <div class="avatar avatar-md">
+                  <img class="avatar-img"
+                      src="{{ asset('assets/img/profil.jpg') }}"
+                      alt="{{ Auth::user()->email }}">
+                </div>
+              </a>
 
-  <div class="dropdown-menu dropdown-menu-end pt-0">
-    <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">
-      Akun
-    </div>
+              <div class="dropdown-menu dropdown-menu-end pt-0">
+                <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">
+                  Akun
+                </div>
 
-    <!-- Profil -->
-    <a class="dropdown-item" href="/profil">
-      <svg class="icon me-2">
-        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-      </svg>
-      Profile
-    </a>
+                <!-- Profil -->
+                <a class="dropdown-item d-flex align-items-center" href="/profil">
+                  <i class="icon me-2 cil-user"></i>
+                  Profil
+                </a>
 
-    <!-- Logout -->
-    <form action="{{ route('logout') }}" method="POST" class="m-0 p-0">
-      @csrf
-      <button type="submit" class="dropdown-item d-flex align-items-center">
-        <svg class="icon me-2">
-          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
-        </svg>
-        Logout
-      </button>
-    </form>
-  </div>
-</li>
+                <!-- Logout -->
+                <form action="{{ route('logout') }}" method="POST" class="m-0 p-0">
+                  @csrf
+                  <button type="submit" class="dropdown-item d-flex align-items-center">
+                    <i class="icon me-2 cil-account-logout"></i>
+                    Logout
+                  </button>
+                </form>
+              </div>
+            </li>
 
           </ul>
         </div>
         <div class="container-fluid px-4">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb my-0">
-      @php
-        $routeName = Route::currentRouteName();
-        $current = ucwords(str_replace('-', ' ', $routeName));
-      @endphp
+              @php
+                $routeName = Route::currentRouteName();
+                $current = ucwords(str_replace('-', ' ', $routeName));
+              @endphp
 
-      @if ($routeName === 'dashboard' || $routeName === null)
-        {{-- Kalau di halaman dashboard --}}
-        <li class="breadcrumb-item active">
-          <span>Dashboard</span>
-        </li>
-      @else
-        {{-- Kalau di halaman lain --}}
-        <li class="breadcrumb-item">
-          <a href="{{ route('dashboard') }}">Dashboard</a>
-        </li>
-        <li class="breadcrumb-item active">
-          <span>{{ $current }}</span>
-        </li>
-      @endif
+              @if ($routeName === 'dashboard' || $routeName === null)
+                {{-- Kalau di halaman dashboard --}}
+                <li class="breadcrumb-item active">
+                  <span>Dashboard</span>
+                </li>
+              @else
+                {{-- Kalau di halaman lain --}}
+                <li class="breadcrumb-item">
+                  <a href="{{ route('dashboard') }}">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active">
+                  <span>{{ $current }}</span>
+                </li>
+              @endif
             </ol>
           </nav>
         </div>
