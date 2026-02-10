@@ -27,4 +27,5 @@ class Marga extends Model
     {
         return $this->hasMany(MargaHistory::class);
     }
+
 }

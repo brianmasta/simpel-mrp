@@ -52,6 +52,8 @@ class Profil extends Component
 
     public $foto_ktp, $foto_kk;
 
+    public $sumberMarga;
+
     protected $rules = [
         'nik' => 'required|digits:16',
         'no_kk' => 'required|digits:16',
@@ -181,35 +183,12 @@ private function extractNamaFromKtp($text)
      */
     public function verifikasiMarga()
     {
-        // Reset status
-        $this->margaDitemukan = null;
-        $this->marga = null;
+        $hasil = $this->deteksiMargaDariUserAtauIbu();
 
-        // 1️⃣ Ambil marga dari nama lengkap
-        if ($this->nama_lengkap) {
-            $parts = explode(' ', trim($this->nama_lengkap));
-            $margaDariNama = ucfirst(strtolower(end($parts)));
-        }
-
-        // 2️⃣ Ambil marga dari nama ibu jika nama lengkap tidak mengandung marga
-        if (empty($margaDariNama) || strlen($margaDariNama) < 3) {
-            if ($this->nama_ibu) {
-                $partsIbu = explode(' ', trim($this->nama_ibu));
-                $margaDariNama = ucfirst(strtolower(end($partsIbu)));
-            }
-        }
-
-        if (!empty($margaDariNama)) {
-            $cekMarga = Marga::where('marga', $margaDariNama)->first();
-
-            if ($cekMarga) {
-                $this->marga = $cekMarga->marga;
-                $this->margaDitemukan = true;
-            } else {
-                $this->marga = $margaDariNama;
-                $this->margaDitemukan = false;
-            }
-        }
+        $this->marga = $hasil['marga'];
+        $this->margaDitemukan = $hasil['ditemukan'];
+        $this->status_oap = $hasil['ditemukan'];
+        $this->sumberMarga = $hasil['sumber']; 
     }
 
     /**
@@ -225,43 +204,79 @@ private function extractNamaFromKtp($text)
      */
     public function updatedNamaIbu()
     {
-        if (!$this->status_oap) {
-            $this->verifikasiMarga();
-        }
+        $this->verifikasiMarga();
     }
 
-    protected function cekMargaOtomatis($namaLengkap, $isNamaIbu = false)
-    {
-        // Ubah jadi Title Case biar pencarian seragam
-        $namaArray = explode(' ', \Illuminate\Support\Str::title($namaLengkap));
+    // protected function cekMargaOtomatis($namaLengkap, $isNamaIbu = false)
+    // {
+    //     // Ubah jadi Title Case biar pencarian seragam
+    //     $namaArray = explode(' ', \Illuminate\Support\Str::title($namaLengkap));
 
-        // Cek tiap kata apakah ada di tabel margas
-        $margaDitemukan = \App\Models\Marga::whereIn('marga', $namaArray)->first();
+    //     // Cek tiap kata apakah ada di tabel margas
+    //     $margaDitemukan = \App\Models\Marga::whereIn('marga', $namaArray)->first();
 
-        if ($margaDitemukan) {
-            $this->marga = $margaDitemukan->nama;
-            $this->margaDitemukan = true;
-            $this->status_oap = true; // ✅ otomatis set status OAP = true
-            $this->marga_terverifikasi = $margaDitemukan->nama;
-        } else {
-            $this->marga = end($namaArray);
-            $this->margaDitemukan = false;
-            $this->status_oap = false; // ❌ belum OAP
-            $this->marga_terverifikasi = null;
+    //     if ($margaDitemukan) {
+    //         $this->marga = $margaDitemukan->nama;
+    //         $this->margaDitemukan = true;
+    //         $this->status_oap = true; // ✅ otomatis set status OAP = true
+    //         $this->marga_terverifikasi = $margaDitemukan->nama;
+    //     } else {
+    //         $this->marga = end($namaArray);
+    //         $this->margaDitemukan = false;
+    //         $this->status_oap = false; // ❌ belum OAP
+    //         $this->marga_terverifikasi = null;
 
-            // Jika dicek lewat nama ibu dan belum ketemu
-            if ($isNamaIbu) {
-                $namaArrayIbu = explode(' ', \Illuminate\Support\Str::title($namaLengkap));
-                $margaIbu = \App\Models\Marga::whereIn('marga', $namaArrayIbu)->first();
+    //         // Jika dicek lewat nama ibu dan belum ketemu
+    //         if ($isNamaIbu) {
+    //             $namaArrayIbu = explode(' ', \Illuminate\Support\Str::title($namaLengkap));
+    //             $margaIbu = \App\Models\Marga::whereIn('marga', $namaArrayIbu)->first();
 
-                if ($margaIbu) {
-                    $this->margaDitemukan = true;
-                    $this->status_oap = true;
-                    $this->marga_terverifikasi = $margaIbu->nama;
-                }
-            }
-        }
-    }
+    //             if ($margaIbu) {
+    //                 $this->margaDitemukan = true;
+    //                 $this->status_oap = true;
+    //                 $this->marga_terverifikasi = $margaIbu->nama;
+    //             }
+    //         }
+    //     }
+    // }
+
+    // protected function deteksiMargaUserAtauIbu()
+    // {
+    //     // 1️⃣ Coba dari nama lengkap user
+    //     if ($this->nama_lengkap) {
+    //         $namaArray = explode(' ', Str::title($this->nama_lengkap));
+    //         $marga = Marga::whereIn('marga', $namaArray)->first();
+
+    //         if ($marga) {
+    //             return [
+    //                 'status_oap' => true,
+    //                 'marga' => $marga->marga,
+    //                 'sumber' => 'user'
+    //             ];
+    //         }
+    //     }
+
+    //     // 2️⃣ Fallback: nama ibu kandung
+    //     if ($this->nama_ibu) {
+    //         $namaIbuArray = explode(' ', Str::title($this->nama_ibu));
+    //         $margaIbu = Marga::whereIn('marga', $namaIbuArray)->first();
+
+    //         if ($margaIbu) {
+    //             return [
+    //                 'status_oap' => true,
+    //                 'marga' => $margaIbu->marga,
+    //                 'sumber' => 'ibu'
+    //             ];
+    //         }
+    //     }
+
+    //     // 3️⃣ Tidak ditemukan
+    //     return [
+    //         'status_oap' => false,
+    //         'marga' => null,
+    //         'sumber' => null
+    //     ];
+    // }
 
     private function isPapuaTengah($value)
     {
@@ -479,25 +494,11 @@ private function extractNamaFromKtp($text)
         }
 
         // 🔍 Logika verifikasi OAP otomatis
-        $namaArray = explode(' ', Str::title($this->nama_lengkap));
-        $margaDitemukan = Marga::whereIn('marga', $namaArray)->first();
+        $hasilMarga = $this->deteksiMargaDariUserAtauIbu();
 
-        $status_oap = false;
-        $marga_terverifikasi = null;
-
-        if ($margaDitemukan) {
-            $status_oap = true;
-            $marga_terverifikasi = $margaDitemukan->nama;
-        } else {
-            // Jika tidak ditemukan lewat nama lengkap → cek nama ibu
-            $namaIbuArray = explode(' ', Str::title($this->nama_ibu));
-            $margaIbu = Marga::whereIn('marga', $namaIbuArray)->first();
-
-            if ($margaIbu) {
-                $status_oap = true;
-                $marga_terverifikasi = $margaIbu->nama;
-            }
-        }
+        $profil->status_oap = $hasilMarga['ditemukan'];
+        $profil->marga_terverifikasi = $hasilMarga['marga'];
+        $profil->sumber_marga = $hasilMarga['sumber'];
 
         // ✅ Simpan data profil
         $profil->nik = $this->nik;
@@ -517,27 +518,67 @@ private function extractNamaFromKtp($text)
         $profil->kelurahan_id = $this->kelurahan_id;
 
         // ✅ Simpan hasil verifikasi OAP
-        $profil->status_oap = $status_oap;
-        $profil->marga_terverifikasi = $marga_terverifikasi;
+
 
         $profil->save();
 
         // ✅ Pesan sukses dinamis
-        if ($status_oap) {
-            $this->dispatch('toast', [
-                'message' => 'Profil berhasil disimpan dengan status OAP. Sekarang Anda sudah bisa mengajukan surat OAP.',
-                'type' => 'success'
-            ]);
-            // session()->flash('message', 'Profil berhasil disimpan. Status OAP terverifikasi (' . $marga_terverifikasi . ').');
-        } else {
-            $this->dispatch('toast', [
-                'message' => "Profil berhasil disimpan, namun status OAP belum terverifikasi. Silakan ajukan marga jika belum terdaftar.",
-                'type' => 'warning'
-            ]);
-            // session()->flash('message', 'Profil berhasil disimpan. Status OAP belum terverifikasi.');
-        }
+    if ($hasilMarga['ditemukan']) {
+        $this->dispatch('toast', [
+            'message' => 'Profil berhasil disimpan dengan status OAP. Sekarang Anda sudah bisa mengajukan surat OAP.',
+            'type' => 'success'
+        ]);
+    } else {
+        $this->dispatch('toast', [
+            'message' => 'Profil berhasil disimpan, namun status OAP belum terverifikasi. Silakan ajukan penambahan marga.',
+            'type' => 'warning'
+        ]);
+    }
 
     }
+
+    protected function deteksiMargaDariUserAtauIbu()
+    {
+        // 1️⃣ cek dari nama lengkap user
+        if ($this->nama_lengkap) {
+            $parts = explode(' ', Str::title(trim($this->nama_lengkap)));
+            $marga = Marga::whereIn('marga', $parts)->first();
+
+            if ($marga) {
+                return [
+                    'ditemukan' => true,
+                    'marga' => $marga->marga,
+                    'sumber' => 'user'
+                ];
+            }
+        }
+
+        // 2️⃣ fallback: nama ibu kandung
+        if ($this->nama_ibu) {
+            $partsIbu = explode(' ', Str::title(trim($this->nama_ibu)));
+            $margaIbu = Marga::whereIn('marga', $partsIbu)->first();
+
+            if ($margaIbu) {
+                return [
+                    'ditemukan' => true,
+                    'marga' => $margaIbu->marga,
+                    'sumber' => 'ibu'
+                ];
+            }
+        }
+
+        // 3️⃣ tidak ditemukan
+        $namaSumber = $this->nama_lengkap ?? $this->nama_ibu ?? '';
+        $parts = explode(' ', Str::title(trim($namaSumber)));
+        $margaTerakhir = end($parts);
+
+        return [
+            'ditemukan' => false,
+            'marga' => $margaTerakhir ?: null,
+            'sumber' => null
+        ];
+    }
+
 
 
     public function render()

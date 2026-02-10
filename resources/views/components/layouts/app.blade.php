@@ -279,15 +279,18 @@
             <li class="nav-item py-1">
               <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link py-0 pe-0" data-coreui-toggle="dropdown" href="#" role="button"
-                aria-haspopup="true" aria-expanded="false">
+            <li class="nav-item dropdown" wire:ignore>
+  <button
+    type="button"
+    class="nav-link py-0 pe-0 bg-transparent border-0"
+    data-coreui-toggle="dropdown"
+    aria-expanded="false">
                 <div class="avatar avatar-md">
                   <img class="avatar-img"
                       src="{{ asset('assets/img/profil.jpg') }}"
                       alt="{{ Auth::user()->email }}">
                 </div>
-              </a>
+  </button>
 
               <div class="dropdown-menu dropdown-menu-end pt-0">
                 <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">
@@ -379,16 +382,7 @@
         document.addEventListener('livewire:navigated', initSidebar);
     </script>
 
-<script>
-document.addEventListener('livewire:load', function () {
-    // Saat Livewire selesai update DOM
-    Livewire.hook('message.processed', (message, component) => {
-        document.querySelectorAll('[data-coreui-toggle="dropdown"]').forEach(dropdownToggle => {
-            new coreui.Dropdown(dropdownToggle);
-        });
-    });
-});
-</script>
+
 
 
 <script>
@@ -471,6 +465,22 @@ document.addEventListener("livewire:init", () => {
     }, remaining > 0 ? remaining : 0);
   });
 })();
+</script>
+
+<script>
+function initCoreUI() {
+    document
+        .querySelectorAll('[data-coreui-toggle="dropdown"]')
+        .forEach(el => {
+            if (el._coreuiDropdown) {
+                el._coreuiDropdown.dispose();
+            }
+            el._coreuiDropdown = new coreui.Dropdown(el);
+        });
+}
+
+document.addEventListener('DOMContentLoaded', initCoreUI);
+document.addEventListener('livewire:navigated', initCoreUI);
 </script>
 </html>
 

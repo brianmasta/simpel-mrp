@@ -369,20 +369,32 @@
             <hr>
 
             <div class="d-grid gap-2">
-                <button 
-                    wire:click="kirim" 
-                    class="btn btn-primary"
-                    wire:loading.attr="disabled"
-                    @disabled(!$margaValid)
-                >
-                    <span wire:loading.remove>Kirim & Terbitkan Surat</span>
-                    <span wire:loading>Memproses...</span>
-                </button>
+                @if($margaValid)
+                    {{-- Tombol Kirim Surat --}}
+                    <button 
+                        wire:click="kirim" 
+                        class="btn btn-primary"
+                        wire:loading.attr="disabled"
+                    >
+                        <span wire:loading.remove>Kirim & Terbitkan Surat</span>
+                        <span wire:loading>Memproses...</span>
+                    </button>
+                @else
+                    {{-- Tombol Ajukan Marga --}}
+                    <a 
+                        href="{{ url('/pengajuan-marga') }}" 
+                        class="btn btn-warning"
+                    >
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Ajukan Marga
+                    </a>
+                @endif
             </div>
 
             @if(!$margaValid)
-                <div class="text-danger mt-3">
-                    ⚠️ Tombol kirim dinonaktifkan karena marga tidak terdaftar di database MRP.
+                <div class="alert alert-warning mt-3">
+                    ⚠️ Marga Anda belum terdaftar di database MRP.  
+                    Silakan ajukan penambahan marga terlebih dahulu agar dapat mengajukan Surat OAP.
                 </div>
             @endif
         </div>

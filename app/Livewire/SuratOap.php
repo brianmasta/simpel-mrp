@@ -26,46 +26,52 @@ class SuratOap extends Component
     public $pesanVerifikasi = '';
     public $riwayat = []; // <-- Tambahkan ini
     public $alasan_lain, $status_oaps, $wilayah_adat, $status_oap;
+    public $sumber_marga;
+
+    public $profilLengkap = false;
+    public $pesanProfil;
 
     public function mount()
     {
         $profil = Profil::where('user_id', Auth::id())->with('kabupaten')->first();
 
-        // Ambil kata terakhir sebagai marga
-        $parts = explode(' ', trim($profil?->nama_lengkap));
-        $this->marga = ucfirst(strtolower(end($parts)));
-        $cekMarga = Marga::where('marga', $this->marga)->first();
+        $this->profilLengkap = $this->cekProfilLengkap($profil);
 
-        // Cek apakah marga & suku valid
-        if ($cekMarga && $cekMarga->suku) {
-            $this->suku = $cekMarga->suku;
-            $this->margaValid = true;
-            $this->pesanVerifikasi = "✅ Marga '{$this->marga}' dengan suku '{$this->suku}' terverifikasi.";
-        } else {
-            $this->suku = null;
-            $this->margaValid = false;
-            $this->pesanVerifikasi = "⚠️ Marga '{$this->marga}' tidak ditemukan atau belum memiliki suku. Pengajuan tidak dapat dilakukan.";
-        }
-        
-        // dd($cekMarga->suku);
+        $this->pesanProfil = $this->profilLengkap
+            ? null
+            : '⚠️ Profil Anda belum lengkap. Lengkapi profil terlebih dahulu sebelum mengajukan surat.';
 
-        if ($profil) {
-            $this->nik = $profil->nik;
-            $this->no_kk = $profil->no_kk;
-            $this->namaLengkap = $profil->nama_lengkap;
-            $this->asalKabupaten = $profil->kabupaten->nama ?? '-';
-            $this->namaAyah = $profil->nama_ayah;
-            $this->namaIbu = $profil->nama_ibu;
-            $this->suku = $cekMarga?->suku;
+        if (!$profil) {
+            abort(403, 'Profil tidak ditemukan, Silahkan Lengkapi Data Profil Anda.');
         }
 
-        // Ambil riwayat surat pengguna
+
+        // ===== DATA PROFIL =====
+        $this->nik           = $profil->nik;
+        $this->no_kk         = $profil->no_kk;
+        $this->namaLengkap   = $profil->nama_lengkap;
+        $this->namaAyah      = $profil->nama_ayah;
+        $this->namaIbu       = $profil->nama_ibu;
+        $this->asalKabupaten = $profil->kabupaten->nama ?? '-';
+
+        // ===== VERIFIKASI MARGA =====
+        $this->verifikasiMarga();
+
+        // ===== RIWAYAT =====
         $this->riwayat = PengajuanSurat::where('user_id', Auth::id())
             ->latest()
             ->get();
+    }
 
-        // Verifikasi otomatis marga
-        $this->verifikasiMarga();
+    protected function cekProfilLengkap($profil)
+    {
+        return
+            !empty($profil->nik) &&
+            !empty($profil->no_kk) &&
+            !empty($profil->nama_lengkap) &&
+            !empty($profil->nama_ayah) &&
+            !empty($profil->nama_ibu) &&
+            !empty($profil->kabupaten_id);
     }
 
     public function unduhSurat($id)
@@ -83,30 +89,97 @@ class SuratOap extends Component
         }, basename($surat->file_surat));
     }
 
-    public function verifikasiMarga()
+    /* =========================================================
+     |  VERIFIKASI MARGA (USER → IBU)
+     ========================================================= */
+    protected function cariMargaValid(?string $nama)
     {
-        $namaLengkap = strtolower($this->namaLengkap ?? '');
-        $daftarMarga = Marga::pluck('marga')->map(fn($m) => strtolower($m))->toArray();
+        if (!$nama) return null;
 
-        $margaTerdaftar = null;
-        foreach ($daftarMarga as $marga) {
-            if (str_contains($namaLengkap, $marga)) {
-                $margaTerdaftar = $marga;
-                break;
+        $nama = strtolower($nama);
+
+        // Ambil langsung dari tabel margas
+        $margas = Marga::select('marga', 'suku')->get();
+
+        foreach ($margas as $row) {
+            if (str_contains($nama, strtolower($row->marga))) {
+                return [
+                    'marga' => ucfirst($row->marga),
+                    'suku'  => $row->sukuRelasi->nama ?? null,
+                ];
             }
         }
 
-        if ($margaTerdaftar) {
-            $this->margaValid = true;
-            $this->pesanVerifikasi = "✅ Marga *{$margaTerdaftar}* terdaftar di database MRP.";
+        return null;
+    }
+
+    public function verifikasiMarga()
+    {
+        // 1️⃣ Coba dari nama lengkap pengguna (kata terakhir)
+        $hasil = $this->ambilMargaDariNamaIbu($this->namaLengkap);
+
+        if ($hasil) {
+            $this->sumber_marga = 'user';
         } else {
-            $this->margaValid = false;
-            $this->pesanVerifikasi = "⚠️ Marga tidak ditemukan di database MRP.";
+            // 2️⃣ Fallback: nama lengkap ibu kandung
+            $hasil = $this->ambilMargaDariNamaIbu($this->namaIbu);
+            if ($hasil) {
+                $this->sumber_marga = 'ibu';
+            }
         }
+
+        if (!$hasil) {
+            $this->margaValid = false;
+            $this->marga = null;
+            $this->suku = null;
+            $this->pesanVerifikasi =
+                '⚠️ Marga tidak ditemukan pada nama pengguna maupun ibu kandung.';
+            return;
+        }
+
+        $this->marga = $hasil['marga'];
+        $this->suku  = $hasil['suku'];
+        $this->margaValid = true;
+
+        $this->pesanVerifikasi = $this->sumber_marga === 'ibu'
+            ? 'ℹ️ Marga diambil dari nama ibu kandung.'
+            : '✅ Marga terverifikasi dari nama pengguna.';
+    }
+
+    protected function ambilMargaDariNamaIbu(?string $namaIbu)
+    {
+        if (!$namaIbu) return null;
+
+        // Normalisasi spasi
+        $namaIbu = trim(preg_replace('/\s+/', ' ', $namaIbu));
+
+        // Ambil kata terakhir (marga)
+        $parts = explode(' ', $namaIbu);
+        $margaIbu = strtolower(end($parts));
+
+        // Cari marga di database
+        $data = Marga::whereRaw('LOWER(marga) = ?', [$margaIbu])->first();
+
+        if ($data) {
+            return [
+                'marga' => ucfirst($data->marga),
+                'suku'  => $data->suku, // langsung dari tabel margas
+            ];
+        }
+
+        return null;
     }
 
     public function kirim()
     {
+        if (!$this->profilLengkap) {
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Pengajuan ditolak. Profil belum lengkap.'
+            ]);
+            return;
+        }
+        
         if (!$this->margaValid) {
             session()->flash('error', 'Marga belum terverifikasi. Pengajuan tidak dapat dilanjutkan.');
             return;

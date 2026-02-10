@@ -37,13 +37,31 @@
                     <div class="alert alert-success mt-2">
                         ✅ Marga <strong>{{ $marga }}</strong> terdaftar di database MRP.
                         <br>
-                        <small class="text-muted">Diverifikasi otomatis {{ $nama_lengkap ? 'dari Nama Lengkap' : 'dari Nama Ibu' }}</small>
+                        <small class="text-muted">
+                            Diverifikasi otomatis 
+                            @if($sumberMarga === 'user')
+                                dari Nama Lengkap
+                            @elseif($sumberMarga === 'ibu')
+                                dari Nama Ibu Kandung
+                            @else
+                                (belum terverifikasi)
+                            @endif
+                        </small>
                     </div>
                 @elseif($margaDitemukan === false)
                     <div class="alert alert-warning mt-2">
                         ⚠️ Marga <strong>{{ $marga }}</strong> tidak ditemukan di database MRP.
                         <br>
-                        <small class="text-muted">Diverifikasi otomatis {{ $nama_lengkap ? 'dari Nama Lengkap' : 'dari Nama Ibu' }}</small>
+                                                <small class="text-muted">
+                            Diverifikasi otomatis 
+                            @if($sumberMarga === 'user')
+                                dari Nama Lengkap
+                            @elseif($sumberMarga === 'ibu')
+                                dari Nama Ibu Kandung
+                            @else
+                                (belum terverifikasi)
+                            @endif
+                        </small>
                         <br>
                         Silakan <a href="{{ url('/pengajuan-marga') }}" class="alert-link">ajukan penambahan marga</a> ke MRP.
                     </div>
