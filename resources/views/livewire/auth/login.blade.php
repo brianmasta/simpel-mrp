@@ -42,6 +42,17 @@
                             @enderror
                           </div>
                         </div>
+                        <!-- CAPTCHA -->
+                        <div class="mb-3" wire:ignore>
+                            <div class="g-recaptcha"
+                                data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                                data-callback="onRecaptchaSuccess">
+                            </div>
+
+                            @error('recaptcha')
+                                <small class="text-danger d-block mt-1">{{ $message }}</small>
+                            @enderror
+                        </div>
                         <div class="row">
                           <div class="col-6">
                             <button type="submit" class="btn btn-primary px-4">Login</button>
@@ -69,4 +80,17 @@
           </div>
         </div>
     </div>
+    <script>
+    function onRecaptchaSuccess(token) {
+        Livewire.find(@this.__instance.id).set('recaptchaToken', token);
+    }
+
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('reset-recaptcha', () => {
+            if (typeof grecaptcha !== 'undefined') {
+                grecaptcha.reset();
+            }
+        });
+    });
+</script>
 </div>

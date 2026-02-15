@@ -5,6 +5,7 @@ namespace App\Livewire\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 
 class Register extends Component
@@ -13,6 +14,9 @@ class Register extends Component
     public $email;
     public $password;
     public $password_confirmation;
+
+    // CAPTCHA TOKEN
+    public string $recaptchaToken = '';
 
     protected $rules = [
         'name' => 'required|string|min:3',
@@ -40,6 +44,14 @@ class Register extends Component
     {
         $validated = $this->validate();
 
+        
+        // 🔐 VALIDASI CAPTCHA
+        if (!$this->validateRecaptcha()) {
+            $this->addError('recaptcha', 'Silakan centang "Saya bukan robot".');
+            $this->resetCaptcha();
+            return;
+        }
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -52,6 +64,31 @@ class Register extends Component
         session()->flash('success', 'Registrasi berhasil! Anda telah login.');
 
         return redirect()->route('dashboard');
+    }
+
+        /* ================= CAPTCHA ================= */
+
+    private function validateRecaptcha(): bool
+    {
+        if (empty($this->recaptchaToken)) {
+            return false;
+        }
+
+        $response = Http::asForm()->post(
+            'https://www.google.com/recaptcha/api/siteverify',
+            [
+                'secret'   => config('services.recaptcha.secret_key'),
+                'response' => $this->recaptchaToken,
+            ]
+        );
+
+        return $response->json('success') === true;
+    }
+
+    private function resetCaptcha(): void
+    {
+        $this->recaptchaToken = '';
+        $this->dispatch('reset-recaptcha');
     }
 
     public function render()

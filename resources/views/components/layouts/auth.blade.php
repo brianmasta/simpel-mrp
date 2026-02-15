@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <meta name="description" content="Platform resmi MRP Papua Tengah untuk pengajuan dan verifikasi Surat Orang Asli Papua (OAP) secara online. Cepat, sah, dan terverifikasi.">
   <meta name="keywords" content="SIMPEL MRP, Surat OAP, Pelayanan OAP, MRP Papua Tengah, Surat Orang Asli Papua Online">
-    <title>MRP - Provinsi Papua Tengah</title>
+    <title>SIMPEL-MRP | Provinsi Papua Tengah</title>
     <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('assets/img/logo.png') }}">
     <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('assets/img/logo.png') }}">
     <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/img/logo.png') }}">
@@ -34,7 +34,9 @@
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{{ asset('assets/css/examples.css') }}" rel="stylesheet">
     <script src="{{ asset('assets/js/config.js') }}"></script>
-        <script src="{{ asset('assets/js/coreui.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/coreui.bundle.min.js') }}"></script>
+
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     {{-- <script src="{{ asset('assets/js/color-modes.js') }}"></script> --}}
 
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
