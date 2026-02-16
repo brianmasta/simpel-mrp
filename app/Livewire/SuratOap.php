@@ -289,8 +289,11 @@ class SuratOap extends Component
 
     protected function terbitkanSuratOap($pengajuan)
     {
+        $isIpdn = str_contains(strtoupper($pengajuan->alasan), 'IPDN');
+
         $profil = Profil::where('user_id', Auth::id())->with('kabupaten')->first();
-        $format = FormatSurat::where('jenis', 'surat_oap')->first();
+
+        $format = FormatSurat::where('jenis', $isIpdn ? 'IPDN' : 'surat_oap')->first();
 
         if (!$format) {
             session()->flash('error', 'Format surat OAP belum tersedia di database.');
@@ -392,8 +395,18 @@ class SuratOap extends Component
             $html = str_replace('[[' . $key . ']]', $value, $html);
         }
 
+        if ($isIpdn) {
+            // LEGAL 216 x 356 mm
+            $pdf = Pdf::loadHTML($html)
+                ->setPaper('Legal', 'portrait');
+        } else {
+            // A4 210 x 330 mm
+            $pdf = Pdf::loadHTML($html)
+                ->setPaper('A4', 'portrait');
+        }
+
         // Buat PDF preview
-        $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+        // $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
         // $this->pdfContent = base64_encode($pdf->output());
 
         $fileName = 'surat_oap_' . $profil->nik . '_' . time() . '.pdf';

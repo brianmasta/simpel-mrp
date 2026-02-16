@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Surat Keterangan OAP - IPDN</title>
+  <style>
+    body {
+      font-family: "Times New Roman", serif;
+      font-size: 12pt;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background: white;
+    }
+
+    /* Watermark */
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 90px;
+      color: #000;
+      opacity: 0.05;
+      font-weight: bold;
+      white-space: nowrap;
+      z-index: 0;
+    }
+
+    .page {
+      padding: 30px;
+      z-index: 1;
+      position: relative;
+    }
+
+    .kop {
+      text-align: center;
+    }
+
+    .judul {
+      text-align: center;
+      font-weight: bold;
+      text-decoration: underline;
+      margin: 20px 0 10px;
+      font-size: 14pt;
+    }
+
+    .nomor {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    td {
+      vertical-align: top;
+      padding: 4px 0;
+    }
+
+    .foto {
+      width: 4cm;
+      height: 6cm;
+      border: 1px solid #000;
+      text-align: center;
+      font-size: 10pt;
+      margin: auto;
+    }
+
+    .formasi {
+      margin-top: 20px;
+    }
+
+    .ttd {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .small {
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+
+<div class="watermark">SIMPEL-MRP</div>
+
+<div class="page">
+
+  <!-- KOP -->
+  <div class="kop">
+    <h4 style="margin:0; font-size:22pt;">MAJELIS RAKYAT PAPUA</h4>
+    <h5 style="margin:0; font-size:14pt;">PROVINSI PAPUA TENGAH</h5>
+    <p style="margin:4px 0;">Jl. Mandala Kelurahan Bumi Wonorejo, Nabire – Papua Tengah</p>
+    <hr style="border:1px solid #000;">
+  </div>
+
+  <!-- JUDUL -->
+  <div class="judul">
+    SURAT KETERANGAN<br>
+    ORANG ASLI PAPUA (OAP)
+  </div>
+
+  <div class="nomor">
+    Nomor: [[nomor_surat]]
+  </div>
+
+  <!-- ISI -->
+  <table>
+    <tr>
+      <td colspan="2">Yang bertanda tangan di bawah ini:</td>
+      <td rowspan="7" style="width:25%; text-align:center;">
+        <div class="foto">
+          <br><br>Foto 4 x 6
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="width:30%;">Nama</td>
+      <td>: Agustinus Anggaibak, S.M.</td>
+    </tr>
+    <tr>
+      <td>Jabatan</td>
+      <td>: Ketua</td>
+    </tr>
+    <tr>
+      <td>Alamat</td>
+      <td>: Jl. Mandala Kelurahan Bumi Wonorejo</td>
+    </tr>
+
+    <tr><td colspan="3" style="padding-top:15px;">Dengan ini menyatakan bahwa:</td></tr>
+
+    <tr>
+      <td>Nama</td>
+      <td>: [[nama_lengkap]]</td>
+    </tr>
+    <tr>
+      <td>NIK</td>
+      <td>: [[nik]]</td>
+    </tr>
+    <tr>
+      <td>Asal Kabupaten / Kota</td>
+      <td>: [[kabupaten]]</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Nama Ayah</td>
+      <td>: [[nama_ayah]]</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Nama Ibu</td>
+      <td>: [[nama_ibu]]</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Nomor Tes</td>
+      <td>: [[nomor_tes]]</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td colspan="3" style="padding-top:10px;">
+        Adalah benar-benar <strong>Orang Asli Papua (OAP)</strong> berdasarkan ketentuan peraturan perundang-undangan yang berlaku dan diwajibkan untuk mendaftar pada salah satu formasi di bawah ini:
+      </td>
+    </tr>
+  </table>
+
+  <!-- FORMASI -->
+  <div class="formasi">
+    <p>☐ Formasi OAP Provinsi : <strong>[[formasi_provinsi]]</strong></p>
+    <p>☐ Formasi OAP Kabupaten / Kota : <strong>[[formasi_kabupaten]]</strong></p>
+    <p class="small"><em>(Contreng salah satu dan tuliskan nama Provinsi atau Kabupaten/Kota yang dipilih)</em></p>
+  </div>
+
+  <!-- PENUTUP -->
+  <p style="margin-top:15px;">
+    Demikian surat keterangan ini dibuat sebagai syarat <strong>Pendaftaran Seleksi Penerimaan Calon Praja Institut Pemerintahan Dalam Negeri (IPDN)</strong> melalui portal
+    <strong>https://daftar-dikdin.bkn.go.id</strong> dan
+    <strong>https://spcp.ipdn.ac.id</strong>.
+  </p>
+
+  <!-- TTD -->
+  <div class="ttd">
+    <p>Nabire, [[tanggal]]</p>
+    <p><strong>MAJELIS RAKYAT PAPUA<br>PROVINSI PAPUA TENGAH<br>[[jabatan]]</strong></p>
+
+    <div style="height:50px;"></div>
+
+    <p><strong><u>Agustinus Anggaibak, S.M.</u></strong></p>
+  </div>
+
+  <p class="small text-center" style="margin-top:20px;">
+    <em>Surat ini diterbitkan secara elektronik melalui Sistem SIMPEL-MRP dan berlaku tanpa tanda tangan basah.</em>
+  </p>
+
+</div>
+</body>
+</html>

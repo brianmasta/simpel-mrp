@@ -108,7 +108,7 @@ class FormatSurat extends Component
         }
 
         // Buat PDF preview
-        $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+        $pdf = Pdf::loadHTML($html)->setPaper('Legal', 'portrait');
         $this->pdfContent = base64_encode($pdf->output());
 
         $this->showPdfModal = true;

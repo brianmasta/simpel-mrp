@@ -141,7 +141,7 @@
                 <select wire:model.live="alasan" class="form-select">
                     <option value="">-- Pilih Alasan --</option>
                     <option value="Pendaftaran CPNS">Pendaftaran CPNS</option>
-                    <option value="Pendaftaran IPDN">Pendaftaran IPDN</option>
+                    <option value="IPDN">Pendaftaran IPDN</option>
                     <option value="Beasiswa">Beasiswa</option>
                     <option value="Lainnya">Lainnya</option>
                 </select>
