@@ -44,7 +44,7 @@ class DashboardRekapan extends Component
             'akunList' => User::with('profil.kabupaten')
                 ->orderBy('name')
                 ->get(),
-            ]);
+            ])->layout('components.layouts.app');
 
             
     }
