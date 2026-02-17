@@ -8,6 +8,7 @@ use App\Livewire\Auth\Register;
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Auth\VerifyEmail;
 use App\Livewire\Dashboard;
+use App\Livewire\DashboardRekapan;
 use App\Livewire\DataAkun;
 use App\Livewire\DataMarga;
 use App\Livewire\DataSuratOap;
@@ -93,6 +94,7 @@ Route::middleware(['auth', 'verified', 'role:admin,petugas'])->group(function ()
     Route::get('/data-marga', DataMarga::class)->name('data-marga');
     Route::get('/data-surat-oap', DataSuratOap::class)->name('data-surat-oap');
     Route::get('/verifikasi-berkas', VerifikasiBerkas::class)->name('verifikasi-berkas');
+    Route::get('/dashboard-rekapan', DashboardRekapan::class)->name('dashboard-rekapan');
     
 });
 

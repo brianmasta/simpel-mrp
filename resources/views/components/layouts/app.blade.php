@@ -193,6 +193,12 @@
           </a>
         </li>
         <li class="nav-item">
+          <a class="nav-link {{ request()->is('dashboard-rekapan') ? 'active' : '' }}" wire:navigate href="/dashboard-rekapan">
+            <i class="nav-icon cil-folder-open"></i>
+            Data Rekapan
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link {{ request()->is('admin/manage-users') ? 'active' : '' }}" wire:navigate href="/admin/manage-users">
             <i class="nav-icon cil-people"></i>
             Akun
@@ -231,6 +237,12 @@
           <a class="nav-link {{ request()->is('data-surat-oap') ? 'active' : '' }}" wire:navigate href="/data-surat-oap">
             <i class="nav-icon cil-folder-open"></i>
             Data Surat OAP
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('dashboard-rekapan') ? 'active' : '' }}" wire:navigate href="/dashboard-rekapan">
+            <i class="nav-icon cil-folder-open"></i>
+            Data Rekapan
           </a>
         </li>
 
@@ -280,17 +292,17 @@
               <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
             </li>
             <li class="nav-item dropdown" wire:ignore>
-  <button
-    type="button"
-    class="nav-link py-0 pe-0 bg-transparent border-0"
-    data-coreui-toggle="dropdown"
-    aria-expanded="false">
-                <div class="avatar avatar-md">
-                  <img class="avatar-img"
-                      src="{{ asset('assets/img/profil.jpg') }}"
-                      alt="{{ Auth::user()->email }}">
-                </div>
-  </button>
+            <button
+              type="button"
+              class="nav-link py-0 pe-0 bg-transparent border-0"
+              data-coreui-toggle="dropdown"
+              aria-expanded="false">
+                          <div class="avatar avatar-md">
+                            <img class="avatar-img"
+                                src="{{ asset('assets/img/profil.jpg') }}"
+                                alt="{{ Auth::user()->email }}">
+                          </div>
+            </button>
 
               <div class="dropdown-menu dropdown-menu-end pt-0">
                 <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">
