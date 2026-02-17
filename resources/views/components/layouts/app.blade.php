@@ -199,6 +199,12 @@
           </a>
         </li>
         <li class="nav-item">
+          <a class="nav-link {{ request()->is('admin.activity-log') ? 'active' : '' }}" wire:navigate href="/admin/log-aktivitas">
+            <i class="nav-icon cil-folder-open"></i>
+            Activity Log
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link {{ request()->is('admin/manage-users') ? 'active' : '' }}" wire:navigate href="/admin/manage-users">
             <i class="nav-icon cil-people"></i>
             Akun

@@ -59,7 +59,7 @@ class PengajuanMarga extends Component
 
         $path = $this->berkas ? $this->berkas->store('berkas-pengajuan-marga', 'public') : null;
 
-        ModelsPengajuanMarga::create([
+        $marga = ModelsPengajuanMarga::create([
             'user_id' => Auth::id(),
             'nama_lengkap' => $this->nama_lengkap,
             'nik' => $this->nik,
@@ -69,6 +69,11 @@ class PengajuanMarga extends Component
             'alasan' => $this->alasan,
             'berkas' => $path,
         ]);
+
+        logActivity(
+            'Mengajukan marga baru: ' . strtoupper($marga->marga),
+            $marga
+        );
 
         session()->flash('success', 'Pengajuan marga Anda telah dikirim dan menunggu verifikasi MRP.');
                     $this->dispatch('toast', [

@@ -279,6 +279,8 @@ class SuratOap extends Component
         // Refresh riwayat
         $this->riwayat = PengajuanSurat::where('user_id', Auth::id())->latest()->get();
 
+        logActivity('Mengajukan surat ' . strtoupper($pengajuan->alasanFinal), $pengajuan);
+
         $this->dispatch('toast', [
             'type' => 'success',
             'message' => '✅ Surat OAP berhasil diterbitkan otomatis!'

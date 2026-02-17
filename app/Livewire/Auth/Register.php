@@ -3,6 +3,7 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -58,8 +59,15 @@ class Register extends Component
             'password' => Hash::make($validated['password']),
             'role' => 'pengguna',
         ]);
+        
 
         Auth::login($user);
+
+        // EVENT REGISTRASI (WAJIB)
+        event(new Registered($user));
+
+        // LOG AKTIVITAS AKUN BARU
+        logActivity('Registrasi akun baru');
 
         session()->flash('success', 'Registrasi berhasil! Anda telah login.');
 

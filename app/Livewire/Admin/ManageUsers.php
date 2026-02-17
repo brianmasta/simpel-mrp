@@ -105,6 +105,7 @@ class ManageUsers extends Component
         Gate::authorize('admin');
 
         $user = User::findOrFail($this->userId);
+
         $this->validate([
             'name' => 'required|string|min:3',
             'email' => 'required|email|unique:users,email,' . $this->userId,
@@ -116,6 +117,8 @@ class ManageUsers extends Component
             'email' => $this->email,
             'role' => $this->role,
         ]);
+
+        logActivity('Update Data Akun', $user);
 
         Log::info("Admin {$this->user->id} updated user {$user->id}");
 
@@ -136,6 +139,8 @@ class ManageUsers extends Component
         $user = User::findOrFail($id);
         $user->update(['password' => Hash::make('password123')]);
 
+        logActivity('Reset Password Akun: ', $user);
+
         session()->put('reset_attempts', $attempts + 1);
         Log::warning("Admin {$this->user->id} reset password for user {$user->id}");
 
@@ -146,7 +151,11 @@ class ManageUsers extends Component
     {
         Gate::authorize('admin');
 
-        User::findOrFail($id)->delete();
+        $user = User::findOrFail($id)->delete();
+
+        // LOG AKTIVITAS (SEBELUM DIHAPUS)
+        logActivity('Menghapus akun', $user);
+
         Log::warning("Admin {$this->user->id} deleted user {$id}");
         session()->flash('success', 'Akun berhasil dihapus.');
     }

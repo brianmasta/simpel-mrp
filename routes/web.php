@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Admin\ActivityLog;
 use App\Livewire\Admin\ManageUsers;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
@@ -77,6 +78,7 @@ Route::middleware('auth', 'verified','role:admin')->group(function () {
     Route::get('/admin/manage-users', ManageUsers::class)->name('admin.manage-users');
     Route::get('/format-surat', FormatSurat::class)->name('format-surat');
     Route::get('/data-akun', DataAkun::class)->name('data-akun');
+    Route::get('/admin/log-aktivitas', ActivityLog::class)->name('admin.activity-log');
 
 });
 

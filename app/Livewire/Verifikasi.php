@@ -60,7 +60,7 @@ class Verifikasi extends Component
         }
 
         // Jika belum ada, tambah ke tabel Marga
-        Marga::create([
+        $marga = Marga::create([
             'marga' => $pengajuan->marga,
             'suku' => $pengajuan->suku,
             'wilayah_adat' => $pengajuan->wilayah_adat,
@@ -71,7 +71,10 @@ class Verifikasi extends Component
             'status' => 'disetujui',
             'catatan_verifikasi' => $this->catatan ?? null,
         ]);
-            $this->dispatch('toast', [
+
+        logActivity('Pengajuan marga telah disetujui ' . strtoupper($marga->marga), $marga);
+
+        $this->dispatch('toast', [
                 'message' => "Pengajuan marga telah disetujui dan marga berhasil dimasukkan ke database utama.",
                 'type' => 'success'
             ]);
@@ -87,10 +90,13 @@ class Verifikasi extends Component
             'catatan_verifikasi' => $this->catatan,
         ]);
 
-            $this->dispatch('toast', [
-                'message' => "Pengajuan marga telah ditolak.",
-                'type' => 'warning'
-            ]);
+        logActivity('Pengajuan marga telah ditolak: ' . strtoupper($marga->marga), $marga);
+
+        $this->dispatch('toast', [
+            'message' => "Pengajuan marga telah ditolak.",
+            'type' => 'warning'
+        ]);
+
         session()->flash('error', 'Pengajuan marga telah ditolak.');
         $this->loadData();
     }

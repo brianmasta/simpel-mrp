@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Auth;
+
 if (!function_exists('bulan_romawi')) {
     function bulan_romawi($bulan)
     {
@@ -10,4 +13,17 @@ if (!function_exists('bulan_romawi')) {
         ];
         return $romawi[$bulan] ?? '';
     }
+}
+
+function logActivity(string $activity, $model = null)
+{
+    ActivityLog::create([
+        'user_id' => Auth::id(),
+        'role' => Auth::user()->role ?? null,
+        'activity' => $activity,
+        'model' => $model ? class_basename($model) : null,
+        'model_id' => $model->id ?? null,
+        'ip_address' => request()->ip(),
+        'user_agent' => request()->userAgent(),
+    ]);
 }

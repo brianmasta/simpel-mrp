@@ -522,6 +522,9 @@ private function extractNamaFromKtp($text)
 
         $profil->save();
 
+    
+    logActivity('Melengkapi / memperbarui profil akun');
+
         // ✅ Pesan sukses dinamis
     if ($hasilMarga['ditemukan']) {
         $this->dispatch('toast', [
