@@ -28,8 +28,8 @@
             <div class="card bg-warning text-dark">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="fs-6 fw-semibold">Dalam Proses</div>
-                        <div class="fs-3">{{ $suratProses }}</div>
+                        <div class="fs-6 fw-semibold">Perlu Perbaikan</div>
+                        <div class="fs-3">{{ $suratPerbaikan }}</div>
                     </div>
                     <i class="cil-loop fs-1 opacity-75"></i>
                 </div>

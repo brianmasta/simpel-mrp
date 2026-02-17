@@ -17,7 +17,7 @@ class DashboardRekapan extends Component
             // Surat OAP
             'totalSurat'      => PengajuanSurat::count(),
             'suratTerbit'     => PengajuanSurat::where('status', 'terbit')->count(),
-            'suratProses'     => PengajuanSurat::where('status', 'proses')->count(),
+            'suratPerbaikan'     => PengajuanSurat::where('status', 'perlu_perbaikan')->count(),
             'suratDitolak'    => PengajuanSurat::where('status', 'ditolak')->count(),
 
             // Marga
