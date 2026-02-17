@@ -47,63 +47,59 @@
                 </div>
             </form>
 
-            <table class="table table-bordered align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Waktu</th>
-                        <th width="200">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($users as $index => $user)
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle mb-0">
+                    <thead class="table-light">
                         <tr>
-                            <td>{{ $users->firstItem() + $index }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>
-                                <span class="badge bg-{{ $user->role === 'admin' ? 'danger' : ($user->role === 'petugas' ? 'warning' : 'info') }}">
-                                    {{ ucfirst($user->role) }}
-                                </span>
-                            </td>
-                            <td>
-                                {{ $user->created_at->format('d M Y H:i') }}
-                            </td>
-                            <td class="text-center">
-                                <button wire:click="view({{ $user->id }})"
-                                    class="btn btn-sm btn-info"
-                                    title="Lihat Profil">
-                                    <i class="cil-user"></i>
-                                </button>
-
-                                <button wire:click="edit({{ $user->id }})"
-                                    class="btn btn-sm btn-primary"
-                                    title="Edit">
-                                    <i class="cil-pencil"></i>
-                                </button>
-
-                                <button wire:click="resetPassword({{ $user->id }})"
-                                    class="btn btn-sm btn-secondary"
-                                    title="Reset Password">
-                                    <i class="cil-reload"></i>
-                                </button>
-
-                                <button wire:click="delete({{ $user->id }})"
-                                    onclick="confirm('Yakin hapus akun ini?') || event.stopImmediatePropagation()"
-                                    class="btn btn-sm btn-danger"
-                                    title="Hapus">
-                                    <i class="cil-trash"></i>
-                                </button>
-                            </td>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Waktu</th>
+                            <th class="text-center" style="min-width:200px">Aksi</th>
                         </tr>
-                    @empty
-                        <tr><td colspan="5" class="text-center text-muted">Belum ada data</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($users as $index => $user)
+                            <tr>
+                                <td>{{ $users->firstItem() + $index }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>
+                                    <span class="badge bg-{{ $user->role === 'admin' ? 'danger' : ($user->role === 'petugas' ? 'warning' : 'info') }}">
+                                        {{ ucfirst($user->role) }}
+                                    </span>
+                                </td>
+                                <td>{{ $user->created_at->format('d M Y H:i') }}</td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-1 flex-wrap">
+                                        <button wire:click="view({{ $user->id }})" class="btn btn-sm btn-info">
+                                            <i class="cil-user"></i>
+                                        </button>
+                                        <button wire:click="edit({{ $user->id }})" class="btn btn-sm btn-primary">
+                                            <i class="cil-pencil"></i>
+                                        </button>
+                                        <button wire:click="resetPassword({{ $user->id }})" class="btn btn-sm btn-secondary">
+                                            <i class="cil-reload"></i>
+                                        </button>
+                                        <button wire:click="delete({{ $user->id }})"
+                                            onclick="confirm('Yakin hapus akun ini?') || event.stopImmediatePropagation()"
+                                            class="btn btn-sm btn-danger">
+                                            <i class="cil-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">
+                                    Belum ada data
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
             {{ $users->links() }}
         </div>
