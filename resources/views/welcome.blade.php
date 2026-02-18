@@ -107,6 +107,129 @@
 .chat-body {
   padding: 12px;
 }
+
+
+/* ===============================
+   FLOATING LIVE CHAT (KEKINIAN)
+================================ */
+#liveChatBtn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: linear-gradient(135deg, #0d6efd, #0a58ca);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(13,110,253,.35);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 9999;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+#liveChatBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(13,110,253,.45);
+}
+
+#liveChatBtn i {
+  font-size: 1.2rem;
+}
+
+/* Badge notif (opsional) */
+#liveChatBtn .badgechat {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+}
+
+/* ===============================
+   CHAT BOX
+================================ */
+.chat-box {
+  position: fixed;
+  bottom: 96px;
+  right: 24px;
+  width: 360px;
+  max-height: 520px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.25);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: chatFadeUp .25s ease;
+}
+
+@keyframes chatFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===============================
+   CHAT HEADER
+================================ */
+.chat-header {
+  background: linear-gradient(135deg, #0d6efd, #0a58ca);
+  color: #fff;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header strong {
+  font-size: .95rem;
+}
+
+.chat-header button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: .9;
+}
+
+.chat-header button:hover {
+  opacity: 1;
+}
+
+/* ===============================
+   CHAT BODY
+================================ */
+.chat-body {
+  padding: 12px;
+  background: #f4f6f9;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .chat-box {
+    right: 10px;
+    left: 10px;
+    width: auto;
+    bottom: 90px;
+  }
+
+  #liveChatBtn {
+    right: 16px;
+    bottom: 16px;
+  }
+}
+
   </style>
 
   
@@ -1462,15 +1585,18 @@
   <!-- Main JS File -->
   <script src="{{ asset('assets/js/main2.js') }}"></script>
 
-  <!-- Live Chat Button -->
+<!-- Live Chat Button -->
 <div id="liveChatBtn" onclick="toggleChat()">
   <i class="bi bi-chat-dots"></i>
   <span>Bantuan</span>
+
+  {{-- contoh badge (nanti bisa diisi Livewire) --}}
+  {{-- <span class="badgechat">1</span> --}}
 </div>
 
 <div id="liveChatBox" class="chat-box d-none">
   <div class="chat-header">
-    <strong>Bantuan SIMPEL-MRP</strong>
+    <strong>💬 Bantuan SIMPEL-MRP</strong>
     <button onclick="toggleChat()">×</button>
   </div>
 
@@ -1478,6 +1604,7 @@
     @livewire('live-chat-public')
   </div>
 </div>
+
 
 <script>
 function toggleChat() {

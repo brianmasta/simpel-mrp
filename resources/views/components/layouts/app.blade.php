@@ -69,6 +69,9 @@
 </style>
 
 <style>
+/* ===============================
+   SIMPEL LOADER
+================================ */
 .simpel-loader {
   position: fixed;
   inset: 0;
@@ -94,15 +97,107 @@
   100% { transform: scale(1); opacity: .85; }
 }
 
+/* ===============================
+   BADGE NOTIFIKASI CHAT
+================================ */
 .badgechat {
-    animation: pulse 1.2s infinite;
+  background: #dc3545;
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 4px 6px;
+  border-radius: 10px;
+  animation: badgePulse 1.2s infinite;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-    100% { transform: scale(1); }
+@keyframes badgePulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220,53,69,.7); }
+  70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(220,53,69,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220,53,69,0); }
 }
+
+/* ===============================
+   LIVE CHAT KEKINIAN
+================================ */
+.live-chat-container {
+  max-width: 420px;
+  margin: auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+.chat-header {
+  padding: 10px 14px;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #dee2e6;
+}
+
+.chat-body {
+  height: 320px;
+  overflow-y: auto;
+  background: #f4f6f9;
+  border-radius: 10px;
+}
+
+.chat-bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  position: relative;
+  line-height: 1.4;
+}
+
+.chat-bubble.user {
+  background: #0d6efd;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.petugas {
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-time {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* ===============================
+   SYSTEM MESSAGE (NOTIFIKASI)
+================================ */
+.system-chip {
+  background: #e7f1ff;
+  color: #0d6efd;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(0,0,0,.05);
+}
+
+/* ===============================
+   CHAT INPUT
+================================ */
+.chat-input textarea {
+  resize: none;
+  border-radius: 8px;
+}
+
+.chat-input button {
+  border-radius: 8px;
+}
+
+/* ===============================
+   SMOOTH SCROLL CHAT
+================================ */
+.chat-body {
+  scroll-behavior: smooth;
+}
+
 </style>
 
 

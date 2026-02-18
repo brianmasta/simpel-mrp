@@ -1,63 +1,84 @@
-<div>
+<div class="live-chat-container">
 
 @if(!$chat)
     {{-- ================= FORM MULAI CHAT ================= --}}
-    <input
-        wire:model="name"
-        placeholder="Nama"
-        class="form-control mb-2">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h6 class="text-center mb-3 fw-bold">
+                💬 Live Chat Bantuan SIMPEL-MRP
+            </h6>
 
-    <input
-        wire:model="email"
-        placeholder="Email (opsional)"
-        class="form-control mb-2">
+            <input
+                wire:model="name"
+                placeholder="Nama Anda"
+                class="form-control mb-2">
 
-    <button
-        wire:click="startChat"
-        class="btn btn-primary w-100">
-        Mulai Chat
-    </button>
+            <input
+                wire:model="email"
+                placeholder="Email (opsional)"
+                class="form-control mb-3">
+
+            <button
+                wire:click="startChat"
+                class="btn btn-primary w-100">
+                Mulai Chat
+            </button>
+        </div>
+    </div>
 
 @else
-    {{-- ================= HEADER STATUS ================= --}}
-    <div class="mb-2 text-center">
+    {{-- ================= HEADER ================= --}}
+    <div class="chat-header d-flex justify-content-between align-items-center mb-2">
+        <div>
+            <strong>Live Chat SIMPEL-MRP</strong><br>
+            <small class="text-muted">
+                {{ $chat->name }}
+            </small>
+        </div>
+
         <span class="badge
             @if($chat->status === 'open') bg-success
             @elseif($chat->status === 'need_email') bg-warning
             @else bg-secondary
-            @endif
-        ">
+            @endif">
             {{ strtoupper($chat->status) }}
         </span>
     </div>
 
     {{-- ================= AREA CHAT ================= --}}
     <div wire:poll.5s
-         class="border rounded p-2 mb-2"
-         style="height:260px; overflow-y:auto; background:#f8f9fa;">
+         class="chat-body shadow-sm rounded p-3 mb-2">
 
         @forelse($messages as $m)
 
-            {{-- ===== PESAN SISTEM ===== --}}
+            {{-- SYSTEM MESSAGE --}}
             @if($m->sender === 'system')
                 <div class="text-center my-2">
-                    <span class="badge bg-info">
+                    <span class="system-chip">
                         🔔 {{ $m->message }}
                     </span>
                 </div>
 
-            {{-- ===== PESAN PENGGUNA ===== --}}
+            {{-- USER MESSAGE --}}
             @elseif($m->sender === 'user')
-                <div class="mb-1">
-                    <strong>Anda:</strong>
-                    {{ $m->message }}
+                <div class="d-flex justify-content-end mb-2">
+                    <div class="chat-bubble user">
+                        {{ $m->message }}
+                        <div class="chat-time">
+                            {{ $m->created_at->format('H:i') }}
+                        </div>
+                    </div>
                 </div>
 
-            {{-- ===== PESAN PETUGAS ===== --}}
+            {{-- PETUGAS MESSAGE --}}
             @else
-                <div class="mb-1">
-                    <strong>Petugas:</strong>
-                    {{ $m->message }}
+                <div class="d-flex justify-content-start mb-2">
+                    <div class="chat-bubble petugas">
+                        {{ $m->message }}
+                        <div class="chat-time">
+                            {{ $m->created_at->format('H:i') }}
+                        </div>
+                    </div>
                 </div>
             @endif
 
@@ -68,24 +89,27 @@
         @endforelse
     </div>
 
-    {{-- ================= STATUS OPEN ================= --}}
+    {{-- ================= INPUT ================= --}}
     @if($chat->status === 'open')
-        <textarea
-            wire:model.defer="message"
-            class="form-control mt-2"
-            placeholder="Tulis pesan Anda..."></textarea>
+        <div class="chat-input">
+            <textarea
+                wire:model.defer="message"
+                class="form-control"
+                rows="2"
+                placeholder="Tulis pesan..."></textarea>
 
-        <button
-            wire:click="send"
-            class="btn btn-success w-100 mt-2">
-            Kirim
-        </button>
+            <button
+                wire:click="send"
+                class="btn btn-success mt-2 w-100">
+                Kirim
+            </button>
+        </div>
 
-    {{-- ================= STATUS NEED EMAIL ================= --}}
+    {{-- ================= NEED EMAIL ================= --}}
     @elseif($chat->status === 'need_email')
-        <div class="alert alert-warning text-center mt-2">
-            ⚠️ Untuk melanjutkan penanganan,
-            silakan masukkan <strong>alamat email aktif</strong>.
+        <div class="alert alert-warning text-center">
+            Untuk melanjutkan penanganan,
+            silakan masukkan <strong>email aktif</strong>.
         </div>
 
         <input
@@ -100,36 +124,34 @@
             Simpan Email
         </button>
 
-    {{-- ================= STATUS CLOSED ================= --}}
+    {{-- ================= CLOSED ================= --}}
     @else
         <div class="alert alert-success text-center mt-2">
 
-            {{-- CLOSED: SELESAI VIA CHAT --}}
             @if($chat->closed_reason === 'chat_resolved')
-                ✅ <strong>Permasalahan Anda telah berhasil ditangani</strong><br>
-                melalui layanan live chat SIMPEL-MRP.
+                ✅ <strong>Permasalahan Anda telah diselesaikan</strong><br>
+                melalui layanan live chat.
 
-            {{-- CLOSED: DIKONVERSI MENJADI TIKET --}}
             @elseif($chat->closed_reason === 'converted_to_ticket')
                 🧾 <strong>Tiket berhasil dibuat</strong><br>
 
                 @if($chat->ticket)
-                    Nomor Tiket:
-                    <strong class="d-block my-1">
-                        {{ $chat->ticket->ticket_number }}
-                    </strong>
+                    <span class="d-block my-1">
+                        Nomor Tiket:
+                        <strong>{{ $chat->ticket->ticket_number }}</strong>
+                    </span>
                 @endif
 
-                Silakan <strong>periksa email Anda</strong>
+                Silakan periksa email Anda
                 untuk memantau perkembangan tiket.
             @endif
 
-            <hr class="my-2">
-            Percakapan ini telah ditutup oleh petugas SIMPEL-MRP.
+            <hr>
+            Percakapan ini telah ditutup.
         </div>
 
         <a href="/"
-           class="btn btn-outline-primary w-100 mt-2">
+           class="btn btn-outline-primary w-100">
             Kembali ke Beranda
         </a>
     @endif
