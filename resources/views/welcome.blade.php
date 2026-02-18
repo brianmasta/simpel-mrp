@@ -67,7 +67,49 @@
 .sitename small {
     font-size: 0.7rem;
 }
+
+#liveChatBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #0d6efd;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 9999;
+}
+
+.chat-box {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.2);
+  z-index: 9999;
+}
+
+.chat-header {
+  background: #0d6efd;
+  color: #fff;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-body {
+  padding: 12px;
+}
   </style>
+
+  
 </head>
 
 <body class="index-page">
@@ -1420,6 +1462,28 @@
   <!-- Main JS File -->
   <script src="{{ asset('assets/js/main2.js') }}"></script>
 
+  <!-- Live Chat Button -->
+<div id="liveChatBtn" onclick="toggleChat()">
+  <i class="bi bi-chat-dots"></i>
+  <span>Bantuan</span>
+</div>
+
+<div id="liveChatBox" class="chat-box d-none">
+  <div class="chat-header">
+    <strong>Bantuan SIMPEL-MRP</strong>
+    <button onclick="toggleChat()">×</button>
+  </div>
+
+  <div class="chat-body">
+    @livewire('live-chat-public')
+  </div>
+</div>
+
+<script>
+function toggleChat() {
+  document.getElementById('liveChatBox').classList.toggle('d-none');
+}
+</script>
 </body>
 
 </html>

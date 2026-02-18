@@ -14,6 +14,8 @@ use App\Livewire\DataAkun;
 use App\Livewire\DataMarga;
 use App\Livewire\DataSuratOap;
 use App\Livewire\FormatSurat;
+use App\Livewire\LiveChatIndex;
+use App\Livewire\LiveChatPetugas;
 use App\Livewire\PengajuanMarga;
 use App\Livewire\PerbaikanBerkasOap;
 use App\Livewire\Profil;
@@ -80,6 +82,7 @@ Route::middleware('auth', 'verified','role:admin')->group(function () {
     Route::get('/data-akun', DataAkun::class)->name('data-akun');
     Route::get('/admin/log-aktivitas', ActivityLog::class)->name('admin.activity-log');
 
+
 });
 
 Route::middleware(['auth', 'verified', 'role:pengguna,admin'])->group(function () {
@@ -87,6 +90,13 @@ Route::middleware(['auth', 'verified', 'role:pengguna,admin'])->group(function (
     Route::get('/surat-oap', SuratOap::class)->name('surat-oap');
     Route::get('/pengajuan-marga', PengajuanMarga::class)->name('pengajuan-marga');
     Route::get('/perbaikan-berkas/{id}', PerbaikanBerkasOap::class)->name('perbaikan-berkas');
+
+        // ===== LIVE CHAT BANTUAN =====
+    Route::get('/live-chat', LiveChatIndex::class)
+        ->name('admin.livechat.index');
+
+    Route::get('/live-chat/{chatId}', LiveChatPetugas::class)
+        ->name('admin.livechat.show');
 
 });
 

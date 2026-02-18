@@ -93,6 +93,16 @@
   50% { transform: scale(1.08); opacity: 1; }
   100% { transform: scale(1); opacity: .85; }
 }
+
+.badgechat {
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
 </style>
 
 
@@ -210,6 +220,17 @@
             Akun
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('admin/live-chat*') ? 'active' : '' }}"
+            wire:navigate
+            href="{{ route('admin.livechat.index') }}">
+            <i class="nav-icon cil-chat-bubble"></i>
+            Live Chat Bantuan
+
+            {{-- 🔴 BADGE NOTIFIKASI --}}
+             @livewire('live-chat-badge')
+          </a>
+        </li>
 
         @endif
 
@@ -249,6 +270,17 @@
           <a class="nav-link {{ request()->is('dashboard-rekapan') ? 'active' : '' }}" wire:navigate href="/dashboard-rekapan">
             <i class="nav-icon cil-folder-open"></i>
             Data Rekapan
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('admin/live-chat*') ? 'active' : '' }}"
+            wire:navigate
+            href="{{ route('admin.livechat.index') }}">
+            <i class="nav-icon cil-chat-bubble"></i>
+            Live Chat Bantuan
+
+          {{-- 🔴 BADGE NOTIFIKASI --}}
+          @livewire('live-chat-badge')
           </a>
         </li>
 
