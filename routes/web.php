@@ -2,6 +2,8 @@
 
 use App\Livewire\Admin\ActivityLog;
 use App\Livewire\Admin\ManageUsers;
+use App\Livewire\Admin\TicketIndex;
+use App\Livewire\Admin\TicketShow;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Logout;
@@ -97,6 +99,12 @@ Route::middleware(['auth', 'verified', 'role:pengguna,admin'])->group(function (
 
     Route::get('/live-chat/{chatId}', LiveChatPetugas::class)
         ->name('admin.livechat.show');
+
+    Route::get('/tickets', TicketIndex::class)
+        ->name('admin.tickets.index');
+
+    Route::get('/tickets/{ticket}', TicketShow::class)
+            ->name('admin.tickets.show');
 
 });
 

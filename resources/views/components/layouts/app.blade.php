@@ -231,6 +231,14 @@
              @livewire('live-chat-badge')
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('admin/tickets*') ? 'active' : '' }}"
+            wire:navigate
+            href="{{ route('admin.tickets.index') }}">
+            <i class="nav-icon cil-clipboard"></i>
+            Tiket Kendala
+          </a>
+        </li>
 
         @endif
 
@@ -281,6 +289,14 @@
 
           {{-- 🔴 BADGE NOTIFIKASI --}}
           @livewire('live-chat-badge')
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('admin/tickets*') ? 'active' : '' }}"
+            wire:navigate
+            href="{{ route('admin.tickets.index') }}">
+            <i class="nav-icon cil-clipboard"></i>
+            Tiket Kendala
           </a>
         </li>
 

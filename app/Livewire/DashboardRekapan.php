@@ -116,7 +116,6 @@ class DashboardRekapan extends Component
                 ->groupBy('wilayah_adat')
                 ->pluck('total', 'wilayah_adat'),
 
-            'totalMarga' => Marga::count(),
 
         ])->layout('components.layouts.app');
     }

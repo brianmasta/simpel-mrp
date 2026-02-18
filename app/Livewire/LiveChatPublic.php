@@ -30,6 +30,11 @@ class LiveChatPublic extends Component
 
     public function send()
     {
+        // CEGAH KIRIM JIKA CHAT DITUTUP
+        if (!$this->chat || $this->chat->status === 'closed') {
+            return;
+        }
+
         $this->validate();
 
         $this->chat->messages()->create([
@@ -43,8 +48,35 @@ class LiveChatPublic extends Component
         $this->reset('message');
     }
 
+    public function submitEmail()
+    {
+        $this->validate([
+            'email' => 'required|email'
+        ]);
+
+        $this->chat->update([
+            'email' => $this->email,
+            'status' => 'open'
+        ]);
+
+        // PESAN SISTEM (REALTIME KE PETUGAS & PENGGUNA)
+        $this->chat->messages()->create([
+            'sender' => 'user',
+            'message' => 'Alamat email berhasil diinput oleh pengguna.'
+        ]);
+
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Email berhasil disimpan. Petugas akan melanjutkan proses.'
+        ]);
+    }
+
     public function render()
     {
+        if ($this->chat) {
+            $this->chat->load('ticket');
+        }
+
         return view('livewire.live-chat-public', [
             'messages' => $this->chat
                 ? $this->chat->messages()->latest()->get()
