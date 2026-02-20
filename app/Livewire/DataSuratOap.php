@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PengajuanSuratExport;
 use App\Mail\SuratOapMail;
 use App\Models\FormatSurat;
+use App\Models\Marga;
 use App\Services\FonnteService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Http;
@@ -35,6 +36,8 @@ class DataSuratOap extends Component
     public $detailSurat;
     public $previewPdfData = null; // simpan PDF base64
     public $selectedData;
+
+    public $marga, $cekMarga;
 
     public $fotoBaru;
 
@@ -319,8 +322,16 @@ class DataSuratOap extends Component
             ? 'data:image/png;base64,' . base64_encode(file_get_contents($qrPath))
             : '';
 
+
+
         // Data template
         $profil = $pengajuan->profil;
+
+                        // Ambil kata terakhir sebagai marga
+        $parts = explode(' ', trim($profil->nama_lengkap));
+        $this->marga = ucfirst(strtolower(end($parts)));
+        $cekMarga = Marga::where('marga', $this->marga)->first();
+        
         $data = [
             'nama_lengkap' => $profil->nama_lengkap,
             'nik' => $profil->nik,
@@ -330,6 +341,7 @@ class DataSuratOap extends Component
             'nama_ayah' => $profil->nama_ayah,
             'nama_ibu' => $profil->nama_ibu,
             'alasan' => $pengajuan->alasan,
+            'suku' => $cekMarga->suku,
             'foto' => $fotoBase64,
             'qrcode' => $qrBase64,
             'tanggal' => $pengajuan->created_at->translatedFormat('d F Y'),
