@@ -109,17 +109,20 @@
 
 <!-- Modal Lihat Data -->
 <!-- Modal Lihat Data -->
-<div class="modal fade" id="lihatDataModal" tabindex="-1">
+<div wire:ignore.self class="modal fade" id="lihatDataModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
+
       <div class="modal-header bg-info text-white">
         <h5 class="modal-title">Detail Pengajuan Surat OAP</h5>
-        <button type="button" class="btn-close btn-close-white" data-coreui-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white"
+                data-coreui-dismiss="modal"></button>
       </div>
 
       <div class="modal-body">
         @if($selectedData)
             <div class="row">
+                <!-- KIRI -->
                 <div class="col-md-6">
                     <table class="table table-sm">
                         <tr><th>No Surat</th><td>{{ $selectedData->nomor_surat }}</td></tr>
@@ -132,48 +135,107 @@
                     </table>
                 </div>
 
+                <!-- KANAN -->
                 <div class="col-md-6">
                     <h6 class="fw-bold mb-2">Berkas Pendukung</h6>
-                    <div class="d-flex flex-wrap gap-3">
-            @if($selectedData->foto)
-        <a href="{{ route('view.private', ['folder' => 'foto', 'filename' => basename($selectedData->foto)]) }}"
-           target="_blank"
-           class="btn btn-sm btn-outline-primary">
-           <i class="bi bi-person-bounding-box me-1"></i> Lihat Foto 4x6
-        </a>
-    @endif
 
-    @if($selectedData->ktp)
-        <a href="{{ route('view.private', ['folder' => 'ktp', 'filename' => basename($selectedData->ktp)]) }}"
-           target="_blank"
-           class="btn btn-sm btn-outline-primary">
-           <i class="bi bi-credit-card-2-front me-1"></i> Lihat KTP
-        </a>
-    @endif
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        @if($selectedData->foto)
+                            <a href="{{ route('view.private', ['folder' => 'foto', 'filename' => basename($selectedData->foto)]) }}"
+                               target="_blank"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-person-bounding-box me-1"></i> Foto 4x6
+                            </a>
+                        @endif
 
-    @if($selectedData->kk)
-        <a href="{{ route('view.private', ['folder' => 'kk', 'filename' => basename($selectedData->kk)]) }}"
-           target="_blank"
-           class="btn btn-sm btn-outline-primary">
-           <i class="bi bi-people-fill me-1"></i> Lihat KK
-        </a>
-    @endif
+                        @if($selectedData->ktp)
+                            <a href="{{ route('view.private', ['folder' => 'ktp', 'filename' => basename($selectedData->ktp)]) }}"
+                               target="_blank"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-credit-card-2-front me-1"></i> KTP
+                            </a>
+                        @endif
 
-    @if($selectedData->akte)
-        <a href="{{ route('view.private', ['folder' => 'akte', 'filename' => basename($selectedData->akte)]) }}"
-           target="_blank"
-           class="btn btn-sm btn-outline-primary">
-           <i class="bi bi-file-earmark-pdf me-1"></i> Lihat Akte Kelahiran
-        </a>
-    @endif
+                        @if($selectedData->kk)
+                            <a href="{{ route('view.private', ['folder' => 'kk', 'filename' => basename($selectedData->kk)]) }}"
+                               target="_blank"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-people-fill me-1"></i> KK
+                            </a>
+                        @endif
+
+                        @if($selectedData->akte)
+                            <a href="{{ route('view.private', ['folder' => 'akte', 'filename' => basename($selectedData->akte)]) }}"
+                               target="_blank"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-file-earmark-pdf me-1"></i> Akte
+                            </a>
+                        @endif
+                    </div>
+
+@if(auth()->user()->role === 'admin')
+    <hr>
+    <h6 class="fw-bold text-danger">Perbaikan foto (Admin)</h6>
+
+    <form wire:submit.prevent="perbaikiDanTerbitkan"
+          enctype="multipart/form-data">
+
+        {{-- INPUT FILE --}}
+        <input type="file"
+               wire:model="fotoBaru"
+               accept="image/*"
+               class="form-control form-control-sm mb-2">
+
+        {{-- LOADING SAAT UPLOAD FOTO --}}
+        <div wire:loading wire:target="fotoBaru"
+             class="alert alert-info py-1 px-2 mb-2">
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Mengunggah foto…
+        </div>
+
+        {{-- PREVIEW FOTO --}}
+        @if ($fotoBaru)
+            <div class="mb-2">
+                <small class="text-muted">Preview Foto Baru:</small><br>
+                <img src="{{ $fotoBaru->temporaryUrl() }}"
+                     class="img-thumbnail mt-1"
+                     style="max-height:150px">
+            </div>
+        @endif
+
+        {{-- VALIDATION ERROR --}}
+        @error('fotoBaru')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
+
+        {{-- BUTTON --}}
+        <button type="submit"
+                wire:loading.attr="disabled"
+                wire:target="perbaikiDanTerbitkan,fotoBaru"
+                class="btn btn-danger btn-sm">
+            <span wire:loading
+                  wire:target="perbaikiDanTerbitkan"
+                  class="spinner-border spinner-border-sm me-1"></span>
+            Perbaiki & Terbitkan Ulang
+        </button>
+
+        <small class="d-block mt-2 text-muted">
+            ⚠ Nomor surat tetap, PDF diperbarui
+        </small>
+    </form>
+@endif
+                </div>
+            </div>
         @else
             <p class="text-center text-muted">Data tidak tersedia</p>
         @endif
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-coreui-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-secondary"
+                data-coreui-dismiss="modal">Tutup</button>
       </div>
+
     </div>
   </div>
 </div>
@@ -222,23 +284,32 @@
 </div>
 
 @script
-    <script>
+<script>
+document.addEventListener('livewire:initialized', () => {
+
+    function showModal(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        let modal = coreui.Modal.getInstance(el);
+        if (!modal) {
+            modal = new coreui.Modal(el);
+        }
+        modal.show();
+    }
 
     window.addEventListener('show-lihat-data', () => {
-        const modal = coreui.Modal.getOrCreateInstance(document.getElementById('lihatDataModal'));
-        modal.show();
+        showModal('lihatDataModal');
     });
 
-        window.addEventListener('show-pdf-modal', event => {
-            var myModal = new coreui.Modal(document.getElementById('pdfModal'));
-            myModal.show();
-        });
+    window.addEventListener('show-pdf-modal', () => {
+        showModal('pdfModal');
+    });
 
     window.addEventListener('show-hapus-modal', () => {
-        const modal = new coreui.Modal(document.getElementById('hapusModal'));
-        modal.show();
+        showModal('hapusModal');
     });
 
-    
-    </script>
+});
+</script>
 @endscript

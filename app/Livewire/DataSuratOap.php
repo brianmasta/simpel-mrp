@@ -8,11 +8,13 @@ use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PengajuanSuratExport;
 use App\Mail\SuratOapMail;
+use App\Models\FormatSurat;
 use App\Services\FonnteService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Livewire\WithFileUploads;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -21,7 +23,7 @@ class DataSuratOap extends Component
 {
     public $previewPdfUrl = null;
 
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -33,6 +35,8 @@ class DataSuratOap extends Component
     public $detailSurat;
     public $previewPdfData = null; // simpan PDF base64
     public $selectedData;
+
+    public $fotoBaru;
 
     public function render()
     {
@@ -262,6 +266,92 @@ class DataSuratOap extends Component
             'type' => 'success',
             'message' => 'Surat berhasil dikirim ke WhatsApp.'
         ]);
-        }
+    }
     
+    public function perbaikiDanTerbitkan()
+    {
+        abort_if(auth()->user()->role !== 'admin', 403);
+
+        $this->validate([
+            'fotoBaru' => 'nullable|image|max:2048'
+        ]);
+
+        $pengajuan = PengajuanSurat::with(['profil.kabupaten'])->findOrFail($this->selectedData->id);
+
+        // Update foto
+        if ($this->fotoBaru) {
+
+        // hapus foto lama jika ada
+        if (
+            !empty($pengajuan->foto) &&
+            Storage::disk('public')->exists($pengajuan->foto)
+        ) {
+            Storage::disk('public')->delete($pengajuan->foto);
+        }
+
+        // simpan foto baru ke folder surat_oap/foto
+        $path = $this->fotoBaru->store('public/surat_oap/foto');
+
+        // update database
+        $pengajuan->update([
+            'foto' => $path,
+        ]);
+        }
+
+        // Format surat
+        $isIpdn = str_contains(strtoupper($pengajuan->alasan), 'IPDN');
+        $format = FormatSurat::where('jenis', $isIpdn ? 'IPDN' : 'surat_oap')->first();
+
+        if (!$format) {
+            session()->flash('error', 'Format surat belum tersedia.');
+            return;
+        }
+
+        // Foto base64
+        $fotoPath = storage_path('app/private/' . $pengajuan->foto);
+        $fotoBase64 = file_exists($fotoPath)
+            ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($fotoPath))
+            : '';
+
+        // QR lama
+        $qrPath = public_path('qrcodes/qrcode_' . $pengajuan->kode_autentikasi . '.png');
+        $qrBase64 = file_exists($qrPath)
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents($qrPath))
+            : '';
+
+        // Data template
+        $profil = $pengajuan->profil;
+        $data = [
+            'nama_lengkap' => $profil->nama_lengkap,
+            'nik' => $profil->nik,
+            'nik_kk' => $profil->no_kk,
+            'nomor_surat' => $pengajuan->nomor_surat,
+            'kabupaten' => $profil->kabupaten->nama ?? '',
+            'nama_ayah' => $profil->nama_ayah,
+            'nama_ibu' => $profil->nama_ibu,
+            'alasan' => $pengajuan->alasan,
+            'foto' => $fotoBase64,
+            'qrcode' => $qrBase64,
+            'tanggal' => $pengajuan->created_at->translatedFormat('d F Y'),
+        ];
+
+        // Inject HTML
+        $html = $format->isi_html;
+        foreach ($data as $k => $v) {
+            $html = str_replace('[[' . $k . ']]', $v, $html);
+        }
+
+        // Generate PDF ulang (TIMPA FILE LAMA)
+        $pdf = Pdf::loadHTML($html)->setPaper($isIpdn ? 'Legal' : 'A4', 'portrait');
+        Storage::disk('public')->put($pengajuan->file_surat, $pdf->output());
+
+        $pengajuan->update(['status' => 'terbit']);
+
+        $this->reset('fotoBaru');
+
+        session()->flash(
+            'success',
+            'Surat berhasil diperbaiki dan diterbitkan ulang dengan nomor yang sama.'
+        );
+    }
 }
