@@ -47,14 +47,15 @@
                             <td>{{ $item->nomor_surat ?? '-' }}</td>
                             <td>{{ $item->alasan ?? '-' }}</td>
                             <td>
-    <span class="badge 
-        bg-{{ 
-            $item->status === 'terbit' || $item->status === 'valid' ? 'success' :
-            ($item->status === 'perlu_perbaikan' ? 'danger' :
-            ($item->status === 'verifikasi' ? 'warning' : 'secondary'))
-        }}">
-        {{ strtoupper($item->status) }}
-    </span>
+<span class="badge 
+    bg-{{
+        in_array($item->status, ['terbit','valid']) ? 'success' :
+        ($item->status === 'perlu_perbaikan' ? 'danger' :
+        (in_array($item->status, ['verifikasi','menunggu']) ? 'warning' :
+        'secondary'))
+    }}">
+    {{ strtoupper(str_replace('_',' ', $item->status)) }}
+</span>
                             </td>
                             <td>{{ $item->created_at?->format('d-m-Y') ?? '-' }}</td>
                             <td>
@@ -64,7 +65,9 @@
            class="btn btn-sm btn-danger">
             <i class="bi bi-tools me-1"></i> Perbaiki Berkas
         </a>
-
+    
+    @elseif($item->status === 'verifikasi')
+        <span class="text-muted">Belum tersedia</span>
     @elseif($item->file_surat && \Illuminate\Support\Facades\Storage::disk('public')->exists($item->file_surat))
         <a href="{{ \Illuminate\Support\Facades\Storage::url($item->file_surat) }}?v={{ time() }}"
            target="_blank"

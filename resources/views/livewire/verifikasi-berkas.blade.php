@@ -93,22 +93,22 @@
                                             </td>
 
                                             <td>
-@php
-    $file = $selectedData?->{$v->dokumen};
-@endphp
+                                                @php
+                                                    $file = $selectedData?->{$v->dokumen};
+                                                @endphp
 
-@if($file)
-    <a href="{{ route('view.private', [
-        'folder' => $v->dokumen,
-        'filename' => basename($file)
-    ]) }}"
-    target="_blank"
-    class="btn btn-sm btn-outline-primary">
-        <i class="bi bi-eye me-1"></i> Lihat
-    </a>
-@else
-    <span class="text-muted">Tidak ada</span>
-@endif
+                                                @if($file)
+                                                    <a href="{{ route('view.private', [
+                                                        'folder' => $v->dokumen,
+                                                        'filename' => basename($file)
+                                                    ]) }}"
+                                                    target="_blank"
+                                                    class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye me-1"></i> Lihat
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">Tidak ada</span>
+                                                @endif
                                             </td>
 
                                             <td>

@@ -84,61 +84,62 @@ class VerifikasiBerkas extends Component
         // 🔴 PRIORITAS 1: ADA PERBAIKAN
         if ($perluPerbaikan) {
 
-    // simpan status lama
-    $oldStatus = $pengajuan->status;
+        // simpan status lama
+        $oldStatus = $pengajuan->status;
 
-    // update status
-    $pengajuan->status = 'perlu_perbaikan';
-    $pengajuan->pernah_perbaikan = true;
-    $pengajuan->save();
+        // update status
+        $pengajuan->status = 'perlu_perbaikan';
+        $pengajuan->pernah_perbaikan = true;
+        $pengajuan->save();
 
-    // kirim WA hanya jika status BARU
-    if ($oldStatus !== 'perlu_perbaikan') {
+        // kirim WA hanya jika status BARU
+        if ($oldStatus !== 'perlu_perbaikan') {
 
-        // =========================
-        // 📝 AMBIL CATATAN PETUGAS
-        // =========================
-        $catatanList = VerifikasiPengajuan::where('pengajuan_id', $pengajuan->id)
-            ->where('status', 'perlu_perbaikan')
-            ->whereNotNull('catatan')
-            ->get()
-            ->map(fn ($v) => '- ' . strtoupper($v->dokumen) . ': ' . $v->catatan)
-            ->implode("\n");
+            // =========================
+            // 📝 AMBIL CATATAN PETUGAS
+            // =========================
+            $catatanList = VerifikasiPengajuan::where('pengajuan_id', $pengajuan->id)
+                ->where('status', 'perlu_perbaikan')
+                ->whereNotNull('catatan')
+                ->get()
+                ->map(fn ($v) => '- ' . strtoupper($v->dokumen) . ': ' . $v->catatan)
+                ->implode("\n");
 
-        if ($catatanList === '') {
-            $catatanList = '- Silakan lihat detail di sistem SIMPEL-MRP';
+            if ($catatanList === '') {
+                $catatanList = '- Silakan lihat detail di sistem SIMPEL-MRP';
+            }
+
+            // 🔗 LINK PERBAIKAN
+            $linkPerbaikan = url('/perbaikan-berkas/' . $pengajuan->id);
+
+            // =========================
+            // 📲 KIRIM WHATSAPP
+            // =========================
+            if ($pengajuan->user?->profil?->no_hp) {
+                FonnteService::send(
+                    $pengajuan->user->profil->no_hp,
+                    "⚠️ *SIMPEL-MRP*\n\n" .
+                    "Yth. Bapak/Ibu,\n\n" .
+                    "Berdasarkan hasil verifikasi petugas,\n" .
+                    "pengajuan *Surat Keterangan Orang Asli Papua (OAP)* Anda\n" .
+                    "berstatus *PERLU PERBAIKAN*.\n\n" .
+                    "📝 *Catatan Petugas:*\n" .
+                    "{$catatanList}\n\n" .
+                    "Silakan melakukan perbaikan melalui tautan berikut:\n" .
+                    "🔗 {$linkPerbaikan}\n\n" .
+                    "Terima kasih atas perhatian dan kerja samanya."
+                );
+            }
+
+                    // 📧 EMAIL
+            if ($pengajuan->user?->email) {
+                Mail::to($pengajuan->user->email)
+                    ->send(new NotifikasiPerluPerbaikan($pengajuan));
+            }
         }
 
-        // 🔗 LINK PERBAIKAN
-        $linkPerbaikan = url('/perbaikan-berkas/' . $pengajuan->id);
-
-        // =========================
-        // 📲 KIRIM WHATSAPP
-        // =========================
-        if ($pengajuan->user?->profil?->no_hp) {
-            FonnteService::send(
-                $pengajuan->user->profil->no_hp,
-                "⚠️ *SIMPEL-MRP*\n\n" .
-                "Yth. Bapak/Ibu,\n\n" .
-                "Berdasarkan hasil verifikasi petugas,\n" .
-                "pengajuan *Surat Keterangan Orang Asli Papua (OAP)* Anda\n" .
-                "berstatus *PERLU PERBAIKAN*.\n\n" .
-                "📝 *Catatan Petugas:*\n" .
-                "{$catatanList}\n\n" .
-                "Silakan melakukan perbaikan melalui tautan berikut:\n" .
-                "🔗 {$linkPerbaikan}\n\n" .
-                "Terima kasih atas perhatian dan kerja samanya."
-            );
-        }
-
-                // 📧 EMAIL
-        if ($pengajuan->user?->email) {
-            Mail::to($pengajuan->user->email)
-                ->send(new NotifikasiPerluPerbaikan($pengajuan));
-        }
-    }
-
-    return;
+        return;
+        
         }
 
         // 🟡 BELUM SEMUA VALID

@@ -261,11 +261,11 @@ class SuratOap extends Component
             'ktp' => $ktpPath,
             'kk' => $kkPath,
             'akte' => $aktePath,
-            'status' => 'diajukan',
+            'status' => 'menunggu_verifikasi',
         ]);
 
         // Terbitkan otomatis surat
-        $this->terbitkanSuratOap($pengajuan);
+        // $this->terbitkanSuratOap($pengajuan);
         
         // Verifikasi Pengajuan
         foreach (['foto','ktp','kk','akte'] as $dokumen) {
@@ -283,7 +283,7 @@ class SuratOap extends Component
 
         $this->dispatch('toast', [
             'type' => 'success',
-            'message' => '✅ Surat OAP berhasil diterbitkan otomatis!'
+            'message' => '✅ Pengajuan berhasil dikirim. Menunggu verifikasi berkas oleh petugas.'
         ]);
         $this->dispatch('scrollToTop'); // <-- tambah ini
         $this->reset(['alasan', 'foto', 'ktp', 'kk', 'akte']);
@@ -426,6 +426,25 @@ class SuratOap extends Component
             'kode_autentikasi' => $kodeAutentikasi,
             'qr_code_path' => $relativePath,
         ]);
+    }
+
+    public function terbitkanJikaLengkap($pengajuanId)
+    {
+        $pengajuan = PengajuanSurat::findOrFail($pengajuanId);
+
+        $belumValid = VerifikasiPengajuan::where('pengajuan_id', $pengajuanId)
+            ->where('status', '!=', 'valid')
+            ->exists();
+
+        if ($belumValid) {
+            throw new \Exception('Masih ada berkas belum diverifikasi');
+        }
+
+        $pengajuan->update([
+            'status' => 'berkas_lengkap'
+        ]);
+
+        $this->terbitkanSuratOap($pengajuan);
     }
 
     private function bulanRomawi($bulan)

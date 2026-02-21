@@ -20,6 +20,7 @@ use App\Livewire\LiveChatIndex;
 use App\Livewire\LiveChatPetugas;
 use App\Livewire\PengajuanMarga;
 use App\Livewire\PerbaikanBerkasOap;
+use App\Livewire\Petugas\VerifikasiSuratOap;
 use App\Livewire\Profil;
 use App\Livewire\SuratOap;
 use App\Livewire\Verifikasi;
@@ -93,7 +94,19 @@ Route::middleware(['auth', 'verified', 'role:pengguna,admin'])->group(function (
     Route::get('/pengajuan-marga', PengajuanMarga::class)->name('pengajuan-marga');
     Route::get('/perbaikan-berkas/{id}', PerbaikanBerkasOap::class)->name('perbaikan-berkas');
 
-        // ===== LIVE CHAT BANTUAN =====
+
+
+});
+
+Route::middleware(['auth', 'verified', 'role:admin,petugas'])->group(function () {
+
+    Route::get('/verifikasi', Verifikasi::class)->name('verifikasi');
+    Route::get('/data-marga', DataMarga::class)->name('data-marga');
+    Route::get('/data-surat-oap', DataSuratOap::class)->name('data-surat-oap');
+    Route::get('/verifikasi-berkas', VerifikasiBerkas::class)->name('verifikasi-berkas');
+    Route::get('/dashboard-rekapan', DashboardRekapan::class)->name('dashboard-rekapan');
+
+            // ===== LIVE CHAT BANTUAN =====
     Route::get('/live-chat', LiveChatIndex::class)
         ->name('admin.livechat.index');
 
@@ -106,15 +119,8 @@ Route::middleware(['auth', 'verified', 'role:pengguna,admin'])->group(function (
     Route::get('/tickets/{ticket}', TicketShow::class)
             ->name('admin.tickets.show');
 
-});
-
-Route::middleware(['auth', 'verified', 'role:admin,petugas'])->group(function () {
-
-    Route::get('/verifikasi', Verifikasi::class)->name('verifikasi');
-    Route::get('/data-marga', DataMarga::class)->name('data-marga');
-    Route::get('/data-surat-oap', DataSuratOap::class)->name('data-surat-oap');
-    Route::get('/verifikasi-berkas', VerifikasiBerkas::class)->name('verifikasi-berkas');
-    Route::get('/dashboard-rekapan', DashboardRekapan::class)->name('dashboard-rekapan');
+        // Halaman verifikasi berkas Surat OAP
+    Route::get('/petugas/verifikasi/surat-oap', VerifikasiSuratOap::class)->name('petugas.verifikasi.surat-oap');
     
 });
 

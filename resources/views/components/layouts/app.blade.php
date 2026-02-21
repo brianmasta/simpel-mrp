@@ -273,6 +273,14 @@
           </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {{ request()->is('petugas/verifikasi/surat-oap*') ? 'active' : '' }}"
+              wire:navigate
+              href="{{ route('petugas.verifikasi.surat-oap') }}">
+                <i class="nav-icon cil-task"></i>
+                Verifikasi Surat OAP
+            </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link {{ request()->is('pengajuan-marga') ? 'active' : '' }}" wire:navigate href="/pengajuan-marga">
             <i class="nav-icon cil-people"></i>
             Pengajuan Marga
@@ -357,6 +365,14 @@
             <i class="nav-icon cil-clipboard"></i>
             Verifikasi Berkas
           </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('petugas/verifikasi/surat-oap*') ? 'active' : '' }}"
+              wire:navigate
+              href="{{ route('petugas.verifikasi.surat-oap') }}">
+                <i class="nav-icon cil-task"></i>
+                Verifikasi Surat OAP
+            </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {{ request()->is('data-marga') ? 'active' : '' }}" wire:navigate href="/data-marga">
