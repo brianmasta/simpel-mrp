@@ -17,81 +17,112 @@
 }
 </style>
 
-<div class="card mb-4">
-    <div class="card-header bg-primary text-white"><strong>Riwayat Pengajuan Surat OAP</strong></div>
-    <div class="card-body">
-
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
-
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Nomor Surat</th>
-                        <th>Alasan</th>
-                        <th>Status</th>
-                        <th>Tanggal</th>
-                        <th>Dokumen</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($riwayat as $index => $item)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $item->nomor_surat ?? '-' }}</td>
-                            <td>{{ $item->alasan ?? '-' }}</td>
-                            <td>
-<span class="badge 
-    bg-{{
-        in_array($item->status, ['terbit','valid']) ? 'success' :
-        ($item->status === 'perlu_perbaikan' ? 'danger' :
-        (in_array($item->status, ['verifikasi','menunggu']) ? 'warning' :
-        'secondary'))
-    }}">
-    {{ strtoupper(str_replace('_',' ', $item->status)) }}
-</span>
-                            </td>
-                            <td>{{ $item->created_at?->format('d-m-Y') ?? '-' }}</td>
-                            <td>
-
-    @if($item->status === 'perlu_perbaikan')
-        <a href="{{ route('perbaikan-berkas', $item->id) }}"
-           class="btn btn-sm btn-danger">
-            <i class="bi bi-tools me-1"></i> Perbaiki Berkas
-        </a>
-    
-    @elseif($item->status === 'verifikasi')
-        <span class="text-muted">Belum tersedia</span>
-    @elseif($item->file_surat && \Illuminate\Support\Facades\Storage::disk('public')->exists($item->file_surat))
-        <a href="{{ \Illuminate\Support\Facades\Storage::url($item->file_surat) }}?v={{ time() }}"
-           target="_blank"
-           class="btn btn-sm btn-warning">
-            <i class="bi bi-download me-1"></i> Unduh
-        </a>
-
-    @else
-        <span class="text-muted">Belum tersedia</span>
-    @endif
-
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-muted">Belum ada pengajuan surat.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex align-items-center justify-content-between bg-primary text-white">
+            <strong>
+                <i class="bi bi-clock-history me-2"></i>
+                Riwayat Pengajuan Surat OAP
+            </strong>
         </div>
 
+        <div class="card-body">
+
+            {{-- Alert --}}
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle me-1"></i>
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="bi bi-x-circle me-1"></i>
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle mb-0">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th style="width:5%">#</th>
+                            <th>Nomor Surat</th>
+                            <th>Alasan</th>
+                            <th style="width:15%">Status</th>
+                            <th style="width:15%">Tanggal</th>
+                            <th style="width:20%">Dokumen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($riwayat as $index => $item)
+                            <tr>
+                                <td class="text-center fw-semibold">{{ $index + 1 }}</td>
+
+                                <td>
+                                    <span class="fw-semibold text-dark">
+                                        {{ $item->nomor_surat ?? '-' }}
+                                    </span>
+                                </td>
+
+                                <td>{{ $item->alasan ?? '-' }}</td>
+
+                                <td class="text-center">
+                                    <span class="badge px-3 py-2
+                                        bg-{{
+                                            in_array($item->status, ['terbit','valid']) ? 'success' :
+                                            ($item->status === 'perlu_perbaikan' ? 'danger' :
+                                            (in_array($item->status, ['verifikasi','menunggu']) ? 'warning' :
+                                            'secondary'))
+                                        }}">
+                                        {{ strtoupper(str_replace('_',' ', $item->status)) }}
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <i class="bi bi-calendar-event me-1 text-muted"></i>
+                                    {{ $item->created_at?->format('d-m-Y') ?? '-' }}
+                                </td>
+
+                                <td class="text-center">
+                                    @if($item->status === 'perlu_perbaikan')
+                                        <a href="{{ route('perbaikan-berkas', $item->id) }}"
+                                        class="btn btn-sm btn-danger">
+                                            <i class="bi bi-tools me-1"></i>
+                                            Perbaiki
+                                        </a>
+
+                                    @elseif($item->file_surat && Storage::disk('public')->exists($item->file_surat))
+                                        <a href="{{ Storage::url($item->file_surat) }}?v={{ time() }}"
+                                        target="_blank"
+                                        class="btn btn-sm btn-warning">
+                                            <i class="bi bi-download me-1"></i>
+                                            Unduh
+                                        </a>
+
+                                    @else
+                                        <span class="text-muted fst-italic">
+                                            Belum tersedia
+                                        </span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                                    Belum ada pengajuan surat
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
     </div>
-</div>
 
 
     {{-- FORM PENGAJUAN SURAT --}}
@@ -379,7 +410,7 @@
                         class="btn btn-primary"
                         wire:loading.attr="disabled"
                     >
-                        <span wire:loading.remove>Kirim & Terbitkan Surat</span>
+                        <span wire:loading.remove>Kirim Pengajuan</span>
                         <span wire:loading>Memproses...</span>
                     </button>
                 @else

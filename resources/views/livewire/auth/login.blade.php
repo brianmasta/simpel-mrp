@@ -55,7 +55,22 @@
                         </div>
                         <div class="row">
                           <div class="col-6">
-                            <button type="submit" class="btn btn-primary px-4">Login</button>
+                              <button type="submit"
+                                      class="btn btn-primary px-4"
+                                      wire:loading.attr="disabled"
+                                      wire:target="login">
+                                  
+                                  {{-- Normal --}}
+                                  <span wire:loading.remove wire:target="login">
+                                      <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                                  </span>
+
+                                  {{-- Loading --}}
+                                  <span wire:loading wire:target="login">
+                                      <span class="spinner-border spinner-border-sm me-1"></span>
+
+                                  </span>
+                              </button>
                           </div>
                           <div class="col-6 text-end">
                             <a href="{{ route('password.request') }}" class="btn btn-link px-0">Lupa password?</a>
