@@ -312,6 +312,12 @@
           </a>
         </li>
         <li class="nav-item">
+          <a class="nav-link {{ request()->is('/petugas/kirim-email') ? 'active' : '' }}" wire:navigate href="/petugas/kirim-email">
+            <i class="nav-icon cil-folder-open"></i>
+            Email
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link {{ request()->is('admin.activity-log') ? 'active' : '' }}" wire:navigate href="/admin/log-aktivitas">
             <i class="nav-icon cil-folder-open"></i>
             Activity Log
@@ -389,6 +395,12 @@
           <a class="nav-link {{ request()->is('dashboard-rekapan') ? 'active' : '' }}" wire:navigate href="/dashboard-rekapan">
             <i class="nav-icon cil-folder-open"></i>
             Data Rekapan
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->is('/petugas/kirim-email') ? 'active' : '' }}" wire:navigate href="/petugas/kirim-email">
+            <i class="nav-icon cil-folder-open"></i>
+            Email
           </a>
         </li>
         <li class="nav-item">

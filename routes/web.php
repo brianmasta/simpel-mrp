@@ -20,6 +20,7 @@ use App\Livewire\LiveChatIndex;
 use App\Livewire\LiveChatPetugas;
 use App\Livewire\PengajuanMarga;
 use App\Livewire\PerbaikanBerkasOap;
+use App\Livewire\Petugas\KirimEmail;
 use App\Livewire\Petugas\VerifikasiSuratOap;
 use App\Livewire\Profil;
 use App\Livewire\SuratOap;
@@ -121,6 +122,8 @@ Route::middleware(['auth', 'verified', 'role:admin,petugas'])->group(function ()
 
         // Halaman verifikasi berkas Surat OAP
     Route::get('/petugas/verifikasi/surat-oap', VerifikasiSuratOap::class)->name('petugas.verifikasi.surat-oap');
+
+    Route::get('/petugas/kirim-email', KirimEmail::class);
     
 });
 
