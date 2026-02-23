@@ -48,6 +48,6 @@ class KirimEmail extends Component
     {
         return view('livewire.petugas.kirim-email', [
             'users' => User::where('role', 'pengguna')->get()
-        ]);
+        ])->layout('components.layouts.app');
     }
 }
