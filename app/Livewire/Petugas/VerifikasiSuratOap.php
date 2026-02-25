@@ -289,9 +289,9 @@ class VerifikasiSuratOap extends Component
     /* =====================================================
      |  MARGA & SUKU
      ===================================================== */
-    $parts = explode(' ', trim($profil->nama_lengkap));
-    $marga = ucfirst(strtolower(end($parts)));
-    $cekMarga = Marga::where('marga', $marga)->first();
+    // $parts = explode(' ', trim($profil->marga_terverifikasi));
+    // $marga = ucfirst(strtolower(end($parts)));
+    $cekMarga = Marga::where('marga', $profil->marga_terverifikasi)->first();
     $suku = $cekMarga->suku ?? '-';
 
     /* =====================================================

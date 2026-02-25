@@ -59,7 +59,18 @@ class SuratOap extends Component
 
         // ===== RIWAYAT =====
         $this->riwayat = PengajuanSurat::where('user_id', Auth::id())
+        ->latest()
+        ->select('id','nomor_surat','alasan','status','created_at','file_surat','foto','ktp','kk','akte')
+        ->get();
+
+        $this->loadRiwayat();
+    }
+
+    protected function loadRiwayat()
+    {
+        $this->riwayat = PengajuanSurat::where('user_id', Auth::id())
             ->latest()
+            ->select('id','nomor_surat','alasan','status','created_at','file_surat','foto','ktp','kk','akte')
             ->get();
     }
 
@@ -280,6 +291,8 @@ class SuratOap extends Component
         $this->riwayat = PengajuanSurat::where('user_id', Auth::id())->latest()->get();
 
         logActivity('Mengajukan surat ' . strtoupper($pengajuan->alasanFinal), $pengajuan);
+
+        $this->dispatch('pengajuanBerhasil');
 
         $this->dispatch('toast', [
             'type' => 'success',
