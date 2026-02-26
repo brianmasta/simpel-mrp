@@ -203,7 +203,7 @@ class DataSuratOap extends Component
             return;
         }
 
-        // ✅ path file sesuai Storage::url()
+        
         $path = storage_path(
             'app/public/' . $pengajuan->file_surat
         );
@@ -246,9 +246,10 @@ class DataSuratOap extends Component
         }
 
         // 🔥 LINK PDF ANTI CACHE (KONSISTEN)
-        $linkSurat = url(
-            Storage::url($pengajuan->file_surat)
-        ) . '?v=' . time();
+        $linkSurat = route('berkas.akses', [
+            $pengajuan->id,
+            'surat'
+        ]);
 
         $pesan =
             "📄 *SURAT OAP TELAH DITERBITKAN*\n\n" .

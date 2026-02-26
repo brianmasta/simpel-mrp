@@ -19,11 +19,11 @@
                             </tr>
                             <tr>
                                 <th>Nama</th>
-                                <td>{{ $surat->profil->nama_lengkap ?? '-' }}</td>
+                                <td>{{ mask_nama($surat->profil->nama_lengkap) }}</td>
                             </tr>
                             <tr>
                                 <th>NIK</th>
-                                <td>{{ $surat->profil->nik ?? '-' }}</td>
+                                <td>{{ mask_nik($surat->profil->nik) }}</td>
                             </tr>
                             <tr>
                                 <th>Kabupaten</th>
@@ -36,9 +36,12 @@
                         </table>
 
                         <div class="mt-3">
-                            <a href="{{ asset('storage/' . $surat->file_surat) }}" target="_blank" class="btn btn-primary">
-                                <i class="bi bi-file-earmark-pdf"></i> Lihat Dokumen Asli
-                            </a>
+                            <button
+                                wire:click="lihatDokumen({{ $surat->id }})"
+                                class="btn btn-primary">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                                Lihat Dokumen Asli
+                            </button>
                         </div>
                     </div>
                 </div>

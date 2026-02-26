@@ -14,10 +14,13 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SuratOap extends Component
 {
     use WithFileUploads;
+    use AuthorizesRequests;
 
     public $namaLengkap, $nik, $no_kk, $asalKabupaten, $namaAyah, $namaIbu, $suku;
     public $alasan, $foto, $ktp, $kk, $akte;
@@ -88,6 +91,9 @@ class SuratOap extends Component
     public function unduhSurat($id)
     {
         $surat = PengajuanSurat::findOrFail($id);
+
+        // 🔐 CEK OTORISASI (ADMIN / PETUGAS / PEMILIK)
+        $this->authorize('view', $surat);
 
         if (!$surat->file_surat || !Storage::exists('html_public/' . $surat->file_surat)) {
             session()->flash('error', 'File surat tidak ditemukan.');
@@ -445,6 +451,9 @@ class SuratOap extends Component
     {
         $pengajuan = PengajuanSurat::findOrFail($pengajuanId);
 
+        // 🔐 hanya admin/petugas (via policy)
+        $this->authorize('view', $pengajuan);
+
         $belumValid = VerifikasiPengajuan::where('pengajuan_id', $pengajuanId)
             ->where('status', '!=', 'valid')
             ->exists();
@@ -480,6 +489,39 @@ class SuratOap extends Component
                 ]);
             }
         }
+    }
+
+    public function aksesBerkas(int $pengajuanId, string $jenis): StreamedResponse
+    {
+        $pengajuan = PengajuanSurat::findOrFail($pengajuanId);
+
+        // 🔐 POLICY: admin, petugas, pemilik
+        $this->authorize('view', $pengajuan);
+
+        // Mapping jenis berkas
+        $map = [
+            'foto'  => $pengajuan->foto,
+            'ktp'   => $pengajuan->ktp,
+            'kk'    => $pengajuan->kk,
+            'akte'  => $pengajuan->akte,
+            'surat' => $pengajuan->file_surat,
+        ];
+
+        if (!isset($map[$jenis]) || !$map[$jenis]) {
+            abort(404, 'Berkas tidak ditemukan.');
+        }
+
+        $path = $map[$jenis];
+
+        // ❗ DISK PUBLIC (SESUAI KONDISI SAAT INI)
+        if (!Storage::disk('public')->exists($path)) {
+            abort(404, 'File tidak tersedia.');
+        }
+
+        return response()->streamDownload(
+            fn () => print(Storage::disk('public')->get($path)),
+            basename($path)
+        );
     }
 
     public function render()

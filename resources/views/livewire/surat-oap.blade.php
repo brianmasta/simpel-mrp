@@ -153,10 +153,10 @@
                                     </a>
                                 @endif
 
-                                @if($item->file_surat && Storage::disk('public')->exists($item->file_surat))
-                                    <a href="{{ Storage::url($item->file_surat) }}"
-                                       target="_blank"
-                                       class="btn btn-sm btn-success">
+                                @if($item->file_surat && $item->status !== 'draft_surat')
+                                    <a
+                                        href="{{ route('berkas.akses', [$item->id, 'surat']) }}"
+                                        class="btn btn-sm btn-success">
                                         <i class="cil-cloud-download me-1"></i>
                                         Unduh Surat
                                     </a>

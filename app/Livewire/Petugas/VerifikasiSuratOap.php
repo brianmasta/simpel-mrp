@@ -21,9 +21,17 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class VerifikasiSuratOap extends Component
 {
+    use AuthorizesRequests;
+
+    public bool $showBerkasModal = false;
+    public ?string $jenisBerkas = null;
+    public ?int $pengajuanId = null;
+
     public $selectedPengajuan;
     public $verifikasi = [];
 
@@ -33,8 +41,13 @@ class VerifikasiSuratOap extends Component
     /* ===================== PILIH PENGAJUAN ===================== */
     public function pilihPengajuan($id)
     {
-        $this->selectedPengajuan = PengajuanSurat::with(['user', 'verifikasi'])
+        $pengajuan =$this->selectedPengajuan = PengajuanSurat::with(['user', 'verifikasi'])
             ->findOrFail($id);
+
+            // 🔐 BATAS AKSES
+        $this->authorize('view', $pengajuan);
+
+        $this->selectedPengajuan = $pengajuan;
 
         foreach ($this->selectedPengajuan->verifikasi as $v) {
             $this->verifikasi[$v->id] = [
@@ -90,6 +103,9 @@ class VerifikasiSuratOap extends Component
     {
         $pengajuan = PengajuanSurat::findOrFail($pengajuanId);
 
+        // 🔐 BATAS AKSES
+        $this->authorize('view', $pengajuan);
+
         $belumValid = VerifikasiPengajuan::where('pengajuan_id', $pengajuanId)
             ->where('status', '!=', 'valid')
             ->exists();
@@ -101,6 +117,9 @@ class VerifikasiSuratOap extends Component
             ]);
             return;
         }
+
+        // 🔐 BATAS AKSES
+        $this->authorize('view', $this->selectedPengajuan);
 
         // 👉 PAKAI METHOD LAMA KAMU (MODE DRAFT)
         $path = $this->terbitkanSuratOap($pengajuan, 'draft');
@@ -151,7 +170,8 @@ class VerifikasiSuratOap extends Component
             // ]);
 
             $linkUnduh = url(
-                Storage::url($this->selectedPengajuan->file_surat)
+                $this->selectedPengajuan->id,
+                'surat'
             );
 
             $linkVerifikasi = url(
@@ -180,7 +200,7 @@ class VerifikasiSuratOap extends Component
                 );
             }
 
-                    // ✅ path file sesuai Storage::url()
+            
             $path = storage_path(
                 'app/public/' . $this->selectedPengajuan->file_surat
             );
@@ -447,6 +467,23 @@ class VerifikasiSuratOap extends Component
             'message' => 'Pengajuan berhasil ditolak & notifikasi terkirim'
         ]);
     }
+
+    public function aksesBerkas($pengajuanId, $jenis)
+    {
+        // $pengajuan = PengajuanSurat::findOrFail($pengajuanId);
+
+        // dd(auth()->user()->can('view', $pengajuan));
+
+        $this->pengajuanId = $pengajuanId;
+        $this->jenisBerkas = $jenis;
+        $this->showBerkasModal = true;
+    }
+
+    public function tutupBerkasModal()
+    {
+        $this->reset(['showBerkasModal', 'jenisBerkas', 'pengajuanId']);
+    }
+
 
     public function render()
     {

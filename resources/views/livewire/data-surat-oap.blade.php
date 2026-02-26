@@ -62,8 +62,10 @@
                             <td>{{ $item->updated_at->format('d/m/Y') }}</td>
                             <td>
                                 @if ($item->file_surat)
-                                    <a href="{{ Storage::url($item->file_surat) }}?v={{ time() }}" target="_blank" class="btn btn-sm btn-warning">
-                                        <i class="bi bi-download"></i> Unduh
+                                    <a href="{{ route('berkas.akses', [$item->id, 'surat']) }}"
+                                    target="_blank"
+                                    class="btn btn-sm btn-warning">
+                                        <i class="bi bi-eye"></i> Lihat
                                     </a>
                                 @else
                                     <span class="text-muted">Belum tersedia</span>
@@ -141,34 +143,34 @@
 
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         @if($selectedData->foto)
-                            <a href="{{ route('view.private', ['folder' => 'foto', 'filename' => basename($selectedData->foto)]) }}"
-                               target="_blank"
-                               class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('berkas.akses', [$selectedData->id, 'foto']) }}"
+                            target="_blank"
+                            class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-person-bounding-box me-1"></i> Foto 4x6
                             </a>
                         @endif
 
                         @if($selectedData->ktp)
-                            <a href="{{ route('view.private', ['folder' => 'ktp', 'filename' => basename($selectedData->ktp)]) }}"
-                               target="_blank"
-                               class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-credit-card-2-front me-1"></i> KTP
+                            <a href="{{ route('berkas.akses', [$selectedData->id, 'ktp']) }}"
+                            target="_blank"
+                            class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-person-bounding-box me-1"></i> KTP
                             </a>
                         @endif
 
                         @if($selectedData->kk)
-                            <a href="{{ route('view.private', ['folder' => 'kk', 'filename' => basename($selectedData->kk)]) }}"
-                               target="_blank"
-                               class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-people-fill me-1"></i> KK
+                            <a href="{{ route('berkas.akses', [$selectedData->id, 'kk']) }}"
+                            target="_blank"
+                            class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-person-bounding-box me-1"></i> KK
                             </a>
                         @endif
 
                         @if($selectedData->akte)
-                            <a href="{{ route('view.private', ['folder' => 'akte', 'filename' => basename($selectedData->akte)]) }}"
-                               target="_blank"
-                               class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-file-earmark-pdf me-1"></i> Akte
+                            <a href="{{ route('berkas.akses', [$selectedData->id, 'akte']) }}"
+                            target="_blank"
+                            class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-person-bounding-box me-1"></i> Akte
                             </a>
                         @endif
                     </div>

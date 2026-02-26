@@ -133,11 +133,17 @@
 
                                             <td class="text-center">
                                                 @php 
-                                                $file = $selectedPengajuan?->{$v->dokumen}; 
+                                                    $file = $selectedPengajuan?->{$v->dokumen}; 
                                                 @endphp 
-                                                @if($file) 
-                                                <a href="{{ route('view.private', [ 'folder' => $v->dokumen, 'filename' => basename($file) ]) }}" target="_blank" class="btn btn-sm btn-outline-primary"> <i class="bi bi-eye me-1"></i> Lihat </a> 
-                                                @else <span class="text-muted">Tidak ada</span> 
+
+                                                @if($file)
+                                                    <button
+                                                        wire:click="aksesBerkas({{ $selectedPengajuan->id }}, '{{ $v->dokumen }}')"
+                                                        class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye me-1"></i> Lihat
+                                                    </button>
+                                                @else
+                                                    <span class="text-muted">Tidak ada</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -168,7 +174,7 @@
 
                             @if ($selectedPengajuan->status === 'draft_surat')
                                 <a
-                                    href="{{ Storage::url($selectedPengajuan->file_surat) }}"
+                                    href="{{ route('berkas.akses', [$selectedPengajuan->id, 'surat']) }}"
                                     target="_blank"
                                     class="btn btn-secondary"
                                 >
@@ -283,4 +289,68 @@
     </div>
 </div>
     </div>
+
+    {{-- ================= MODAL LIHAT BERKAS ================= --}}
+<div
+    class="modal fade @if($showBerkasModal) show @endif"
+    tabindex="-1"
+    style="@if($showBerkasModal) display:block; background:rgba(0,0,0,.5); @endif"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            {{-- HEADER --}}
+            <div class="modal-header">
+                <h5 class="modal-title fw-semibold">
+                    <i class="bi bi-eye me-1"></i>
+                    Preview Berkas: {{ strtoupper($jenisBerkas ?? '') }}
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    wire:click="tutupBerkasModal">
+                </button>
+            </div>
+
+            {{-- BODY --}}
+            <div class="modal-body p-0" style="height:75vh">
+
+                @if($showBerkasModal && $pengajuanId && $jenisBerkas)
+                    <iframe
+                        src="{{ route('berkas.akses', ['pengajuan' => $pengajuanId, 'jenis' => $jenisBerkas]) }}"
+                        style="width:100%; height:100%; border:none;"
+                    ></iframe>
+                @else
+                    <div class="text-center text-muted py-5">
+                        Berkas tidak tersedia
+                    </div>
+                @endif
+
+            </div>
+
+            {{-- FOOTER --}}
+            <div class="modal-footer">
+                @if($pengajuanId && $jenisBerkas)
+                    <a
+                        href="{{ route('berkas.akses', [$pengajuanId, $jenisBerkas]) }}"
+                        target="_blank"
+                        class="btn btn-outline-primary"
+                    >
+                        <i class="bi bi-box-arrow-up-right me-1"></i>
+                        Buka di Tab Baru
+                    </a>
+                @endif
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    wire:click="tutupBerkasModal">
+                    Tutup
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 </div>

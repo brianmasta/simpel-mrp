@@ -27,6 +27,7 @@ use App\Livewire\SuratOap;
 use App\Livewire\Verifikasi;
 use App\Livewire\VerifikasiBerkas;
 use App\Livewire\VerifikasiSurat;
+use App\Models\PengajuanSurat;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -147,17 +148,48 @@ Route::post('/reset-password', [ResetPassword::class, 'reset'])
     ->middleware('guest')
     ->name('password.update');
 
-Route::get('/view-private/{folder}/{filename}', function ($folder, $filename) {
-    $path = storage_path("app/private/public/surat_oap/{$folder}/{$filename}");
+Route::get('/berkas/{pengajuan}/{jenis}', function (
+    \App\Models\PengajuanSurat $pengajuan,
+    string $jenis
+) {
 
-    if (!file_exists($path)) {
-        abort(404, 'File tidak ditemukan.');
+    abort_unless(auth()->user()->can('view', $pengajuan), 403);
+
+    abort_unless(in_array($jenis, ['foto','ktp','kk','akte','surat']), 404);
+
+    $map = [
+        'foto'  => $pengajuan->foto,
+        'ktp'   => $pengajuan->ktp,
+        'kk'    => $pengajuan->kk,
+        'akte'  => $pengajuan->akte,
+        'surat' => $pengajuan->file_surat,
+    ];
+
+    abort_unless($map[$jenis] ?? false, 404);
+
+    // Hilangkan "public/" jika ada
+    $relative = str_replace('public/', '', $map[$jenis]);
+
+    if ($jenis === 'surat') {
+        // 🔥 SURAT OAP (tanpa public/)
+        $realPath = storage_path('app/public/' . $relative);
+        // dd($realPath);
+    } else {
+        // 🔥 BERKAS PENDUKUNG
+        $realPath = storage_path('app/private/public/' . $relative);
+        // dd($realPath);
     }
 
-    $mime = mime_content_type($path);
-    return response()->file($path, [
-        'Content-Type' => $mime,
-        'Cache-Control' => 'no-cache, must-revalidate',
+    abort_unless(file_exists($realPath), 404);
+
+    return response()->file($realPath, [
+        'Content-Type' => mime_content_type($realPath),
+        'Content-Disposition' => 'inline',
+        'X-Frame-Options' => 'SAMEORIGIN',
+        'Cache-Control' => 'no-store',
     ]);
-})->middleware(['auth', 'role:admin,petugas'])->name('view.private');
+
+})
+->middleware('auth')
+->name('berkas.akses');
 
