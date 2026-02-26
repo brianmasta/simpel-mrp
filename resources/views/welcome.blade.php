@@ -326,7 +326,7 @@
           </div>
 
           <div class="col-lg-6 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="200">
-            <img src="{{ asset('assets/img/simpel/about.jpg') }}" class="img-fluid" alt="">
+            <img src="{{ asset('assets/img/simpel/about2.jpg') }}" class="img-fluid" alt="">
           </div>
 
         </div>

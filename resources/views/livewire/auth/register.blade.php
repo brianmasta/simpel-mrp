@@ -94,6 +94,33 @@
                                         </svg>
                                     </button>
                                 </div>
+                                {{-- PERSETUJUAN --}}
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input @error('agree') is-invalid @enderror"
+                                        type="checkbox"
+                                        id="agree"
+                                        wire:model="agree">
+
+                                    <label class="form-check-label small" for="agree">
+                                        Saya menyatakan telah membaca dan menyetujui
+                                        <a href="#"
+                                            wire:click.prevent="$set('showSyarat', true)">
+                                            Syarat dan Ketentuan
+                                        </a>
+                                        serta
+                                        <a href="#"
+                                            wire:click.prevent="$set('showPrivasi', true)">
+                                            Kebijakan Privasi
+                                        </a>
+                                        SIMPEL-MRP.
+                                    </label>
+
+                                    @error('agree')
+                                        <div class="invalid-feedback d-block">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
 
                                 {{-- CAPTCHA --}}
                                 <div class="mb-3" wire:ignore>
@@ -139,6 +166,96 @@
             </div>
         </div>
     </div>
+@if($showSyarat)
+<div class="modal fade show d-block"
+     tabindex="-1"
+     style="background: rgba(0,0,0,.5);">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Syarat dan Ketentuan</h5>
+                <button type="button"
+                        class="btn-close"
+                        wire:click="$set('showSyarat', false)"></button>
+            </div>
+
+            <div class="modal-body small">
+                <p>
+                    SIMPEL-MRP merupakan Sistem Informasi Pelayanan Majelis Rakyat Papua
+                    yang diselenggarakan dalam rangka penerapan Sistem Pemerintahan Berbasis
+                    Elektronik (SPBE) sesuai dengan ketentuan peraturan perundang-undangan.
+                </p>
+                <p>
+                    Pengguna wajib memberikan data dan informasi yang benar, lengkap,
+                    dan dapat dipertanggungjawabkan serta menggunakan sistem ini
+                    sesuai dengan tujuan dan fungsinya.
+                </p>
+                <p>
+                    Setiap pelanggaran terhadap ketentuan penggunaan SIMPEL-MRP
+                    dapat dikenakan sanksi administratif dan/atau tindakan hukum
+                    sesuai dengan ketentuan peraturan perundang-undangan yang berlaku.
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary"
+                        wire:click="$set('showSyarat', false)">
+                    Tutup
+                </button>
+
+                <button class="btn btn-primary"
+                        wire:click="$set('agree', true); $set('showSyarat', false)">
+                    Saya Setuju
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+@endif
+
+@if($showPrivasi)
+<div class="modal fade show d-block"
+     tabindex="-1"
+     style="background: rgba(0,0,0,.5);">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Kebijakan Privasi</h5>
+                <button type="button"
+                        class="btn-close"
+                        wire:click="$set('showPrivasi', false)"></button>
+            </div>
+
+            <div class="modal-body small">
+                <p>
+                    Data pribadi pengguna diproses oleh SIMPEL-MRP sesuai dengan ketentuan
+                    peraturan perundang-undangan yang berlaku mengenai perlindungan data pribadi.
+                </p>
+                <p>
+                    Jenis data pribadi yang dapat dikumpulkan dan diproses meliputi:
+                </p>
+                <ul>
+                    <li>Nama lengkap;</li>
+                    <li>Alamat surat elektronik (email);</li>
+                    <li>Dokumen administrasi pendukung;</li>
+                    <li>Informasi teknis berupa alamat IP untuk kepentingan keamanan sistem dan audit.</li>
+                </ul>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary"
+                        wire:click="$set('showPrivasi', false)">
+                    Tutup
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+@endif
 </div>
 
 {{-- SCRIPT --}}

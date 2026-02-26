@@ -3,14 +3,19 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
+use App\Models\UserConsent;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 
 class Register extends Component
 {
+    public bool $agree = false;
+    public bool $showSyarat = false;
+    public bool $showPrivasi = false;
     public $name;
     public $email;
     public $password;
@@ -23,6 +28,7 @@ class Register extends Component
         'name' => 'required|string|min:3',
         'email' => 'required|email|unique:users,email',
         'password' => 'required|min:6|confirmed',
+        'agree' => 'accepted',
     ];
 
     protected $messages = [
@@ -34,6 +40,7 @@ class Register extends Component
         'password.required' => 'Password wajib diisi.',
         'password.min' => 'Password minimal 6 karakter.',
         'password.confirmed' => 'Konfirmasi password tidak sesuai.',
+        'agree.accepted' => 'Anda wajib menyetujui Syarat dan Ketentuan serta Kebijakan Privasi.',
     ];
 
     public function updated($field)
@@ -53,12 +60,34 @@ class Register extends Component
             return;
         }
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => 'pengguna',
-        ]);
+        DB::transaction(function () use ($validated, &$user) {
+
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'pengguna',
+            ]);
+
+            UserConsent::insert([
+                [
+                    'user_id' => $user->id,
+                    'type' => 'syarat_ketentuan',
+                    'approved_at' => now(),
+                    'ip_address' => request()->ip(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                [
+                    'user_id' => $user->id,
+                    'type' => 'kebijakan_privasi',
+                    'approved_at' => now(),
+                    'ip_address' => request()->ip(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+            ]);
+        });
         
 
         Auth::login($user);
