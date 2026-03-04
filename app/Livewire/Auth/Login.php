@@ -16,13 +16,11 @@ class Login extends Component
 
     public function login()
     {
-        // Validasi form
         $this->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
         ]);
 
-        
         if (!$this->validateRecaptcha()) {
             $this->addError('recaptcha', 'Silakan centang "Saya bukan robot".');
             $this->resetCaptcha();
@@ -34,19 +32,24 @@ class Login extends Component
             'password' => $this->password,
         ];
 
-        // Auth::attempt dengan opsi remember
         if (Auth::attempt($credentials, $this->remember)) {
+
             session()->regenerate();
 
-            // Ambil role user
-            $role = Auth::user()->role;
+            $user = Auth::user();
 
-            // Redirect sesuai role
-            return match ($role) {
+            // 🔐 paksa ganti password jika login pertama
+            if ($user->must_change_password) {
+                return redirect()->route('ganti-password');
+            }
+
+            // Redirect berdasarkan role
+            return match ($user->role) {
                 'admin'   => redirect()->route('dashboard'),
                 'petugas' => redirect()->route('dashboard'),
                 'pengguna' => redirect()->route('dashboard'),
             };
+            logActivity('Login ke sistem', Auth::user());
         }
 
         $this->addError('email', 'Email atau password salah.');

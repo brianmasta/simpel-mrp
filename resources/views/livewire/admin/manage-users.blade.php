@@ -87,6 +87,14 @@
                                             class="btn btn-sm btn-danger">
                                             <i class="cil-trash"></i>
                                         </button>
+                                        <a 
+                                        href="{{ route('admin.profil',$user->id) }}"
+                                        class="btn btn-sm btn-warning">
+
+                                        <i class="cil-user"></i>
+                                        Edit Profil
+
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

@@ -4,6 +4,7 @@ use App\Livewire\Admin\ActivityLog;
 use App\Livewire\Admin\ManageUsers;
 use App\Livewire\Admin\TicketIndex;
 use App\Livewire\Admin\TicketShow;
+use App\Livewire\Auth\ForceChangePassword;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Logout;
@@ -125,6 +126,8 @@ Route::middleware(['auth', 'verified', 'role:admin,petugas'])->group(function ()
     Route::get('/petugas/verifikasi/surat-oap', VerifikasiSuratOap::class)->name('petugas.verifikasi.surat-oap');
 
     Route::get('/petugas/kirim-email', KirimEmail::class);
+
+    Route::get('/admin/profil/{userId}', Profil::class)->name('admin.profil');
     
 });
 
@@ -192,4 +195,11 @@ Route::get('/berkas/{pengajuan}/{jenis}', function (
 })
 ->middleware('auth')
 ->name('berkas.akses');
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/ganti-password', ForceChangePassword::class)
+        ->name('ganti-password');
+
+});
 

@@ -50,6 +50,19 @@
     <i class="cil-plus me-1"></i>
     Ajukan Surat OAP
 </button>
+
+@if(in_array(auth()->user()->role,['admin','petugas']))
+
+<button 
+    class="btn btn-warning mb-3"
+    data-coreui-toggle="modal"
+    data-coreui-target="#modalPengajuanPetugas"
+>
+    <i class="cil-user-plus me-1"></i>
+    Pengajuan Oleh Petugas
+</button>
+
+@endif
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-primary text-white">
         <i class="cil-history me-2"></i>
@@ -94,6 +107,18 @@
                         <div>
                             <h6 class="mb-0 fw-bold">
                                 {{ $item->nomor_surat ?? 'Nomor Surat Belum Terbit' }}
+
+                                @if($item->sumber_pengajuan === 'petugas')
+                                    <span class="badge bg-info ms-1">
+                                        <i class="cil-user-follow me-1"></i>
+                                        Petugas
+                                    </span>
+                                @else
+                                    <span class="badge bg-success ms-1">
+                                        <i class="cil-user me-1"></i>
+                                        Online
+                                    </span>
+                                @endif
                             </h6>
                             <small class="text-muted">
                                 <i class="cil-calendar me-1"></i>
@@ -120,6 +145,17 @@
                             <p class="mb-2">
                                 <i class="cil-description me-1"></i>
                                 <strong>Alasan:</strong> {{ $item->alasan ?? '-' }}
+                            </p>
+
+                            <p class="mb-2">
+                                <i class="cil-user me-1"></i>
+                                <strong>Sumber Pengajuan:</strong>
+                                
+                                @if($item->sumber_pengajuan === 'petugas')
+                                    Pengajuan melalui petugas pelayanan
+                                @else
+                                    Pengajuan mandiri melalui sistem
+                                @endif
                             </p>
 
                             {{-- DETAIL BERKAS --}}
@@ -511,24 +547,419 @@
         </div>
     </div>
 </div>
+
+<div 
+wire:ignore.self
+class="modal fade"
+id="modalPengajuanPetugas"
+tabindex="-1"
+>
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+
+    {{-- HEADER --}}
+    <div class="modal-header bg-warning text-dark">
+
+    <h5 class="modal-title">
+    <i class="cil-user-plus me-2"></i>
+    Pengajuan Surat OAP (Petugas)
+    </h5>
+
+    <button 
+    type="button"
+    class="btn-close"
+    data-coreui-dismiss="modal">
+    </button>
+
+    </div>
+
+    {{-- BODY --}}
+    <div class="modal-body">
+
+    {{-- CARI PEMOHON --}}
+    <div class="mb-3">
+
+    <label class="form-label">Cari Pemohon (Nama / NIK)</label>
+
+    <input
+    type="text"
+    class="form-control"
+    placeholder="Ketik nama atau NIK..."
+    wire:model.live="searchUser">
+
+    @if(!empty($hasilUsers))
+
+    <ul class="list-group mt-2">
+
+    @foreach($hasilUsers as $user)
+
+    <li 
+    class="list-group-item list-group-item-action"
+    wire:click="pilihUser({{ $user->id }})"
+    style="cursor:pointer">
+
+    <strong>{{ $user->name }}</strong><br>
+    <small>NIK : {{ $user->profil->nik ?? '-' }}</small>
+
+    </li>
+
+    @endforeach
+
+    </ul>
+
+    @endif
+
+    </div>
+
+    @if($user_id)
+
+    <hr>
+
+    {{-- ALERT VERIFIKASI MARGA --}}
+    @if ($pesanVerifikasi)
+    <div class="alert {{ $margaValid ? 'alert-success' : 'alert-warning' }}">
+    {{ $pesanVerifikasi }}
+    </div>
+    @endif
+
+
+    {{-- DATA PEMOHON --}}
+    <div class="row g-3">
+
+    <div class="col-md-6">
+    <label class="form-label">NIK</label>
+    <input class="form-control" value="{{ $nik }}" disabled>
+    </div>
+
+    <div class="col-md-6">
+    <label class="form-label">No KK</label>
+    <input class="form-control" value="{{ $no_kk }}" disabled>
+    </div>
+
+    <div class="col-md-6">
+    <label class="form-label">Nama Lengkap</label>
+    <input class="form-control" value="{{ $namaLengkap }}" disabled>
+    </div>
+
+    <div class="col-md-6">
+    <label class="form-label">Suku</label>
+    <input class="form-control" value="{{ $suku }}" disabled>
+    </div>
+
+    <div class="col-md-6">
+    <label class="form-label">Asal Kabupaten/Kota</label>
+    <input class="form-control" value="{{ $asalKabupaten }}" disabled>
+    </div>
+
+    <div class="col-md-6">
+    <label class="form-label">Nama Ayah</label>
+    <input class="form-control" value="{{ $namaAyah }}" disabled>
+    </div>
+
+    <div class="col-md-6">
+    <label class="form-label">Nama Ibu</label>
+    <input class="form-control" value="{{ $namaIbu }}" disabled>
+    </div>
+
+    </div>
+
+    <hr>
+
+    {{-- ALASAN --}}
+    <div class="mb-3">
+
+    <label class="form-label">Alasan Pengajuan</label>
+
+    <select wire:model.live="alasan" class="form-select">
+
+    <option value="">-- Pilih Alasan --</option>
+    <option value="Pendaftaran CPNS">Pendaftaran CPNS</option>
+    <option value="IPDN">Pendaftaran IPDN</option>
+    <option value="Beasiswa">Beasiswa</option>
+    <option value="Lainnya">Lainnya</option>
+
+    </select>
+
+    </div>
+
+    @if ($alasan === 'Lainnya')
+
+    <div class="mb-3">
+
+    <input 
+    wire:model="alasan_lain"
+    class="form-control"
+    placeholder="Masukkan alasan lainnya">
+
+    </div>
+
+    @endif
+
+
+    <hr>
+
+    <h5 class="mb-3">Unggah Dokumen Pendukung</h5>
+
+    <div class="table-responsive">
+
+    <table class="table table-bordered align-middle">
+
+    <thead class="table-light">
+
+    <tr>
+    <th width="40">No</th>
+    <th>Dokumen</th>
+    <th>Unggah Berkas</th>
+    <th width="140">Status</th>
+    <th width="120">Preview</th>
+    </tr>
+
+    </thead>
+
+    <tbody>
+
+    {{-- FOTO --}}
+    <tr>
+
+    <td>1</td>
+
+    <td>Pas Foto 4x6 (Latar Belakang Merah)</td>
+
+    <td>
+
+    <input type="file" wire:model.defer="foto" class="form-control">
+
+    <div wire:loading wire:target="foto" class="small text-primary mt-1">
+    Unggah...
+    </div>
+
+    </td>
+
+    <td>
+
+    @if($foto)
+    <span class="badge bg-success">Siap</span>
+    @else
+    <span class="badge bg-secondary">Belum</span>
+    @endif
+
+    </td>
+
+    <td>
+
+    @if($foto)
+
+    <img src="{{ $foto->temporaryUrl() }}" class="img-thumbnail" width="70">
+
+    @endif
+
+    </td>
+
+    </tr>
+
+
+    {{-- KTP --}}
+    <tr>
+
+    <td>2</td>
+
+    <td>KTP</td>
+
+    <td>
+
+    <input type="file" wire:model.defer="ktp" class="form-control">
+
+    <div wire:loading wire:target="ktp" class="small text-primary mt-1">
+    Unggah...
+    </div>
+
+    </td>
+
+    <td>
+
+    @if($ktp)
+    <span class="badge bg-success">Siap</span>
+    @else
+    <span class="badge bg-secondary">Belum</span>
+    @endif
+
+    </td>
+
+    <td>
+
+    @if($ktp)
+
+    @if(str_starts_with($ktp->getMimeType(),'image'))
+    <img src="{{ $ktp->temporaryUrl() }}" class="img-thumbnail" width="70">
+    @else
+    <span class="badge bg-danger">PDF</span>
+    @endif
+
+    @endif
+
+    </td>
+
+    </tr>
+
+
+    {{-- KK --}}
+    <tr>
+
+    <td>3</td>
+
+    <td>Kartu Keluarga</td>
+
+    <td>
+
+    <input type="file" wire:model.defer="kk" class="form-control">
+
+    <div wire:loading wire:target="kk" class="small text-primary mt-1">
+    Unggah...
+    </div>
+
+    </td>
+
+    <td>
+
+    @if($kk)
+    <span class="badge bg-success">Siap</span>
+    @else
+    <span class="badge bg-secondary">Belum</span>
+    @endif
+
+    </td>
+
+    <td>
+
+    @if($kk)
+
+    @if(str_starts_with($kk->getMimeType(),'image'))
+    <img src="{{ $kk->temporaryUrl() }}" class="img-thumbnail" width="70">
+    @else
+    <span class="badge bg-danger">PDF</span>
+    @endif
+
+    @endif
+
+    </td>
+
+    </tr>
+
+
+    {{-- AKTE --}}
+    <tr>
+
+    <td>4</td>
+
+    <td>Akte Kelahiran</td>
+
+    <td>
+
+    <input type="file" wire:model.defer="akte" class="form-control">
+
+    <div wire:loading wire:target="akte" class="small text-primary mt-1">
+    Unggah...
+    </div>
+
+    </td>
+
+    <td>
+
+    @if($akte)
+    <span class="badge bg-success">Siap</span>
+    @else
+    <span class="badge bg-secondary">Belum</span>
+    @endif
+
+    </td>
+
+    <td>
+
+    @if($akte)
+
+    @if(str_starts_with($akte->getMimeType(),'image'))
+    <img src="{{ $akte->temporaryUrl() }}" class="img-thumbnail" width="70">
+    @else
+    <span class="badge bg-danger">PDF</span>
+    @endif
+
+    @endif
+
+    </td>
+
+    </tr>
+
+    </tbody>
+
+    </table>
+
+    </div>
+
+    @endif
+
+    </div>
+
+
+    {{-- FOOTER --}}
+    <div class="modal-footer">
+
+    <button 
+    class="btn btn-secondary"
+    data-coreui-dismiss="modal">
+    Tutup
+    </button>
+
+    @if($user_id)
+
+    <button 
+    wire:click="kirim"
+    class="btn btn-warning"
+    wire:loading.attr="disabled">
+
+    <span wire:loading.remove>
+    <i class="cil-send"></i>
+    Kirim Pengajuan
+    </span>
+
+    <span wire:loading>
+
+    <span class="spinner-border spinner-border-sm"></span>
+    Memproses...
+
+    </span>
+
+    </button>
+
+    @endif
+
+    </div>
+
+    </div>
+    </div>
 </div>
 
 <script>
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('scrollToTop', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+window.addEventListener('pengajuanBerhasil', () => {
 
-    });
+    // tutup semua modal yang sedang terbuka
+    document.querySelectorAll('.modal.show').forEach(modalEl => {
 
-    window.addEventListener('pengajuanBerhasil', () => {
-        const modalEl = document.getElementById('modalPengajuanSurat');
-        const modal = coreui.Modal.getInstance(modalEl);
+        let modal = coreui.Modal.getInstance(modalEl);
 
-        // 👉 pindahkan fokus ke body / tombol lain
-        document.body.focus();
+        if (!modal) {
+            modal = new coreui.Modal(modalEl);
+        }
 
-        // 👉 baru tutup modal
         modal.hide();
     });
+
+    // hapus backdrop yang kadang tersisa
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+
+    // reset body
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('padding-right');
+
+});
 </script>

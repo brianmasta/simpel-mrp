@@ -317,17 +317,23 @@ private function extractNamaFromKtp($text)
         }
     }
 
-    public function mount()
+    public function mount($userId = null)
     {
-        $this->user = Auth::user();
-        $this->profil = $this->user->profil; // ambil data profil terkait
+        if ($userId && in_array(auth()->user()->role,['admin','petugas'])) {
 
-        // Ambil email dari user
+            $this->user = \App\Models\User::findOrFail($userId);
+
+        } else {
+
+            $this->user = Auth::user();
+        }
+
+        $this->profil = $this->user->profil;
+
         $this->email = $this->user->email;
 
-        // Ambil data profil
-        // dd($this->profil);
         if($this->profil){
+
             $this->nik = $this->profil->nik;
             $this->no_kk = $this->profil->no_kk;
             $this->nama_lengkap = $this->profil->nama_lengkap;
@@ -348,8 +354,6 @@ private function extractNamaFromKtp($text)
             $this->searchKabupaten = $this->profil->kabupaten?->nama ?? '';
             $this->searchKecamatan = $this->profil->kecamatan?->nama ?? '';
             $this->searchKelurahan = $this->profil->kelurahan?->nama ?? '';
-
-            // dd($this->searchProvinsi = $this->profil->provinsi?->nama);
         }
     }
 

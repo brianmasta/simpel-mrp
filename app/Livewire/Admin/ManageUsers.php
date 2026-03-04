@@ -2,12 +2,15 @@
 
 namespace App\Livewire\Admin;
 
+use App\Mail\AkunPenggunaMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Pest\Support\Str;
 
 class ManageUsers extends Component
 {
@@ -73,18 +76,27 @@ class ManageUsers extends Component
 
     public function store()
     {
-        $this->validate();
+        $this->validate([
+            'name' => 'required|string|min:3',
+            'email' => 'required|email|unique:users,email',
+            'role' => 'required|in:admin,petugas,pengguna',
+        ]);
+
+        $plainPassword = Str::random(8);
 
         $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
             'role' => $this->role,
-            'password' => Hash::make($this->password),
+            'password' => Hash::make($plainPassword),
+            'must_change_password' => true,
+            'email_verified_at' => now()
         ]);
 
-        Log::info("Admin {$this->user->id} created user {$user->id}");
+        Mail::to($user->email)->send(new AkunPenggunaMail($user,$plainPassword));
 
-        session()->flash('success', 'Akun berhasil ditambahkan.');
+        session()->flash('success','Akun berhasil dibuat. Password dikirim ke email.');
+
         $this->resetForm();
     }
 

@@ -6,6 +6,7 @@ use App\Models\FormatSurat;
 use App\Models\Marga;
 use App\Models\PengajuanSurat;
 use App\Models\Profil;
+use App\Models\User;
 use App\Models\VerifikasiPengajuan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -30,12 +31,46 @@ class SuratOap extends Component
     public $riwayat = []; // <-- Tambahkan ini
     public $alasan_lain, $status_oaps, $wilayah_adat, $status_oap;
     public $sumber_marga;
+    public $users = [];
+    public $user_id;
+
+    public $searchUser = '';
+    public $hasilUsers = [];
+
+    public $tempat_lahir;
+    public $tanggal_lahir;
+    public $alamat;
+
+    public $provinsi_id;
+    public $kabupaten_id;
+    public $kecamatan_id;
+    public $kelurahan_id;
+
+    public $searchProvinsi;
+    public $searchKabupaten;
+    public $searchKecamatan;
+    public $searchKelurahan;
+
+    public $provinsis = [];
+    public $kabupatens = [];
+    public $kecamatans = [];
+    public $kelurahans = [];
 
     public $profilLengkap = false;
     public $pesanProfil;
 
     public function mount()
     {
+        if(in_array(auth()->user()->role,['admin','petugas'])){
+
+        $this->users = User::where('role','pengguna')
+            ->whereHas('profil')
+            ->with('profil')
+            ->orderBy('name')
+            ->get();
+
+        }
+
         $profil = Profil::where('user_id', Auth::id())->with('kabupaten')->first();
 
         $this->profilLengkap = $this->cekProfilLengkap($profil);
@@ -50,11 +85,11 @@ class SuratOap extends Component
 
 
         // ===== DATA PROFIL =====
-        $this->nik           = $profil->nik;
-        $this->no_kk         = $profil->no_kk;
-        $this->namaLengkap   = $profil->nama_lengkap;
-        $this->namaAyah      = $profil->nama_ayah;
-        $this->namaIbu       = $profil->nama_ibu;
+        $this->nik           = $profil->nik ?? '-';
+        $this->no_kk         = $profil->no_kk ?? '-';
+        $this->namaLengkap   = $profil->nama_lengkap ?? '-';
+        $this->namaAyah      = $profil->nama_ayah ?? '-';
+        $this->namaIbu       = $profil->nama_ibu ?? '-';
         $this->asalKabupaten = $profil->kabupaten->nama ?? '-';
 
         // ===== VERIFIKASI MARGA =====
@@ -63,22 +98,148 @@ class SuratOap extends Component
         // ===== RIWAYAT =====
         $this->riwayat = PengajuanSurat::where('user_id', Auth::id())
         ->latest()
-        ->select('id','nomor_surat','alasan','status','created_at','file_surat','foto','ktp','kk','akte')
+        ->select('id','nomor_surat','alasan','status','sumber_pengajuan','created_at','file_surat','foto','ktp','kk','akte')
         ->get();
 
+        $this->loadProfil($profil);
+
         $this->loadRiwayat();
+    }
+
+    public function updatedSearchUser()
+    {
+        if(strlen($this->searchUser) < 3){
+            $this->hasilUsers = [];
+            return;
+        }
+
+        $this->hasilUsers = User::where('role','pengguna')
+            ->where(function($q){
+                $q->where('name','like','%'.$this->searchUser.'%')
+                ->orWhereHas('profil', function($q2){
+                    $q2->where('nik','like','%'.$this->searchUser.'%');
+                });
+            })
+            ->with('profil')
+            ->limit(5)
+            ->get();
+    }
+
+    public function pilihUser($id)
+    {
+        $user = User::with('profil.kabupaten')->find($id);
+
+        if(!$user || !$user->profil){
+            $this->dispatch('toast',[
+                'type'=>'error',
+                'message'=>'Profil pemohon belum tersedia'
+            ]);
+            return;
+        }
+
+        $profil = $user->profil;
+
+        if(!$this->cekProfilLengkap($profil)){
+            $this->dispatch('toast',[
+                'type'=>'warning',
+                'message'=>'Profil pemohon belum lengkap'
+            ]);
+            return;
+        }
+
+        // SET USER YANG DIPILIH
+        $this->user_id = $user->id;
+
+        // STATUS PROFIL
+        $this->profilLengkap = true;
+
+        // DATA PEMOHON
+        $this->nik = $profil->nik;
+        $this->no_kk = $profil->no_kk;
+        $this->namaLengkap = $profil->nama_lengkap;
+        $this->namaAyah = $profil->nama_ayah;
+        $this->namaIbu = $profil->nama_ibu;
+        $this->asalKabupaten = $profil->kabupaten->nama ?? '';
+
+        // VERIFIKASI MARGA
+        $this->verifikasiMarga();
+
+        // RESET SEARCH RESULT
+        $this->hasilUsers = [];
+
+        // TAMPILKAN DI INPUT
+        $this->searchUser = $user->name.' - '.$profil->nik;
+    }
+
+    protected function loadProfil($profil)
+    {
+        $this->nik           = $profil->nik ?? '-';
+        $this->no_kk         = $profil->no_kk ?? '-';
+        $this->namaLengkap   = $profil->nama_lengkap ?? '-';
+        $this->namaAyah      = $profil->nama_ayah ?? '-';
+        $this->namaIbu       = $profil->nama_ibu ?? '-';
+        $this->asalKabupaten = $profil->kabupaten->nama ?? '-';
+
+        $this->verifikasiMarga();
+    }
+
+    public function updatedUserId()
+    {
+        if(!$this->user_id) return;
+
+        $profil = Profil::where('user_id',$this->user_id)
+            ->with('kabupaten')
+            ->first();
+
+        if(!$profil){
+
+            $this->dispatch('toast',[
+                'type'=>'error',
+                'message'=>'Profil pemohon belum tersedia'
+            ]);
+
+            $this->user_id = null;
+            return;
+        }
+
+        // cek profil lengkap
+        if(!$this->cekProfilLengkap($profil)){
+
+            $this->dispatch('toast',[
+                'type'=>'warning',
+                'message'=>'Profil pemohon belum lengkap'
+            ]);
+
+            $this->user_id = null;
+            return;
+        }
+
+        $this->loadProfil($profil);
+
+        $this->tempat_lahir = $profil->tempat_lahir;
+        $this->tanggal_lahir = $profil->tanggal_lahir;
+        $this->alamat = $profil->alamat;
+
+        $this->provinsi_id = $profil->provinsi_id;
+        $this->kabupaten_id = $profil->kabupaten_id;
+        $this->kecamatan_id = $profil->kecamatan_id;
+        $this->kelurahan_id = $profil->kelurahan_id;
     }
 
     protected function loadRiwayat()
     {
         $this->riwayat = PengajuanSurat::where('user_id', Auth::id())
             ->latest()
-            ->select('id','nomor_surat','alasan','status','created_at','file_surat','foto','ktp','kk','akte')
+            ->select('id','nomor_surat','alasan','status','sumber_pengajuan','created_at','file_surat','foto','ktp','kk','akte')
             ->get();
     }
 
     protected function cekProfilLengkap($profil)
     {
+        if(!$profil){
+            return false;
+        }
+
         return
             !empty($profil->nik) &&
             !empty($profil->no_kk) &&
@@ -189,6 +350,26 @@ class SuratOap extends Component
 
     public function kirim()
     {
+        // tentukan pemohon
+        $pemohonId = Auth::id();
+        $sumberPengajuan = 'user';
+
+        if(in_array(auth()->user()->role, ['admin','petugas'])){
+
+            if(!$this->user_id){
+                $this->dispatch('toast',[
+                    'type'=>'error',
+                    'message'=>'Pilih pemohon terlebih dahulu'
+                ]);
+                return;
+            }
+            
+            $pemohonId = $this->user_id;
+            $sumberPengajuan = 'petugas';
+
+
+        }
+
         if (!$this->profilLengkap) {
             $this->dispatch('toast', [
                 'type' => 'error',
@@ -226,7 +407,7 @@ class SuratOap extends Component
         // ================= BATAS PENGAJUAN OAP =================
 
         // 1. Cek jika masih ada proses dengan alasan sama
-        $cekProses = PengajuanSurat::where('user_id', Auth::id())
+        $cekProses = PengajuanSurat::where('user_id', $pemohonId)
             ->where('alasan', $alasanFinal)
             ->whereIn('status', ['diajukan', 'verifikasi', 'diproses'])
             ->exists();
@@ -242,7 +423,7 @@ class SuratOap extends Component
         // ================= BATAS PENGAJUAN OAP =================
 
         // 2. Ambil surat terakhir yang sudah terbit
-        $last = PengajuanSurat::where('user_id', Auth::id())
+        $last = PengajuanSurat::where('user_id', $pemohonId)
             ->where('alasan', $alasanFinal)
             ->where('status', 'terbit')
             ->latest()
@@ -272,7 +453,8 @@ class SuratOap extends Component
 
         // Simpan pengajuan
         $pengajuan = PengajuanSurat::create([
-            'user_id' => Auth::id(),
+            'user_id' => $pemohonId,
+            'sumber_pengajuan' => $sumberPengajuan,
             'alasan' => $alasanFinal,
             'foto' => $fotoPath,
             'ktp' => $ktpPath,
@@ -294,9 +476,9 @@ class SuratOap extends Component
         }
 
         // Refresh riwayat
-        $this->riwayat = PengajuanSurat::where('user_id', Auth::id())->latest()->get();
+        $this->riwayat = PengajuanSurat::where('user_id', $pemohonId)->latest()->get();
 
-        logActivity('Mengajukan surat ' . strtoupper($pengajuan->alasanFinal), $pengajuan);
+        logActivity('Mengajukan surat ' . strtoupper($alasanFinal), $pengajuan);
 
         $this->dispatch('pengajuanBerhasil');
 
@@ -304,15 +486,24 @@ class SuratOap extends Component
             'type' => 'success',
             'message' => '✅ Pengajuan berhasil dikirim. Menunggu verifikasi berkas oleh petugas.'
         ]);
-        $this->dispatch('scrollToTop'); // <-- tambah ini
-        $this->reset(['alasan', 'foto', 'ktp', 'kk', 'akte']);
+        $this->reset([
+            'user_id',
+            'alasan',
+            'alasan_lain',
+            'foto',
+            'ktp',
+            'kk',
+            'akte',
+            'searchUser',
+            'hasilUsers'
+            ]);
     }
 
     protected function terbitkanSuratOap($pengajuan)
     {
         $isIpdn = str_contains(strtoupper($pengajuan->alasan), 'IPDN');
 
-        $profil = Profil::where('user_id', Auth::id())->with('kabupaten')->first();
+        $profil = Profil::where('user_id', $pengajuan->user_id)->with('kabupaten')->first();
 
         $format = FormatSurat::where('jenis', $isIpdn ? 'IPDN' : 'surat_oap')->first();
 
