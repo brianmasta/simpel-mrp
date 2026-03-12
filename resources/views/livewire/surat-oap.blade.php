@@ -335,7 +335,7 @@
                         <td>1</td>
                         <td>Pas Foto 4x6 (Latar Belakang Merah)</td>
                         <td>
-                            <input type="file" wire:model.defer="foto" class="form-control w-100" accept="image/jpeg,image/png" capture="environment">
+                            <input type="file" wire:model.defer="foto" class="form-control w-100" accept="image/jpeg,image/png,application" capture="environment">
                             <div wire:loading wire:target="foto" class="small text-primary mt-1">
                                 Unggah...
                             </div>
