@@ -674,6 +674,7 @@ tabindex="-1"
     <select wire:model.live="alasan" class="form-select">
 
     <option value="">-- Pilih Alasan --</option>
+    <option value="Pendaftaran Polri Tahun Anggaran 2026">Pendaftaran Polri Tahun Anggaran 2026</option>
     <option value="Pendaftaran CPNS">Pendaftaran CPNS</option>
     <option value="IPDN">Pendaftaran IPDN</option>
     <option value="Beasiswa">Beasiswa</option>
