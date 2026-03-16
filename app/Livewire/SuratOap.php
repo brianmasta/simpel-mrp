@@ -293,16 +293,26 @@ class SuratOap extends Component
 
     public function verifikasiMarga()
     {
-        // 1️⃣ Coba dari nama lengkap pengguna (kata terakhir)
-        $hasil = $this->ambilMargaDariNamaIbu($this->namaLengkap);
+        // 1️⃣ CEK DARI USER
+        $hasil = $this->ambilMargaDariNama($this->namaLengkap);
 
         if ($hasil) {
             $this->sumber_marga = 'user';
         } else {
-            // 2️⃣ Fallback: nama lengkap ibu kandung
-            $hasil = $this->ambilMargaDariNamaIbu($this->namaIbu);
+
+            // 2️⃣ CEK DARI AYAH
+            $hasil = $this->ambilMargaDariNama($this->namaAyah);
+
             if ($hasil) {
-                $this->sumber_marga = 'ibu';
+                $this->sumber_marga = 'ayah';
+            } else {
+
+                // 3️⃣ CEK DARI IBU
+                $hasil = $this->ambilMargaDariNama($this->namaIbu);
+
+                if ($hasil) {
+                    $this->sumber_marga = 'ibu';
+                }
             }
         }
 
@@ -310,8 +320,10 @@ class SuratOap extends Component
             $this->margaValid = false;
             $this->marga = null;
             $this->suku = null;
+
             $this->pesanVerifikasi =
-                '⚠️ Marga tidak ditemukan pada nama pengguna maupun ibu kandung.';
+                '⚠️ Marga tidak ditemukan pada nama pengguna, ayah, maupun ibu.';
+
             return;
         }
 
@@ -319,29 +331,29 @@ class SuratOap extends Component
         $this->suku  = $hasil['suku'];
         $this->margaValid = true;
 
-        $this->pesanVerifikasi = $this->sumber_marga === 'ibu'
-            ? 'ℹ️ Marga diambil dari nama ibu kandung.'
-            : '✅ Marga terverifikasi dari nama pengguna.';
+        $this->pesanVerifikasi = match ($this->sumber_marga) {
+            'user' => '✅ Marga terverifikasi dari nama pengguna.',
+            'ayah' => 'ℹ️ Marga diambil dari nama ayah kandung.',
+            'ibu'  => 'ℹ️ Marga diambil dari nama ibu kandung.',
+        };
     }
 
-    protected function ambilMargaDariNamaIbu(?string $namaIbu)
+    protected function ambilMargaDariNama(?string $nama)
     {
-        if (!$namaIbu) return null;
+        if (!$nama) return null;
 
-        // Normalisasi spasi
-        $namaIbu = trim(preg_replace('/\s+/', ' ', $namaIbu));
+        $nama = trim(preg_replace('/\s+/', ' ', $nama));
 
-        // Ambil kata terakhir (marga)
-        $parts = explode(' ', $namaIbu);
-        $margaIbu = strtolower(end($parts));
+        // ambil kata terakhir
+        $parts = explode(' ', $nama);
+        $marga = strtolower(end($parts));
 
-        // Cari marga di database
-        $data = Marga::whereRaw('LOWER(marga) = ?', [$margaIbu])->first();
+        $data = Marga::whereRaw('LOWER(marga) = ?', [$marga])->first();
 
         if ($data) {
             return [
                 'marga' => ucfirst($data->marga),
-                'suku'  => $data->suku, // langsung dari tabel margas
+                'suku'  => $data->suku,
             ];
         }
 

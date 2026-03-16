@@ -43,6 +43,9 @@
                                 dari Nama Lengkap
                             @elseif($sumberMarga === 'ibu')
                                 dari Nama Ibu Kandung
+                            
+                            @elseif($sumberMarga === 'ayah')
+                            dari Nama Ibu Ayah
                             @else
                                 (belum terverifikasi)
                             @endif

@@ -546,21 +546,35 @@ private function extractNamaFromKtp($text)
 
     protected function deteksiMargaDariUserAtauIbu()
     {
-        // 1️⃣ cek dari nama lengkap user
+        // 1️⃣ CEK dari nama lengkap user
         if ($this->nama_lengkap) {
-            $parts = explode(' ', Str::title(trim($this->nama_lengkap)));
-            $marga = Marga::whereIn('marga', $parts)->first();
+            $partsUser = explode(' ', Str::title(trim($this->nama_lengkap)));
+            $margaUser = Marga::whereIn('marga', $partsUser)->first();
 
-            if ($marga) {
+            if ($margaUser) {
                 return [
                     'ditemukan' => true,
-                    'marga' => $marga->marga,
+                    'marga' => $margaUser->marga,
                     'sumber' => 'user'
                 ];
             }
         }
 
-        // 2️⃣ fallback: nama ibu kandung
+        // 2️⃣ CEK dari nama ayah kandung
+        if ($this->nama_ayah) {
+            $partsAyah = explode(' ', Str::title(trim($this->nama_ayah)));
+            $margaAyah = Marga::whereIn('marga', $partsAyah)->first();
+
+            if ($margaAyah) {
+                return [
+                    'ditemukan' => true,
+                    'marga' => $margaAyah->marga,
+                    'sumber' => 'ayah'
+                ];
+            }
+        }
+
+        // 3️⃣ CEK dari nama ibu kandung
         if ($this->nama_ibu) {
             $partsIbu = explode(' ', Str::title(trim($this->nama_ibu)));
             $margaIbu = Marga::whereIn('marga', $partsIbu)->first();
@@ -574,8 +588,8 @@ private function extractNamaFromKtp($text)
             }
         }
 
-        // 3️⃣ tidak ditemukan
-        $namaSumber = $this->nama_lengkap ?? $this->nama_ibu ?? '';
+        // 4️⃣ Jika tidak ditemukan
+        $namaSumber = $this->nama_lengkap ?? '';
         $parts = explode(' ', Str::title(trim($namaSumber)));
         $margaTerakhir = end($parts);
 
