@@ -96,11 +96,6 @@
                                         wire:click="konfirmasiHapus({{ $item->id }})">
                                         <i class="bi bi-trash"></i> Hapus
                                     </button>
-                                                    <button
-                                        wire:click="editData({{ $item->id }})"
-                                        class="btn btn-warning btn-sm ms-1">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </button>
                                 @endif
                             </td>
                         </tr>
