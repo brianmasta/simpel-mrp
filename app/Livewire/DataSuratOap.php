@@ -19,6 +19,11 @@ use Livewire\WithFileUploads;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 
 class DataSuratOap extends Component
 {
@@ -40,6 +45,8 @@ class DataSuratOap extends Component
     public $marga, $cekMarga;
 
     public $fotoBaru;
+
+    public $editNama, $editNik, $editAlasan, $editNamaAyah, $editNamaIbu;
 
     public function render()
     {
@@ -67,10 +74,36 @@ class DataSuratOap extends Component
 
     }
 
+    public function editData($id)
+    {
+        $data = PengajuanSurat::with('profil')->findOrFail($id);
+
+        $this->selectedData = $data;
+
+        $this->editNama = $data->profil->nama_lengkap;
+        $this->editNik = $data->profil->nik;
+        $this->editNamaAyah = $data->profil->nama_ayah;
+        $this->editNamaIbu = $data->profil->nama_ibu;
+        $this->editAlasan = $data->alasan;
+
+        $this->dispatch('show-edit-modal');
+    }
+
     public function lihatData($id)
     {
-        $this->selectedData = PengajuanSurat::with(['profil.kabupaten'])->find($id);
-        // dd($this->selectedData);
+        $data = \App\Models\PengajuanSurat::with([
+            'profil.kabupaten'
+        ])->findOrFail($id);
+
+        $this->selectedData = $data;
+
+        // 🔥 ISI FORM EDIT DARI SINI
+        $this->editNama = $data->profil->nama_lengkap ?? '';
+        $this->editNik = $data->profil->nik ?? '';
+        $this->editNamaAyah = $data->profil->nama_ayah ?? '';
+        $this->editNamaIbu = $data->profil->nama_ibu ?? '';
+        $this->editAlasan = $data->alasan ?? '';
+
         $this->dispatch('show-lihat-data');
     }
 
@@ -282,6 +315,22 @@ class DataSuratOap extends Component
 
         $pengajuan = PengajuanSurat::with(['profil.kabupaten'])->findOrFail($this->selectedData->id);
 
+                // ✅ UPDATE DATA PROFIL
+        $pengajuan->profil->update([
+            'nama_lengkap' => $this->editNama,
+            'nik' => $this->editNik,
+            'nama_ayah' => $this->editNamaAyah,
+            'nama_ibu' => $this->editNamaIbu,
+        ]);
+
+        // ✅ UPDATE DATA PENGAJUAN
+        $pengajuan->update([
+            'alasan' => $this->editAlasan,
+        ]);
+
+        $pengajuan->refresh();
+        $pengajuan->load('profil.kabupaten');
+
         // Update foto
         if ($this->fotoBaru) {
 
@@ -317,11 +366,33 @@ class DataSuratOap extends Component
             ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($fotoPath))
             : '';
 
-        // QR lama
-        $qrPath = public_path('qrcodes/qrcode_' . $pengajuan->kode_autentikasi . '.png');
-        $qrBase64 = file_exists($qrPath)
-            ? 'data:image/png;base64,' . base64_encode(file_get_contents($qrPath))
-            : '';
+        // 🔥 GENERATE QR ULANG
+        $qrContent = route('verifikasi.surat', $pengajuan->kode_autentikasi);
+
+        // pastikan folder ada
+        $qrFolder = public_path('qrcodes');
+        if (!file_exists($qrFolder)) {
+            mkdir($qrFolder, 0777, true);
+        }
+
+        $qrFileName = 'qrcode_' . $pengajuan->kode_autentikasi . '.png';
+        $qrPath = $qrFolder . '/' . $qrFileName;
+
+        // ambil dari database
+        $verifyUrl = route('verifikasi.surat', $pengajuan->kode_autentikasi);
+        // generate QR (tanpa file)
+        $qr = Builder::create()
+            ->writer(new PngWriter())
+            ->data($verifyUrl)
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
+            ->size(200)
+            ->margin(10)
+            ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
+            ->build();
+
+        // 🔥 WAJIB
+        $qrBase64 = 'data:image/png;base64,' . base64_encode($qr->getString());
 
 
 
@@ -354,6 +425,8 @@ class DataSuratOap extends Component
             $html = str_replace('[[' . $k . ']]', $v, $html);
         }
 
+
+
         // Generate PDF ulang (TIMPA FILE LAMA)
         $pdf = Pdf::loadHTML($html)->setPaper($isIpdn ? 'Legal' : 'A4', 'portrait');
         Storage::disk('public')->put($pengajuan->file_surat, $pdf->output());
@@ -366,5 +439,10 @@ class DataSuratOap extends Component
             'success',
             'Surat berhasil diperbaiki dan diterbitkan ulang dengan nomor yang sama.'
         );
+
+         $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Surat berhasil diperbaiki dan diterbitkan ulang dengan nomor yang sama.'
+        ]);
     }
 }

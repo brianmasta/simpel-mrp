@@ -96,6 +96,11 @@
                                         wire:click="konfirmasiHapus({{ $item->id }})">
                                         <i class="bi bi-trash"></i> Hapus
                                     </button>
+                                                    <button
+                                        wire:click="editData({{ $item->id }})"
+                                        class="btn btn-warning btn-sm ms-1">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </button>
                                 @endif
                             </td>
                         </tr>
@@ -112,130 +117,189 @@
 <!-- Modal Lihat Data -->
 <!-- Modal Lihat Data -->
 <div wire:ignore.self class="modal fade" id="lihatDataModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content border-0 shadow">
 
+      <!-- HEADER -->
       <div class="modal-header bg-info text-white">
-        <h5 class="modal-title">Detail Pengajuan Surat OAP</h5>
-        <button type="button" class="btn-close btn-close-white"
-                data-coreui-dismiss="modal"></button>
+        <h5 class="modal-title fw-semibold">
+            <i class="bi bi-file-earmark-text me-2"></i>
+            Detail Pengajuan Surat OAP
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-coreui-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body">
+      <!-- BODY -->
+      <div class="modal-body bg-light">
         @if($selectedData)
-            <div class="row">
-                <!-- KIRI -->
-                <div class="col-md-6">
-                    <table class="table table-sm">
-                        <tr><th>No Surat</th><td>{{ $selectedData->nomor_surat }}</td></tr>
-                        <tr><th>Nama Lengkap</th><td>{{ $selectedData->profil->nama_lengkap ?? '-' }}</td></tr>
-                        <tr><th>NIK</th><td>{{ $selectedData->profil->nik ?? '-' }}</td></tr>
-                        <tr><th>Asal Kabupaten</th><td>{{ $selectedData->profil->kabupaten->nama ?? '-' }}</td></tr>
-                        <tr><th>Tujuan Surat</th><td>{{ $selectedData->alasan }}</td></tr>
-                        <tr><th>Status</th><td>{{ ucfirst($selectedData->status) }}</td></tr>
-                        <tr><th>Tanggal</th><td>{{ $selectedData->created_at->format('d/m/Y') }}</td></tr>
-                    </table>
+        <div class="row g-3">
+
+          <!-- KIRI: INFORMASI -->
+          <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-white fw-bold">
+                Informasi Pemohon
+              </div>
+
+              <div class="card-body p-2">
+                <table class="table table-sm mb-0">
+                  <tr><th width="40%">No Surat</th><td>{{ $selectedData->nomor_surat }}</td></tr>
+                  <tr><th>Nama</th><td>{{ $selectedData->profil->nama_lengkap ?? '-' }}</td></tr>
+                  <tr><th>NIK</th><td>{{ $selectedData->profil->nik ?? '-' }}</td></tr>
+                  <tr><th>Kabupaten</th><td>{{ $selectedData->profil->kabupaten->nama ?? '-' }}</td></tr>
+                  <tr><th>Tujuan</th><td>{{ $selectedData->alasan }}</td></tr>
+                  <tr>
+                    <th>Status</th>
+                    <td>
+                      <span class="badge bg-info">
+                        {{ ucfirst($selectedData->status) }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr><th>Tanggal</th><td>{{ $selectedData->created_at->format('d/m/Y') }}</td></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- KANAN -->
+          <div class="col-md-6">
+
+            <!-- BERKAS -->
+            <div class="card shadow-sm border-0 mb-3">
+              <div class="card-header bg-white fw-bold">
+                Berkas Pendukung
+              </div>
+
+              <div class="card-body">
+                <div class="d-grid gap-2">
+
+                  @if($selectedData->foto)
+                  <a href="{{ route('berkas.akses', [$selectedData->id, 'foto']) }}" target="_blank"
+                     class="btn btn-outline-primary btn-sm text-start">
+                    <i class="bi bi-image me-2"></i> Foto 4x6
+                  </a>
+                  @endif
+
+                  @if($selectedData->ktp)
+                  <a href="{{ route('berkas.akses', [$selectedData->id, 'ktp']) }}" target="_blank"
+                     class="btn btn-outline-primary btn-sm text-start">
+                    <i class="bi bi-credit-card me-2"></i> KTP
+                  </a>
+                  @endif
+
+                  @if($selectedData->kk)
+                  <a href="{{ route('berkas.akses', [$selectedData->id, 'kk']) }}" target="_blank"
+                     class="btn btn-outline-primary btn-sm text-start">
+                    <i class="bi bi-people me-2"></i> Kartu Keluarga
+                  </a>
+                  @endif
+
+                  @if($selectedData->akte)
+                  <a href="{{ route('berkas.akses', [$selectedData->id, 'akte']) }}" target="_blank"
+                     class="btn btn-outline-primary btn-sm text-start">
+                    <i class="bi bi-file-earmark-text me-2"></i> Akte
+                  </a>
+                  @endif
+
                 </div>
+              </div>
+            </div>
 
-                <!-- KANAN -->
-                <div class="col-md-6">
-                    <h6 class="fw-bold mb-2">Berkas Pendukung</h6>
+            <!-- FORM ADMIN -->
+            @if(auth()->user()->role === 'admin')
+            <div class="card shadow-sm border-0">
+              <div class="card-header bg-danger text-white fw-bold">
+                <i class="bi bi-pencil-square me-2"></i> Perbaikan Data
+              </div>
 
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        @if($selectedData->foto)
-                            <a href="{{ route('berkas.akses', [$selectedData->id, 'foto']) }}"
-                            target="_blank"
-                            class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-person-bounding-box me-1"></i> Foto 4x6
-                            </a>
-                        @endif
+              <div class="card-body">
 
-                        @if($selectedData->ktp)
-                            <a href="{{ route('berkas.akses', [$selectedData->id, 'ktp']) }}"
-                            target="_blank"
-                            class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-person-bounding-box me-1"></i> KTP
-                            </a>
-                        @endif
+                <form wire:submit.prevent="perbaikiDanTerbitkan">
 
-                        @if($selectedData->kk)
-                            <a href="{{ route('berkas.akses', [$selectedData->id, 'kk']) }}"
-                            target="_blank"
-                            class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-person-bounding-box me-1"></i> KK
-                            </a>
-                        @endif
+                  <div class="row g-2">
 
-                        @if($selectedData->akte)
-                            <a href="{{ route('berkas.akses', [$selectedData->id, 'akte']) }}"
-                            target="_blank"
-                            class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-person-bounding-box me-1"></i> Akte
-                            </a>
-                        @endif
+                    <div class="col-md-6">
+                      <label class="form-label">Nama</label>
+                      <input type="text" wire:model="editNama" class="form-control form-control-sm">
                     </div>
 
-@if(auth()->user()->role === 'admin')
-    <hr>
-    <h6 class="fw-bold text-danger">Perbaikan foto (Admin)</h6>
+                    <div class="col-md-6">
+                      <label class="form-label">NIK</label>
+                      <input type="text" wire:model="editNik" class="form-control form-control-sm">
+                    </div>
 
-    <form wire:submit.prevent="perbaikiDanTerbitkan"
-          enctype="multipart/form-data">
+                    <div class="col-md-6">
+                      <label class="form-label">Nama Ayah</label>
+                      <input type="text" wire:model="editNamaAyah" class="form-control form-control-sm">
+                    </div>
 
-        {{-- INPUT FILE --}}
-        <input type="file"
-               wire:model="fotoBaru"
-               accept="image/*"
-               class="form-control form-control-sm mb-2">
+                    <div class="col-md-6">
+                      <label class="form-label">Nama Ibu</label>
+                      <input type="text" wire:model="editNamaIbu" class="form-control form-control-sm">
+                    </div>
 
-        {{-- LOADING SAAT UPLOAD FOTO --}}
-        <div wire:loading wire:target="fotoBaru"
-             class="alert alert-info py-1 px-2 mb-2">
-            <span class="spinner-border spinner-border-sm me-2"></span>
-            Mengunggah foto…
+                    <div class="col-12">
+                      <label class="form-label">Tujuan Surat</label>
+                      <textarea wire:model="editAlasan" class="form-control form-control-sm"></textarea>
+                    </div>
+
+                    <!-- FOTO -->
+                    <div class="col-12">
+                      <label class="form-label">Ganti Foto</label>
+                      <input type="file" wire:model="fotoBaru" class="form-control form-control-sm">
+                    </div>
+
+                    <!-- LOADING -->
+                    <div wire:loading wire:target="fotoBaru"
+                         class="alert alert-info py-1 px-2">
+                      <span class="spinner-border spinner-border-sm me-2"></span>
+                      Uploading...
+                    </div>
+
+                    <!-- PREVIEW -->
+                    @if ($fotoBaru)
+                      <div class="col-12 text-center">
+                        <img src="{{ $fotoBaru->temporaryUrl() }}"
+                             class="img-thumbnail"
+                             style="max-height:120px">
+                      </div>
+                    @endif
+
+                    <!-- BUTTON -->
+                    <div class="col-12">
+                      <button type="submit"
+                              wire:loading.attr="disabled"
+                              class="btn btn-danger btn-sm w-100 mt-2">
+                        <span wire:loading class="spinner-border spinner-border-sm me-1"></span>
+                        Simpan & Terbitkan
+                      </button>
+                    </div>
+
+                  </div>
+
+                </form>
+
+              </div>
+            </div>
+            @endif
+
+          </div>
+
         </div>
-
-        {{-- PREVIEW FOTO --}}
-        @if ($fotoBaru)
-            <div class="mb-2">
-                <small class="text-muted">Preview Foto Baru:</small><br>
-                <img src="{{ $fotoBaru->temporaryUrl() }}"
-                     class="img-thumbnail mt-1"
-                     style="max-height:150px">
-            </div>
-        @endif
-
-        {{-- VALIDATION ERROR --}}
-        @error('fotoBaru')
-            <small class="text-danger">{{ $message }}</small>
-        @enderror
-
-        {{-- BUTTON --}}
-        <button type="submit"
-                wire:loading.attr="disabled"
-                wire:target="perbaikiDanTerbitkan,fotoBaru"
-                class="btn btn-danger btn-sm">
-            <span wire:loading
-                  wire:target="perbaikiDanTerbitkan"
-                  class="spinner-border spinner-border-sm me-1"></span>
-            Perbaiki & Terbitkan Ulang
-        </button>
-
-        <small class="d-block mt-2 text-muted">
-            ⚠ Nomor surat tetap, PDF diperbarui
-        </small>
-    </form>
-@endif
-                </div>
-            </div>
         @else
-            <p class="text-center text-muted">Data tidak tersedia</p>
+          <div class="text-center text-muted py-5">
+            <i class="bi bi-file-earmark-x fs-1"></i>
+            <p class="mt-2">Data tidak tersedia</p>
+          </div>
         @endif
       </div>
 
+      <!-- FOOTER -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary"
-                data-coreui-dismiss="modal">Tutup</button>
+        <button class="btn btn-secondary btn-sm" data-coreui-dismiss="modal">
+          Tutup
+        </button>
       </div>
 
     </div>
