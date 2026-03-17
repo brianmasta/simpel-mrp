@@ -356,7 +356,7 @@ class VerifikasiSuratOap extends Component
      |  PDF
      ===================================================== */
     $pdf = Pdf::loadHTML($html)
-        ->setPaper($isIpdn ? 'Legal' : 'A4', 'portrait');
+        ->setPaper($isIpdn ? 'Legal' : 'Legal', 'portrait');
 
     $folder = $isDraft
         ? 'private/surat_oap/draft'

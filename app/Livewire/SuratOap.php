@@ -626,7 +626,7 @@ class SuratOap extends Component
         } else {
             // A4 210 x 330 mm
             $pdf = Pdf::loadHTML($html)
-                ->setPaper('A4', 'portrait');
+                ->setPaper('Legal', 'portrait');
         }
 
         // Buat PDF preview

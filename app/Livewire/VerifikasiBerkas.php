@@ -271,7 +271,7 @@ class VerifikasiBerkas extends Component
             $html = str_replace('[[' . $key . ']]', $value, $html);
         }
 
-        $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+        $pdf = Pdf::loadHTML($html)->setPaper('Legal', 'portrait');
 
         /**
          * ===============================

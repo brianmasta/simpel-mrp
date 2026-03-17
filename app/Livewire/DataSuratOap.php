@@ -428,7 +428,7 @@ class DataSuratOap extends Component
 
 
         // Generate PDF ulang (TIMPA FILE LAMA)
-        $pdf = Pdf::loadHTML($html)->setPaper($isIpdn ? 'Legal' : 'A4', 'portrait');
+        $pdf = Pdf::loadHTML($html)->setPaper($isIpdn ? 'Legal' : 'Legal', 'portrait');
         Storage::disk('public')->put($pengajuan->file_surat, $pdf->output());
 
         $pengajuan->update(['status' => 'terbit']);

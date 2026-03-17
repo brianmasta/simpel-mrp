@@ -28,7 +28,7 @@ class VerifikasiSurat extends Component
     public function mount($kode)
     {
         $this->kode = $kode;
-        $this->surat = PengajuanSurat::with('profil')->where('kode_autentikasi', $kode)->first();
+        $this->surat = PengajuanSurat::with('profil')->where('kode_autentikasi', $kode)->firstOrFail();
 
         $this->status = $this->surat ? 'valid' : 'invalid';
     }
