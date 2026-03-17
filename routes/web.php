@@ -156,8 +156,6 @@ Route::get('/berkas/{pengajuan}/{jenis}', function (
     string $jenis
 ) {
 
-    abort_unless(auth()->user()->can('view', $pengajuan), 403);
-
     abort_unless(in_array($jenis, ['foto','ktp','kk','akte','surat']), 404);
 
     $map = [
@@ -170,31 +168,35 @@ Route::get('/berkas/{pengajuan}/{jenis}', function (
 
     abort_unless($map[$jenis] ?? false, 404);
 
-    // Hilangkan "public/" jika ada
+    // =========================================
+    // 🔐 CEK AKSES
+    // =========================================
+
+    if (auth()->check()) {
+        // user login → pakai policy
+        abort_unless(auth()->user()->can('view', $pengajuan), 403);
+    } else {
+        // publik → wajib signed URL
+        abort_unless(request()->hasValidSignature(), 403);
+    }
+
+    // =========================================
+    // 📁 PATH
+    // =========================================
+
     $relative = str_replace('public/', '', $map[$jenis]);
 
-    if ($jenis === 'surat') {
-        // 🔥 SURAT OAP (tanpa public/)
-        $realPath = storage_path('app/public/' . $relative);
-        // dd($realPath);
-    } else {
-        // 🔥 BERKAS PENDUKUNG
-        $realPath = storage_path('app/private/public/' . $relative);
-        // dd($realPath);
-    }
+    $realPath = $jenis === 'surat'
+        ? storage_path('app/public/' . $relative)
+        : storage_path('app/private/public/' . $relative);
 
     abort_unless(file_exists($realPath), 404);
 
-    return response()->file($realPath, [
-        'Content-Type' => mime_content_type($realPath),
-        'Content-Disposition' => 'inline',
-        'X-Frame-Options' => 'SAMEORIGIN',
-        'Cache-Control' => 'no-store',
-    ]);
+    logActivity('Download dokumen: ' . $jenis, $pengajuan);
 
-})
-->middleware('auth')
-->name('berkas.akses');
+    return response()->download($realPath);
+
+})->name('berkas.akses');
 
 Route::middleware('auth')->group(function () {
 

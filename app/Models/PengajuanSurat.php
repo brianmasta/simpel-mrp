@@ -20,7 +20,9 @@ class PengajuanSurat extends Model
         'file_surat',
         'status',
         'kode_autentikasi',
-        'qr_code_path',    
+        'qr_code_path',
+        'otp',
+        'otp_expired_at',
     ];
 
     public function user()
