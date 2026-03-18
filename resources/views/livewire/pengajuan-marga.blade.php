@@ -179,7 +179,7 @@
                     <label class="form-label">Nama Lengkap</label>
                     <input type="text"
                            class="form-control"
-                           wire:model.defer="nama_lengkap">
+                           wire:model.defer="nama_lengkap" style="text-transform: uppercase;" required>
                     <small class="text-muted">Sesuai KTP atau akta kelahiran.</small>
                     @error('nama_lengkap') <div class="text-danger">{{ $message }}</div> @enderror
                 </div>
@@ -195,7 +195,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Wilayah Adat</label>
-                    <select class="form-control" wire:model.defer="wilayah_adat">
+                    <select class="form-control" wire:model.defer="wilayah_adat" style="text-transform: uppercase;" required>
                         <option value="">-- Pilih Wilayah Adat --</option>
                         <option value="Mamta/Tabi">Mamta/Tabi</option>
                         <option value="Saireri">Saireri</option>
@@ -212,7 +212,7 @@
                     <label class="form-label">Suku</label>
                     <input type="text"
                            class="form-control"
-                           wire:model.defer="suku">
+                           wire:model.defer="suku" style="text-transform: uppercase;" required>
                     @error('suku') <div class="text-danger">{{ $message }}</div> @enderror
                 </div>
 
@@ -220,7 +220,7 @@
                     <label class="form-label">Marga</label>
                     <input type="text"
                            class="form-control"
-                           wire:model.defer="marga">
+                           wire:model.defer="marga" style="text-transform: uppercase;" required>
                     @error('marga') <div class="text-danger">{{ $message }}</div> @enderror
                 </div>
 
@@ -228,7 +228,7 @@
                     <label class="form-label">Alasan Pengajuan</label>
                     <textarea class="form-control"
                               rows="3"
-                              wire:model.defer="alasan"></textarea>
+                              wire:model.defer="alasan" style="text-transform: uppercase;" required></textarea>
                 </div>
 
                 <div class="mb-3">

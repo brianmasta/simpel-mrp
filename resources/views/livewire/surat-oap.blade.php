@@ -261,25 +261,25 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Nama Lengkap</label>
-                        <input class="form-control" value="{{ $namaLengkap }}" disabled>
+                        <input class="form-control" style="text-transform: uppercase;" value="{{ $namaLengkap }}" disabled>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Suku</label>
-                        <input class="form-control" value="{{ $suku }}" disabled>
+                        <input class="form-control" style="text-transform: uppercase;" value="{{ $suku }}" disabled>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Asal Kabupaten/Kota</label>
-                        <input class="form-control" type="text" value="{{ $asalKabupaten }}" disabled>
+                        <input class="form-control" style="text-transform: uppercase;" type="text" value="{{ $asalKabupaten }}" disabled>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Nama Ayah</label>
-                        <input class="form-control" type="text" value="{{ $namaAyah }}" disabled>
+                        <input class="form-control" style="text-transform: uppercase;" type="text" value="{{ $namaAyah }}" disabled>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Nama Ibu</label>
-                        <input class="form-control" type="text" value="{{ $namaIbu }}" disabled>
+                        <input class="form-control" style="text-transform: uppercase;" type="text" value="{{ $namaIbu }}" disabled>
                     </div>
                 </div>
 
@@ -288,7 +288,7 @@
                 {{-- ALASAN --}}
                 <div class="mb-3">
                     <label class="form-label">Alasan Pengajuan</label>
-                    <select wire:model.live="alasan" class="form-select">
+                    <select wire:model.live="alasan" class="form-select" style="text-transform: uppercase;">
                         <option value="">-- Pilih Alasan --</option>
                         <option value="Pendaftaran CPNS">Pendaftaran CPNS</option>
                         <option value="IPDN">Pendaftaran IPDN</option>
@@ -639,27 +639,27 @@ tabindex="-1"
 
     <div class="col-md-6">
     <label class="form-label">Nama Lengkap</label>
-    <input class="form-control" value="{{ $namaLengkap }}" disabled>
+    <input class="form-control" style="text-transform: uppercase;" value="{{ $namaLengkap }}" disabled>
     </div>
 
     <div class="col-md-6">
     <label class="form-label">Suku</label>
-    <input class="form-control" value="{{ $suku }}" disabled>
+    <input class="form-control" style="text-transform: uppercase;" value="{{ $suku }}" disabled>
     </div>
 
     <div class="col-md-6">
     <label class="form-label">Asal Kabupaten/Kota</label>
-    <input class="form-control" value="{{ $asalKabupaten }}" disabled>
+    <input class="form-control" style="text-transform: uppercase;" value="{{ $asalKabupaten }}" disabled>
     </div>
 
     <div class="col-md-6">
     <label class="form-label">Nama Ayah</label>
-    <input class="form-control" value="{{ $namaAyah }}" disabled>
+    <input class="form-control" style="text-transform: uppercase;" value="{{ $namaAyah }}" disabled>
     </div>
 
     <div class="col-md-6">
     <label class="form-label">Nama Ibu</label>
-    <input class="form-control" value="{{ $namaIbu }}" disabled>
+    <input class="form-control" style="text-transform: uppercase;" value="{{ $namaIbu }}" disabled>
     </div>
 
     </div>
@@ -671,7 +671,7 @@ tabindex="-1"
 
     <label class="form-label">Alasan Pengajuan</label>
 
-    <select wire:model.live="alasan" class="form-select">
+    <select wire:model.live="alasan" class="form-select" style="text-transform: uppercase;">
 
     <option value="">-- Pilih Alasan --</option>
     <option value="Pendaftaran Polri Tahun Anggaran 2026">Pendaftaran Polri Tahun Anggaran 2026</option>
